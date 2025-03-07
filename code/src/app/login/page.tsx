@@ -25,6 +25,10 @@ export default function Login() {
           <button className="w-full bg-pink-400 text-white py-3 rounded-lg hover:bg-pink-500 transition">
             Login
           </button>
+          
+          <div className="mb-4">
+            Don't have an account? <a href="/signup" style={{ color: '#ff3388' }}>Sign in</a> here.
+          </div>
         </div>
       </div>
     );

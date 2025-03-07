@@ -32,7 +32,7 @@ export default function SignUp() {
           </div>
   
           <button className="w-full bg-pink-400 text-white py-3 rounded-lg hover:bg-pink-500 transition">
-            Login
+            Sign Up
           </button>
         </div>
 
