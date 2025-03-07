@@ -1,5 +1,5 @@
 import axios from 'axios';
-import formidable from 'formidable';
+import { IncomingForm } from 'formidable';
 import fs from 'fs';
 
 export const config = {
@@ -18,8 +18,9 @@ async function uploadReceipt(docPath) {
             headers: {
                 'Ocp-Apim-Subscription-Key': process.env.RECEIPT_API_KEY,
                 'Content-Type': 'image/jpg',
-            }
+            },
         });
+
         return response.data;
     } catch (error) {
         console.error('Error uploading document to Azure receipt recognizer:', error);
@@ -29,24 +30,23 @@ async function uploadReceipt(docPath) {
 
 export default async function handler(req, res) {
     if (req.method === 'POST') {
-        const form = new formidable.IncomingForm();
+        const form = new IncomingForm();
 
-        form.parse(req, async (error, getConfigFileParsingDiagnostics, files) => {
+        form.parse(req, async (err, fields, files) => {
             if (err) {
                 return res.status(500).json({ error: 'Error parsing receipt data' });
             }
-            
-            const file = files.document[0];
 
-            if (!file) {
+            if (!files.document || files.document.length === 0) {
                 return res.status(400).json({ error: 'No receipt file uploaded' });
             }
 
+            const file = files.document[0];
+
             try {
                 const result = await uploadReceipt(file.filepath);
-
                 return res.status(200).json(result);
-            } catch(error) {
+            } catch (error) {
                 return res.status(500).json({ error: 'Error processing receipt' });
             }
         });
