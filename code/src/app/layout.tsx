@@ -10,7 +10,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           {/* navbar */}
           <nav className="bg-pink-300 text-white p-6 shadow-md">
             <div className="max-w-4xl mx-auto flex justify-center gap-8 text-lg">
-              <Link href="/" className="hover:text-gray-300">Home</Link>
+              <Link href="/home" className="hover:text-gray-300">Home</Link>
               <Link href="/dashboard" className="hover:text-gray-300">Dashboard</Link>
               <Link href="/expenses" className="hover:text-gray-300">Expenses</Link>
               <Link href="/profile" className="hover:text-gray-300">Profile</Link>

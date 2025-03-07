@@ -19,3 +19,37 @@ body {
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  padding: 1.5rem;
+}
+
+.heading {
+  font-size: 2.25rem; /* Equivalent to text-4xl */
+  font-weight: bold;
+  text-align: center;
+}
+
+.buttonContainer {
+  margin-top: 1.5rem;
+  display: flex;
+  gap: 1rem;
+}
+
+
+.button {
+  background-color: #fbb6ce; /* bg-pink-300 */
+  color: white;
+  padding: 0.5rem 1.5rem;
+  border-radius: 0.5rem;
+  transition: background-color 0.3s;
+}
+
+.button:hover {
+  background-color: #f472b6; /* hover:bg-pink-500 */
+}
