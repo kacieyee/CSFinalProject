@@ -27,7 +27,7 @@ export default function Login() {
             Login
           </button>
 
-            Don't have an account? <a href="/signup" style={{ color: '#ff3388' }}>Sign in</a> here.
+            Don't have an account? <a href="/signup" style={{ color: '#ff3388' }}>Sign up</a> here.
         </div>
       </div>
     );
