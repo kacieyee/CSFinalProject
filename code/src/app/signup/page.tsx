@@ -15,7 +15,7 @@ export default function SignUp() {
         postUser(username, password);
         redirect('/login')
       } else {
-        console.log("Passwords must be matching")
+        alert("Passwords must be matching.")
       }
     }
 
