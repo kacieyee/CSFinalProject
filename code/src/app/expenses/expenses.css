@@ -100,7 +100,6 @@ body {
     margin-bottom: 20px;
   }
   
-  /* Styling for the receipt upload section */
   .upload-section {
     padding: 10px;
     background-color: #fafafa;
@@ -118,7 +117,7 @@ body {
   
 
   .submit {
-    background-color: #d25176; /* Green */
+    background-color: #d25176;
     border: none;
     color: white;
     padding: 5px 10px;
