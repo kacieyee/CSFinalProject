@@ -1,17 +1,21 @@
 'use client'
-import axios from "axios";
-import { FormEvent, useState } from "react";
+import { useState } from "react";
+import { postUser } from "../api/users/route"
+import { redirect } from 'next/navigation'
 
 export default function SignUp() {
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
+    const [confirm, setConfirm] = useState('')
 
-    const submitUser = async(e: FormEvent<HTMLFormElement>) => {
+    const submitUser = async(e: any) => {
       e.preventDefault()
-      try {
-        const response = await axios.post('/../api/users', {username, password})
-      } catch(err) {
-        console.log(err)
+
+      if (password === confirm) {
+        postUser(username, password);
+        redirect('/login')
+      } else {
+        console.log("Passwords must be matching")
       }
     }
 
@@ -45,6 +49,7 @@ export default function SignUp() {
             <label className="block text-gray-700 mb-1">Confirm Password</label>
             <input
               type="password"
+              onChange={(e) => setConfirm(e.target.value)}
               placeholder="Enter your password"
               className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-400"
             />
