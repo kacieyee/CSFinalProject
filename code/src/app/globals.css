@@ -43,7 +43,7 @@ body {
 
 
 .button {
-  background-color: #fbb6ce; /* bg-pink-300 */
+  background-color: #f472b6; /* bg-pink-300 */
   color: white;
   padding: 0.5rem 1.5rem;
   border-radius: 0.5rem;
@@ -51,5 +51,5 @@ body {
 }
 
 .button:hover {
-  background-color: #f472b6; /* hover:bg-pink-500 */
+  background-color: #df4d99; /* hover:bg-pink-500 */
 }

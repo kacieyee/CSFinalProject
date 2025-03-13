@@ -89,7 +89,7 @@ body {
   }
   
   ul li div strong {
-    color: #8e3877;
+    color: #db2a8e;
   }
   
   
@@ -107,7 +107,8 @@ body {
     border-radius: 8px;
     text-align: center;
     color: #777;
-    /* float: left; */
+    
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   }
   
   .upload-section p {
@@ -126,6 +127,14 @@ body {
     display: inline-block;
     font-size: 16px;
     border-radius: 8px;
+  }
+
+  .popupContent {
+    margin-bottom: 20px;
+    padding: 20px;
+    background-color: #fafafa;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   }
 
   @media screen and (max-width: 600px) {
