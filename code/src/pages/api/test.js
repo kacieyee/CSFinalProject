@@ -3,7 +3,7 @@ export default function handler(req, res) {
 
   if (method === 'GET') {
     // Handle GET request
-    const message = `GET request received. Query parameters: ${JSON.stringify(query)}`;
+    const message = `GET request received. Query params: ${JSON.stringify(query)}`;
     res.status(200).json({ message });
   } else if (method === 'POST') {
     // Handle POST request
