@@ -7,7 +7,6 @@ import jwt from "jsonwebtoken";
 connectToDB()
 
 const SECRET_KEY = process.env.JWT_SECRET;
-console.log(SECRET_KEY);
 
 export async function postUser(username, password) {
     try {

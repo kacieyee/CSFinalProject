@@ -23,7 +23,7 @@ export default function Login() {
 
         if (checkResult === 0) {
           const token = data.token;
-          localStorage.setItem("authToken", token);
+          localStorage.setItem("token", token);
           window.location.href = '/dashboard';
         } else if (checkResult === 1) {
           alert("Incorrect password. Please try again.")
