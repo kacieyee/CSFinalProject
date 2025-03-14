@@ -24,9 +24,7 @@ export default function Login() {
         if (checkResult === 0) {
           const token = data.token;
           localStorage.setItem("authToken", token);
-          console.log("Logged in");
-          //redirect('dashboard')
-          alert("Logged in!")
+          window.location.href = '/dashboard';
         } else if (checkResult === 1) {
           alert("Incorrect password. Please try again.")
         } else if (checkResult === 2) {
