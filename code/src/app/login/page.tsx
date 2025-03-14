@@ -12,10 +12,20 @@ export default function Login() {
       e.preventDefault()
 
       try {
-        const checkResult = await userLogin(username, password);
+        const response = await fetch('/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password }),
+      });
+
+      const data = await response.json();
+      const checkResult = data.result;
+
         if (checkResult === 0) {
+          const token = data.token;
+          localStorage.setItem("authToken", token);
+          console.log("Logged in");
           //redirect('/dashboard')
-          console.log("Logged in")
         } else if (checkResult === 1) {
           console.log("Incorrect password")
         } else if (checkResult === 2) {

@@ -2,8 +2,12 @@
 import User from "@/models/User";
 import connectToDB from "@/lib/mongoose";
 import { NextResponse } from "next/server";
+import jwt from "jsonwebtoken";
 
 connectToDB()
+
+const SECRET_KEY = process.env.JWT_SECRET;
+console.log(SECRET_KEY);
 
 export async function postUser(username, password) {
     try {
@@ -20,11 +24,17 @@ export async function userLogin(username, password) {
     try {
         const user = await User.findOne({username});
         if (!user) {
-            return 2;
+            return { status: 2 }; 
         } else if (user.password != password) {
-            return 1;
+            return { status: 1 };
         } else {
-            return 0;
+            const token = jwt.sign(
+                { username: user.username },
+                SECRET_KEY,
+                { expiresIn: "1h" }
+            );
+
+            return { status: 0, token};
         }
     } catch(err) {
         console.log(err)
