@@ -26,10 +26,14 @@ export default function Login() {
           localStorage.setItem("authToken", token);
           console.log("Logged in");
           //redirect('/dashboard')
+<<<<<<< HEAD
+=======
+          alert("Logged in!")
+>>>>>>> df01f4e296cd6f93f93fcc9eda962fb61d570c64
         } else if (checkResult === 1) {
-          console.log("Incorrect password")
+          alert("Incorrect password. Please try again.")
         } else if (checkResult === 2) {
-          console.log("User does not exist")
+          alert("User does not exist.")
         } else {
           console.log("Server error")
         }
