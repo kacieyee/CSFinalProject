@@ -12,14 +12,23 @@ export default function Login() {
       e.preventDefault()
 
       try {
-        const checkResult = await userLogin(username, password);
+        const response = await fetch('/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password }),
+      });
+
+      const data = await response.json();
+      const checkResult = data.result;
+
         if (checkResult === 0) {
-          //redirect('/dashboard')
-          console.log("Logged in")
+          const token = data.token;
+          localStorage.setItem("token", token);
+          window.location.href = '/dashboard';
         } else if (checkResult === 1) {
-          console.log("Incorrect password")
+          alert("Incorrect password. Please try again.")
         } else if (checkResult === 2) {
-          console.log("User does not exist")
+          alert("User does not exist.")
         } else {
           console.log("Server error")
         }
