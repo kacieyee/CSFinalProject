@@ -1,15 +1,13 @@
 'use client'
 import './login.css';
 import { useState } from "react";
-import { userLogin } from "../api/users/route"
-import { redirect } from 'next/navigation'
 
 export default function Login() {
-    const [username, setUsername] = useState('')
-    const [password, setPassword] = useState('')
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
 
     const checkUser = async(e: any) => {
-      e.preventDefault()
+      e.preventDefault();
 
       try {
         const response = await fetch('/api/login', {
@@ -26,14 +24,14 @@ export default function Login() {
           localStorage.setItem("token", token);
           window.location.href = '/dashboard';
         } else if (checkResult === 1) {
-          alert("Incorrect password. Please try again.")
+          alert("Incorrect password. Please try again.");
         } else if (checkResult === 2) {
-          alert("User does not exist.")
+          alert("User does not exist.");
         } else {
-          console.log("Server error")
+          console.log("Server error");
         }
       } catch(err) {
-        console.log(err)
+        console.log(err);
       }
     }
 
