@@ -97,9 +97,14 @@ export default function Dashboard() {
 
           {/* Second Row */}
             <div className="filter2">
-              <button className="button">Utilities</button>
-              <button className="button">Rent</button>
-              <button className="button">Gas</button>
+              <button className="button">Housing</button>
+              <button className="button">Health</button>
+              <button className="button">Transport</button>
+            </div>
+
+            {/* Third Row */}
+            <div className="filter2">
+              <button className="button">Misc</button>
             </div>
 
           </div>

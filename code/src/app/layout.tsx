@@ -37,7 +37,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="bg-gray-100 text-gray-900">
         <div className="flex flex-col h-screen">
           {/* navbar */}
-          <nav className="bg-pink-300 text-white p-6 shadow-md">
+          <nav className="navbar">
             <div className="max-w-4xl mx-auto flex justify-center gap-8 text-lg">
               <Link href="/home" className="hover:text-gray-300">Home</Link>
               
