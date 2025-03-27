@@ -22,7 +22,7 @@ export default function SignUp() {
 
     return (
       <div className="loginContainer">
-        <div className="heading">Sign Up Page</div>
+        <div className="heading">Sign Up</div>
         
         <form onSubmit={submitUser}>
         <div className="loginBox">

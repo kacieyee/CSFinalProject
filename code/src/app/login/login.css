@@ -4,9 +4,13 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 100vh;
+    height: 55vh;
     padding: 1.5rem;
     background-color: #000000; 
+    
+    border-color: #f472b6;
+    border-width: 1px; 
+    border-radius: 20px;
   }
   
   .heading {
@@ -21,10 +25,8 @@
     background-color: black;
     padding: 1rem;
     border-radius: 1rem;
-    /*
-    border-color: #f472b6;
-    border-width: 2px; 
-    */
+    
+   
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     width: 24rem; /* w-96 */
   }
@@ -33,23 +35,46 @@
     display: block;
     color: #ffffff; /* text-gray-700 */
     margin-bottom: 0.25rem; /* mb-1 */
+    
 
   }
   
   .inputField {
     width: 100%;
     padding: 0.75rem;
-    border: 1px solid #e1e1e1; /* Border color */
     border-radius: 1.5rem;
     outline: none;
     transition: border-color 0.3s ease;
     margin-bottom: 1rem;
+    background-color: RGB(244, 114, 182, 0.5);
+    opacity: 0.4;
+    
+    border-color: #f472b6;
+    border-width: 2px; 
+    border-radius: 20px;
   }
 
   .input-field:focus {
     border-color: #ec4899; /* focus:ring-pink-400 */
     box-shadow: 0 0 0 2px rgba(248, 113, 207, 0.5); /* focus:ring-pink-400 */
   }
+
+  input::placeholder {
+    opacity: 0.8;
+    color: rgb(255, 255, 255);
+  }
+
+  input[type=text] {
+    opacity: 1;
+    color: rgb(255, 255, 255);
+
+  }
+  input[type=password] {
+    opacity: 1;
+    color: rgb(255, 255, 255);
+
+  }
+  
   
   .loginButton {
     width: 50%;
