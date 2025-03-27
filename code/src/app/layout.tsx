@@ -3,6 +3,9 @@ import Link from "next/link";
 import "./globals.css";
 import { useRouter } from "next/navigation";
 import { jwtDecode } from "jwt-decode";
+import Image from "next/image";
+import pinkLogo from "../assets/pink logo.png"; 
+import whiteLogo from "../assets/white logo.png";
 
 // validate json web token to ensure user is properly authenticated
 function isTokenValid() {
@@ -34,11 +37,23 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   
   return (
     <html lang="en">
-      <body className="bg-gray-100 text-gray-900">
+      <body className="bg-black">
         <div className="flex flex-col h-screen">
           {/* navbar */}
           <nav className="navbar">
+
+          <Link href="/">
+              <Image 
+                src={whiteLogo} 
+                alt="Pink Logo" 
+                width={80}
+                height={80} 
+                className="mr-4"
+              />
+            </Link>
+
             <div className="max-w-4xl mx-auto flex justify-center gap-8 text-lg">
+              
               <Link href="/home" className="hover:text-gray-300">Home</Link>
               
               <Link href="/dashboard" className="hover:text-gray-300">Dashboard</Link>
