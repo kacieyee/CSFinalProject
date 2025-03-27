@@ -1,23 +1,32 @@
 'use client'
 import { useState } from "react";
-import { postUser } from "../api/users/route";
-import { redirect } from 'next/navigation';
-
-// dear viet, please make a front end error preventing the user from inputting nothing. thank you and have a good day.
+import { useRouter } from 'next/navigation';
 
 export default function SignUp() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [confirm, setConfirm] = useState('');
+    const router = useRouter();
 
     const submitUser = async(e: any) => {
-      e.preventDefault();
+      try {
+        e.preventDefault();
 
-      if (password === confirm) {
-        postUser(username, password);
-        redirect('/login');
-      } else {
-        alert("Passwords must be matching.");
+        if (password === confirm) {
+          const response = await fetch("/api/users", { 
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({username, password}),
+          });
+
+          if (response.ok) {
+            router.push('/login');
+          }
+        } else {
+          alert("Passwords must be matching.");
+        }
+      } catch (err) {
+        alert("Fields cannot be blank!");
       }
     }
 

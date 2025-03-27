@@ -10,10 +10,30 @@ const transactionSchema = new Schema({
     category: {type: String, required: true}
 });
 
+const budgetSchema = new Schema({
+    category: {type: String, required: true},
+    goal: {type: Number, required: true},
+    interval: {type: String,
+        enum: ["daily", "weekly", "biweekly", "monthly", "annualy"], 
+        default: "monthly"
+    }
+});
+
 const userSchema = new Schema({
     username: {type: String, required: true, unique: true},
     password: {type: String, required: true},
-    transactions: [transactionSchema]
+    transactions: [transactionSchema],
+    budgets: [budgetSchema]
+});
+
+userSchema.pre("save", function(next) {
+    if (this.isNew && this.budgets.length === 0) {
+        this.budgets = [
+            { category: "savings", goal: 0, interval: "monthly" },
+            { category: "everything", goal: 0, interval: "monthly" }
+        ];
+    }
+    next();
 });
 
 const User = mongoose.models["user-info"] || mongoose.model('user-info', userSchema);

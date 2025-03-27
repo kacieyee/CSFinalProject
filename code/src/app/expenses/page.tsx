@@ -1,8 +1,10 @@
 'use client'
 import './expenses.css';
 import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 interface Expense {
+  _id: string,
   name: string;
   price: number;
   date: string;
@@ -16,25 +18,33 @@ export default function Expenses() {
   const [date, setDate] = useState('');
   const [vendor, setVendor] = useState('');
   const [category, setCategory] = useState('');
+  const router = useRouter();
 
   const submitTransaction = async(e: any) => {
-    e.preventDefault();
-    
-    const token = localStorage.getItem("token");
-    if (!token) {
-        alert("You must be logged in to add an expense.");
-        return;
-    }
-
     try {
-        await fetch("/api/transactions", { 
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ token, name, price, date, vendor, category }),
-        });
-    } catch (error) {
-        console.error("Error submitting transaction:", error);
-        alert("An error occurred.");
+      e.preventDefault();
+    
+      const token = localStorage.getItem("token");
+      if (!token) {
+          alert("You must be logged in to add an expense.");
+          return;
+      }
+  
+      try {
+          const response = await fetch("/api/transactions", { 
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({token, name, price, date, vendor, category}),
+          });
+          
+          if (response.ok) {
+            router.push('/expenses');
+          }
+      } catch (error) {
+          console.error("Error submitting transaction:", error);
+      }      
+    } catch (err) {
+      alert("Fields cannot be blank!");
     }
   }
 
@@ -65,6 +75,33 @@ export default function Expenses() {
     fetchExpenses();
   }, []);
 
+  const deleteTransaction = async (transactionId: string) => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("You must be logged in to delete an expense.");
+      return;
+    }
+  
+    try {
+      const response = await fetch(`/api/transactions`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({transactionId})
+      });
+  
+      if (response.ok) {
+        setExpenses(expenses.filter(expense => expense._id !== transactionId));
+      } else {
+        console.error("Failed to delete transaction:", await response.json());
+      }
+    } catch (error) {
+      console.error("Error deleting transaction:", error);
+    }
+  };
+  
   return (
     
     <div className="row">
@@ -74,13 +111,14 @@ export default function Expenses() {
           {expenses.length === 0 ? (
             <li>No recent expenses</li>
           ) : (
-            expenses.map((expense, index) => (
-              <li key={index}>
+            expenses.map((expense) => (
+              <li key={expense._id}>
                 <div><strong>Name:</strong> {expense.name}</div>
                 <div><strong>Price:</strong> ${expense.price.toFixed(2)}</div>
                 <div><strong>Date:</strong> {new Date(expense.date).toLocaleDateString()}</div>
                 <div><strong>Vendor:</strong> {expense.vendor}</div>
                 <div><strong>Category:</strong> {expense.category}</div>
+                <button onClick={() => deleteTransaction(expense._id)}>Delete</button> {}
               </li>
             ))
           )}

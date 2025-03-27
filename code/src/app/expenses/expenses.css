@@ -1,0 +1,143 @@
+/* General body styles */
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f9;
+  }
+
+  .row {
+    
+    /* border-color: red;
+    border-width: 5px; */
+    width: 100%;
+  }
+  
+  .column {
+    width: 100%;
+    float: left;
+  }
+  
+  .left {
+    width: 50%;
+    /* background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); */
+    padding: 20px;
+    /* float: left; */
+/*     
+    border-color: red;
+    border-width: 5px; */
+  }
+
+  .right {
+    width: 40%;
+    /* background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);*/
+    padding: 20px;
+    float: left; 
+
+  }
+
+  .label {
+    float: left;
+    /* border-color: red;
+    border-width: 5px; */
+    display: block;
+    margin-bottom: 5px;
+
+  }
+
+  input {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+    }
+
+  .row:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+  
+  .left h2 {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 20px;
+  }
+  
+  /* List of expenses */
+  ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  ul li {
+    margin-bottom: 20px;
+    padding: 10px;
+    background-color: #fafafa;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+  
+  ul li div {
+    margin-bottom: 8px;
+    font-size: 16px;
+    color: #333;
+  }
+  
+  ul li div strong {
+    color: #db2a8e;
+  }
+  
+  
+  
+  .right h2 {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 20px;
+  }
+  
+  .upload-section {
+    padding: 10px;
+    background-color: #fafafa;
+    border-radius: 8px;
+    text-align: center;
+    color: #777;
+    
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+  
+  .upload-section p {
+    margin: 0;
+    font-size: 16px;
+  }
+  
+
+  .submit {
+    background-color: #d25176;
+    border: none;
+    color: white;
+    padding: 5px 10px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    border-radius: 8px;
+  }
+
+  .popupContent {
+    margin-bottom: 20px;
+    padding: 20px;
+    background-color: #fafafa;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+
+  @media screen and (max-width: 600px) {
+    .column {
+      width: 100%;
+    }
+  }

@@ -7,31 +7,35 @@ export default function Login() {
     const [password, setPassword] = useState('');
 
     const checkUser = async(e: any) => {
-      e.preventDefault();
-
       try {
-        const response = await fetch('/api/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username, password }),
-      });
+        e.preventDefault();
 
-      const data = await response.json();
-      const checkResult = data.result;
-
-        if (checkResult === 0) {
-          const token = data.token;
-          localStorage.setItem("token", token);
-          window.location.href = '/dashboard';
-        } else if (checkResult === 1) {
-          alert("Incorrect password. Please try again.");
-        } else if (checkResult === 2) {
-          alert("User does not exist.");
-        } else {
-          console.log("Server error");
+        try {
+          const response = await fetch('/api/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, password }),
+        });
+  
+        const data = await response.json();
+        const checkResult = data.result;
+  
+          if (checkResult === 0) {
+            const token = data.token;
+            localStorage.setItem("token", token);
+            window.location.href = '/dashboard';
+          } else if (checkResult === 1) {
+            alert("Incorrect password. Please try again.");
+          } else if (checkResult === 2) {
+            alert("User does not exist.");
+          } else {
+            console.log("Server error");
+          }
+        } catch(err) {
+          console.log(err);
         }
-      } catch(err) {
-        console.log(err);
+      } catch (err) {
+        alert("Fields cannot be blank!");
       }
     }
 

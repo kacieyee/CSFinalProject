@@ -8,12 +8,12 @@ connectToDB();
 
 const SECRET_KEY = process.env.JWT_SECRET;
 
-export async function postUser(username, password) {
+export async function POST(request) {
     try {
+        const {username, password} = await request.json();
         const newUser = new User({username, password}); 
         await newUser.save();
-        return NextResponse.json(
-            {username: newUser.username}, {status: 201});
+        return NextResponse.json({username: newUser.username}, {status: 201});
     } catch(err) {
         console.log(err);
     }
