@@ -4,6 +4,7 @@ import { Chart as ChartJS, LineElement, PointElement, LinearScale, Title, Toolti
 import { Line } from 'react-chartjs-2';
 import { Doughnut } from 'react-chartjs-2';
 import annotationPlugin from 'chartjs-plugin-annotation';
+import { color } from 'chart.js/helpers';
 ChartJS.register(LineElement, PointElement, LinearScale, CategoryScale, Title, Tooltip, Legend, annotationPlugin, ArcElement);
 
 
@@ -31,6 +32,9 @@ export const options = {
   plugins: {
     legend: {
       position: 'left' as const, 
+      labels: {
+        color: 'white', 
+      },
     },
     layout: {
       autoPadding: false,

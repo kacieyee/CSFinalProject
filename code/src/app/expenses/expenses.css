@@ -62,12 +62,6 @@ body {
     clear: both;
   }
   
-  .left h2 {
-    font-size: 24px;
-    color: #333;
-    margin-bottom: 20px;
-  }
-  
   /* List of expenses */
   ul {
     list-style-type: none;
@@ -91,12 +85,11 @@ body {
   ul li div strong {
     color: #db2a8e;
   }
-  
-  
-  
-  .right h2 {
+
+  h2 {
+    color: #df4d99;
+    padding-bottom: 0px;
     font-size: 24px;
-    color: #333;
     margin-bottom: 20px;
   }
   

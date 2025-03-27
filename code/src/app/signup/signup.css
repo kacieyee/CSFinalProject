@@ -21,6 +21,10 @@
     background-color: black;
     padding: 1rem;
     border-radius: 1rem;
+    /*
+    border-color: #f472b6;
+    border-width: 2px; 
+    */
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     width: 24rem; /* w-96 */
   }
