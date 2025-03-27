@@ -44,10 +44,12 @@ export const lineChartData = {
   datasets: [
     {
       label: 'Spending Trend',
+      color: 'white',
       data: [100, 150, 200, 250, 300, 350],
       borderColor: 'lightpink',
-      backgroundColor: 'rgba(246, 172, 220, 0.44)',
+      backgroundColor: 'lightpink',
       tension: 0.4, // curve smoothness
+      pointBackgroundColor: 'lightpink',
     },
   ],
 };
@@ -55,7 +57,12 @@ export const lineChartData = {
 const lineChartOptions = {
   responsive: true,
   plugins: {
-    legend: { display: true },
+    legend: { 
+      display: true ,
+      labels: {
+        color: 'white', 
+      },
+    },
     annotation: {
       annotations: {
         refLine: {
@@ -73,6 +80,24 @@ const lineChartOptions = {
             padding: 4,
           },
         },
+      },
+    },
+  },
+  scales: {
+    x: {
+      ticks: {
+        color: 'white', 
+      },
+      grid: {
+        color: 'white', 
+      },
+    },
+    y: {
+      ticks: {
+        color: 'white', 
+      },
+      grid: {
+        color: 'white', 
       },
     },
   },
@@ -96,14 +121,14 @@ export default function Dashboard() {
             </div>
 
           {/* Second Row */}
-            <div className="filter2">
+            <div className="filter">
               <button className="button">Housing</button>
               <button className="button">Health</button>
               <button className="button">Transport</button>
             </div>
 
             {/* Third Row */}
-            <div className="filter2">
+            <div className="filter">
               <button className="button">Misc</button>
             </div>
 
@@ -111,7 +136,7 @@ export default function Dashboard() {
 
           <Doughnut data={data} options={options} />
 
-          <h1>Looks like you are on track to hitting your savings goal! Keep it up girlie!</h1>
+          <div className="subtext">Looks like you are on track to hitting your savings goal! Keep it up girlie!</div>
 
         </div>
 
@@ -124,7 +149,7 @@ export default function Dashboard() {
         </div>
 
           <h1>Recent Transactions</h1>
-          <ul>
+          <ul className="text-white">
             <li>Paid Rent: $1,200.00</li>
             <li>Received Salary: $3,000.00</li>
             <li>Grocery Shopping: $50.75</li>
