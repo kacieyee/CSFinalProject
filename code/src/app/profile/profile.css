@@ -46,10 +46,12 @@ img {
 
 .profileSection {
   padding: 30px;
-  background-color: #fafafa;
+  background-color: #000000;
   border-radius: 8px;
+  border-color: #FF9BD1;
+  border-width: 2px;
   text-align: left;
-  color: #000000;
+  color: #ffffff;
 
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
