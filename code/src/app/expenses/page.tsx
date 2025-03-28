@@ -1,6 +1,7 @@
 'use client'
 import './expenses.css';
 import React, { useState, ChangeEvent, KeyboardEvent } from 'react';
+import AddExpensePopup from './addExpensePopup'; 
 
 
 interface Expense {
@@ -56,26 +57,11 @@ export default function Expenses() {
           )}
         </ul>
 
-        
-        
-      </div>
-      <div className="column right">
-        <h2>Upload Receipt</h2>
-        <div className="upload-section">
-          {/* back end make a receipt.php later! */}
-            <form action="/receipt.php">
-              <label className="label">Select a file:</label>
-              <input type="file" id="input"></input>
-              <br></br>
-              <input className="button" type="submit"></input>
-            </form>
-        </div>
-
-        <br></br>
+        {/* <button id="openPopup" className="button">Add new expense</button>
         <div id ="expensePopup" className="popup">
         <h2>Add new Expense</h2>
           <div className="popupContent">
-            {/* <span className="closeButton" id="closePopup">&times;</span> */}
+          <span className="closeButton" id="closePopup">&times;</span>
             <form id="expenseForm">
             <label>Expense Name:</label>
                 <input type="text" id="name" name="name" required></input><br></br>
@@ -93,11 +79,31 @@ export default function Expenses() {
                 <input type="text" id="category" name="category" required></input><br></br>
             </form>
             
-            <button className="button" type="button">Add new expense!</button>
           </div>
-        </div>
+        </div> */}
+        
+        <AddExpensePopup />
+        
       </div>
+      <div className="column right">
+        <h2>Upload Receipt</h2>
+        <div className="upload-section">
+          {/* back end make a receipt.php later! */}
+            <form action="/receipt.php">
+              <label className="label">Select a file:</label>
+              <input type="file" id="input"></input>
+              <br></br>
+              <input className="button" type="submit"></input>
+            </form>
+        </div>
+
+        <br></br>
+        
+      </div>
+
     </div>
+  
+    
   );
 }
 
