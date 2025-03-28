@@ -201,7 +201,7 @@ export default function Expenses() {
                 <div><strong>Date:</strong> {new Date(expense.date).toLocaleDateString()}</div>
                 <div><strong>Vendor:</strong> {expense.vendor}</div>
                 <div><strong>Category:</strong> {expense.category}</div>
-                <button onClick={() => deleteTransaction(expense._id)}>Delete</button> {}
+                <button className="deleteButton" onClick={() => deleteTransaction(expense._id)}>Delete</button> {}
               </li>
             ))
           )}
@@ -248,24 +248,9 @@ export default function Expenses() {
             <button className="button" type="submit">Add new expense!</button>
             </form>
           </div>
-        </div> */}
+        </div> 
         
-        <AddExpensePopup />
-        
-      </div>
-      <div className="column right">
-        <h2>Upload Receipt</h2>
-        <div className="upload-section">
-          {/* back end make a receipt.php later! */}
-            <form action="/receipt.php">
-              <label className="label">Select a file:</label>
-              <input type="file" id="input"></input>
-              <br></br>
-              <input className="button" type="submit"></input>
-            </form>
-        </div>
-
-        <br></br>
+        {/* <AddExpensePopup /> */}
         
       </div>
 
