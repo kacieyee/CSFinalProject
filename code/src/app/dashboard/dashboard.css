@@ -19,6 +19,7 @@ body {
   
   .left {
     width: 50%;
+<<<<<<< HEAD
     /* background-color: white;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); */
@@ -27,13 +28,19 @@ body {
 /*     
     border-color: red;
     border-width: 5px; */
+=======
+    padding: 20px;
+>>>>>>> 6e8c6ebe74228c4de9c911edab472e01f4fa9771
   }
 
   .right {
     width: 40%;
+<<<<<<< HEAD
     /* background-color: white;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);*/
+=======
+>>>>>>> 6e8c6ebe74228c4de9c911edab472e01f4fa9771
     padding: 20px;
     float: left; 
   }
@@ -44,11 +51,19 @@ body {
     gap: 15px; /* btw rows */
   }
 
+<<<<<<< HEAD
   .filter, .filter2 {
+=======
+  .filter {
+>>>>>>> 6e8c6ebe74228c4de9c911edab472e01f4fa9771
     display: flex;
     flex-direction: row;
     gap: 15px;
     /* justify-content: space-evenly; */
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e8c6ebe74228c4de9c911edab472e01f4fa9771
 }
 
   .button {
@@ -60,6 +75,21 @@ body {
     transition: background-color 0.3s;
 }
 
+<<<<<<< HEAD
+=======
+.subtext{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ef9cc7;
+    font-size: 2rem;
+}
+
+.line-chart-container {
+  color: white;
+}
+
+>>>>>>> 6e8c6ebe74228c4de9c911edab472e01f4fa9771
   @media screen and (max-width: 600px) {
     .column {
       width: 100%;

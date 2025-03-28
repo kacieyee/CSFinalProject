@@ -43,7 +43,7 @@ export default function Login() {
       // <div className="flex flex-col items-center justify-center h-screen p-6 bg-gray-100">
       <div className="loginContainer">
         <div className="heading">
-          Login Page
+          Login
         </div>
 
         <form onSubmit={checkUser}>
@@ -63,12 +63,14 @@ export default function Login() {
               placeholder="Enter your password"
               className="inputField"
             />
-  
+          <div className="flex justify-center items-center">
           <button type="submit" className="loginButton">
             Login
           </button>
-
-            Don't have an account? <a href="/signup" style={{ color: '#ff3388' }}>Sign up</a> here.
+          </div>
+          <div className="subtext">
+          Don't have an account?&nbsp;<a href="/signup" style={{ color: '#ff3388' }}>&nbsp;Sign up&nbsp;</a> here.
+          </div>
         </div>
         </form>
       </div>

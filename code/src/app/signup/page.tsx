@@ -1,4 +1,5 @@
 'use client'
+import './signup.css';
 import { useState } from "react";
 import { useRouter } from 'next/navigation';
 
@@ -31,44 +32,41 @@ export default function SignUp() {
     }
 
     return (
-      <div className="flex flex-col items-center justify-center h-screen p-6">
-        <h1 className="text-4xl font-bold p-6">Sign Up Page</h1>
+      <div className="loginContainer">
+        <div className="heading">Sign Up</div>
         
         <form onSubmit={submitUser}>
-        <div className="bg-white p-8 rounded-2xl shadow-lg w-96">
-          <div className="mb-4">
-            <label className="block text-gray-700 mb-1">Username</label>
+        <div className="loginBox">
+            <label className="label">Username</label>
             <input
               type="text"
               onChange={(e) => setUsername(e.target.value)}
               placeholder="Enter your username"
-              className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-400"
+              className="inputField"
             />
-          </div>
   
-          <div className="mb-6">
-            <label className="block text-gray-700 mb-1">Password</label>
+            <label className="label">Password</label>
             <input
               type="password"
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Enter your password"
-              className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-400"
+              className="inputField"
             />
-          </div>
 
           <div className="mb-6">
-            <label className="block text-gray-700 mb-1">Confirm Password</label>
+            <label className="label">Confirm Password</label>
             <input
               type="password"
               onChange={(e) => setConfirm(e.target.value)}
-              placeholder="Enter your password"
-              className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-400"
+              placeholder="Renter your password"
+              className="inputField"
             />
           </div>
-  
-          <button type="submit" className="w-full bg-pink-400 text-white py-3 rounded-lg hover:bg-pink-500 transition">
+          <div className="flex justify-center items-center">
+          <button type="submit" className="loginButton">
             Sign Up
           </button>
+          </div>
         </div>
         </form>
 
