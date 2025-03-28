@@ -1,6 +1,7 @@
 'use client'
 import './expenses.css';
 import React, { useEffect, useState } from 'react';
+import AddExpensePopup from './addExpensePopup'; 
 import { BarLoader } from 'react-spinners';
 import { getCookie } from 'cookies-next';
 
@@ -247,9 +248,30 @@ export default function Expenses() {
             <button className="button" type="submit">Add new expense!</button>
             </form>
           </div>
-        </div>
+        </div> */}
+        
+        <AddExpensePopup />
+        
       </div>
+      <div className="column right">
+        <h2>Upload Receipt</h2>
+        <div className="upload-section">
+          {/* back end make a receipt.php later! */}
+            <form action="/receipt.php">
+              <label className="label">Select a file:</label>
+              <input type="file" id="input"></input>
+              <br></br>
+              <input className="button" type="submit"></input>
+            </form>
+        </div>
+
+        <br></br>
+        
+      </div>
+
     </div>
+  
+    
   );
 }
 

@@ -4,7 +4,7 @@ export default function Profile() {
     return (
       <div className="row">
         <div className="column left"> 
-          <img src="https://pbs.twimg.com/media/GLhxXtfXQAA0YbG?format=jpg&name=medium" alt="profile picture"></img> 
+          {/* <img src="https://pbs.twimg.com/media/GLhxXtfXQAA0YbG?format=jpg&name=medium" alt="profile picture"></img>  */}
           
           <h1>Profile</h1>
           <div className="profileSection">
