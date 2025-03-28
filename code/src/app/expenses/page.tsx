@@ -2,6 +2,7 @@
 import './expenses.css';
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { BarLoader } from 'react-spinners';
 
 interface Expense {
   _id: string,
@@ -20,7 +21,9 @@ export default function Expenses() {
   const [category, setCategory] = useState('');
   const router = useRouter();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  
+  const [isLoading, setIsLoading] = useState(false);
+  const [transactionAdded, setTransactionAdded] = useState(false);
+
   const submitTransaction = async(e: any) => {
     try {
       e.preventDefault();
@@ -39,7 +42,7 @@ export default function Expenses() {
           });
           
           if (response.ok) {
-            router.push('/expenses');
+            setTransactionAdded(true);
           }
       } catch (error) {
           console.error("Error submitting transaction:", error);
@@ -74,7 +77,16 @@ export default function Expenses() {
 
   useEffect(() => {
     fetchExpenses();
-  }, []);
+    if (transactionAdded) {
+      setTransactionAdded(false);
+
+      setName('');
+      setPrice('');
+      setDate('');
+      setVendor('');
+      setCategory('');
+    }
+  }, [transactionAdded]);
 
   const deleteTransaction = async (transactionId: string) => {
     const token = localStorage.getItem("token");
@@ -116,6 +128,8 @@ export default function Expenses() {
         return;
     }
 
+    setIsLoading(true);
+
     const formData = new FormData();
     formData.append("document", selectedFile);
 
@@ -134,7 +148,7 @@ export default function Expenses() {
                 let results: any = null;
                 let attempts = 0;
                 const maxAttempts = 20;
-                const interval = 2000;
+                const interval = 1000;
 
                 while (status !== "succeeded" && attempts < maxAttempts) {
                     try {
@@ -151,10 +165,6 @@ export default function Expenses() {
                                 const total = results.analyzeResult.documents[0].fields.Total.valueCurrency.amount;
                                 const transactionDate = results.analyzeResult.documents[0].fields.TransactionDate.valueDate;
                                 const receiptType = results.analyzeResult.documents[0].fields.ReceiptType.valueString;
-                                console.log("Merchant:", merchantName);
-                                console.log("Total:", total);
-                                console.log("Date:", transactionDate);
-                                console.log("Category:", receiptType);  
                                 
                                 setVendor(merchantName);
                                 setPrice(total.toString());
@@ -190,6 +200,8 @@ export default function Expenses() {
     } catch (error) {
         console.error("Error uploading receipt:", error);
         alert("Error uploading receipt.");
+    } finally {
+      setIsLoading(false);
     }
 };
 
@@ -227,6 +239,12 @@ export default function Expenses() {
               <input className="button" type="submit"></input>
             </form>
         </div>
+
+        {isLoading && (
+          <div className="loading-overlay">
+            <BarLoader color="#00BFFF" width={300} />
+          </div>
+        )}
 
         <br></br>
         <div id ="expensePopup" className="popup">
