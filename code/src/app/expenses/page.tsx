@@ -1,8 +1,8 @@
 'use client'
 import './expenses.css';
 import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { BarLoader } from 'react-spinners';
+import { getCookie } from 'cookies-next';
 
 interface Expense {
   _id: string,
@@ -19,7 +19,6 @@ export default function Expenses() {
   const [date, setDate] = useState('');
   const [vendor, setVendor] = useState('');
   const [category, setCategory] = useState('');
-  const router = useRouter();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [transactionAdded, setTransactionAdded] = useState(false);
@@ -28,17 +27,11 @@ export default function Expenses() {
     try {
       e.preventDefault();
     
-      const token = localStorage.getItem("token");
-      if (!token) {
-          alert("You must be logged in to add an expense.");
-          return;
-      }
-  
       try {
           const response = await fetch("/api/transactions", { 
             method: "POST",
             headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({token, name, price, date, vendor, category}),
+            body: JSON.stringify({name, price, date, vendor, category}),
           });
           
           if (response.ok) {
@@ -55,16 +48,9 @@ export default function Expenses() {
   const [expenses, setExpenses] = useState<Expense[]>([]);
 
   const fetchExpenses = async () => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      alert("You must be logged in to view transactions.");
-      return;
-    }
-
     try {
       const res = await fetch("/api/transactions", {
         method: "GET",
-        headers: {Authorization: `Bearer ${token}`},
       });
       if (!res.ok) throw new Error("Failed to fetch transactions");
 
@@ -89,18 +75,11 @@ export default function Expenses() {
   }, [transactionAdded]);
 
   const deleteTransaction = async (transactionId: string) => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      alert("You must be logged in to delete an expense.");
-      return;
-    }
-  
     try {
       const response = await fetch(`/api/transactions`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
         },
         body: JSON.stringify({transactionId})
       });
@@ -171,7 +150,6 @@ export default function Expenses() {
                                 setDate(transactionDate);
                                 setCategory(receiptType);
 
-                                alert("Receipt uploaded and processed successfully!");
                                 break;
                             }
                         } else {

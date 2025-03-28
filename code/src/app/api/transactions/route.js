@@ -1,20 +1,27 @@
 'use server'
 import User from "@/models/User";
 import { NextResponse } from "next/server";
-import jwt from "jsonwebtoken";
+import { cookies } from "next/headers";
+import { jwtVerify } from 'jose';
 
 export async function POST(request) {
     try {
-        const {token, name, price, date, vendor, category} = await request.json();
-
+        const {name, price, date, vendor, category} = await request.json();
+        const cookieStore = await cookies();
+        const token = cookieStore.get("token")?.value;
+        
         if (!token) {
             return NextResponse.json({message: "Unauthorized"}, {status: 401});
         }
 
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const username = decoded.username;
+        const secret = process.env.JWT_SECRET;
+        if (!secret) {
+            throw new Error('JWT_SECRET is not defined');
+        }
 
-        const user = await User.findOne({username});
+        const decoded = await jwtVerify(token, new TextEncoder().encode(secret));
+        const user = await User.findOne({username: decoded.payload.username});
+
         if (!user) {
             return NextResponse.json({message: "User not found!"}, {status: 404});
         }
@@ -39,11 +46,20 @@ export async function POST(request) {
 
 export async function GET(request) {
     try {
-        const token = request.headers.get("Authorization")?.split(" ")[1];
-        if (!token) return NextResponse.json({message: "Unauthorized"}, {status: 401});
+        const cookieStore = await cookies();
+        const token = cookieStore.get("token")?.value;
+        
+        if (!token) {
+            return NextResponse.json({message: "Unauthorized"}, {status: 401});
+        }
 
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const user = await User.findOne({username: decoded.username});
+        const secret = process.env.JWT_SECRET;
+        if (!secret) {
+            throw new Error('JWT_SECRET is not defined');
+        }
+
+        const decoded = await jwtVerify(token, new TextEncoder().encode(secret));
+        const user = await User.findOne({username: decoded.payload.username});
 
         if (!user) return NextResponse.json({message: "User not found!"}, {status: 404});
 
@@ -57,12 +73,20 @@ export async function GET(request) {
 export async function DELETE(request) {
     try {
       const {transactionId} = await request.json();
-      const token = request.headers.get("Authorization")?.split(" ")[1];
-  
-      if (!token) return NextResponse.json({message: "Unauthorized"}, {status: 401});
-  
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      const user = await User.findOne({username: decoded.username});
+      const cookieStore = await cookies();
+        const token = cookieStore.get("token")?.value;
+        
+        if (!token) {
+            return NextResponse.json({message: "Unauthorized"}, {status: 401});
+        }
+
+        const secret = process.env.JWT_SECRET;
+        if (!secret) {
+            throw new Error('JWT_SECRET is not defined');
+        }
+
+        const decoded = await jwtVerify(token, new TextEncoder().encode(secret));
+        const user = await User.findOne({username: decoded.payload.username});
   
       if (!user) return NextResponse.json({message: "User not found"}, {status: 404});
   

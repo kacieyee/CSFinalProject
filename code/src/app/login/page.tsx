@@ -1,13 +1,15 @@
 'use client'
 import './login.css';
 import { useState } from "react";
+import { useRouter } from 'next/navigation';
 
 export default function Login() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const router = useRouter();
 
     const checkUser = async(e: any) => {
-      try {
+      try {  
         e.preventDefault();
 
         try {
@@ -21,9 +23,7 @@ export default function Login() {
         const checkResult = data.result;
   
           if (checkResult === 0) {
-            const token = data.token;
-            localStorage.setItem("token", token);
-            window.location.href = '/dashboard';
+            router.push('/dashboard');
           } else if (checkResult === 1) {
             alert("Incorrect password. Please try again.");
           } else if (checkResult === 2) {
