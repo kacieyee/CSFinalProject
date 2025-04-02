@@ -141,15 +141,31 @@ export default function Expenses() {
 
                             if (status === "succeeded") {
                                 console.log("Results:", results);
-                                const merchantName = results.analyzeResult.documents[0].fields.MerchantName.valueString;
-                                const total = results.analyzeResult.documents[0].fields.Total.valueCurrency.amount;
-                                const transactionDate = results.analyzeResult.documents[0].fields.TransactionDate.valueDate;
-                                const receiptType = results.analyzeResult.documents[0].fields.ReceiptType.valueString;
-                                
-                                setVendor(merchantName);
-                                setPrice(total.toString());
-                                setDate(transactionDate);
-                                setCategory(receiptType);
+                                let merchantName;
+                                let total;
+                                let transactionDate;
+                                let receiptType;
+                                if (results.analyzeResult.documents[0].fields.MerchantName) {
+                                  merchantName = results.analyzeResult.documents[0].fields.MerchantName.valueString;
+                                }
+                                if (results.analyzeResult.documents[0].fields.Total) {
+                                  total = results.analyzeResult.documents[0].fields.Total.valueCurrency.amount;
+                                }
+                                if (results.analyzeResult.documents[0].fields.TransactionDate) {
+                                  transactionDate = results.analyzeResult.documents[0].fields.TransactionDate.valueDate;
+                                }
+                                if (results.analyzeResult.documents[0].fields.ReceiptType) {
+                                  receiptType = results.analyzeResult.documents[0].fields.ReceiptType.valueString;
+                                }
+                              
+                                if (merchantName)
+                                  setVendor(merchantName);
+                                if (total)
+                                  setPrice(total.toString());
+                                if (transactionDate)
+                                  setDate(transactionDate);
+                                if (receiptType)
+                                  setCategory(receiptType);
 
                                 break;
                             }
