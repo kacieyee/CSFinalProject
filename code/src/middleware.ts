@@ -11,11 +11,7 @@ export async function middleware(req: NextRequest) {
   if (protectedRoutes.some((path) => pathname.startsWith(path))) {
     const token = req.cookies.get('token')?.value;
 
-    console.log('mid path:', pathname);
-    console.log('mid token:', token);
-
     if (!token) {
-      console.log('mid no token, redir to login');
       const url = new URL(`/login`, req.url);
       url.searchParams.set('callbackUrl', encodeURI(req.url));
       return NextResponse.redirect(url);
@@ -28,10 +24,8 @@ export async function middleware(req: NextRequest) {
 
       await jwtVerify(token, new TextEncoder().encode(secret));
 
-      console.log('mid jwt ver successful');
       return NextResponse.next();
     } catch (error) {
-      console.error('JWT Verification Failed:', error);
       const url = new URL(`/login`, req.url);
       url.searchParams.set('callbackUrl', encodeURI(req.url));
       return NextResponse.redirect(url);
