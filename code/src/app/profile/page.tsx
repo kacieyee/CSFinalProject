@@ -49,8 +49,8 @@ export default function Profile() {
       <div className="column right">
         <h1>Budgeting Goals</h1>
         <div className="profileSection">
-          {userData.budgets.length > 2 ? (
-            userData.budgets.slice(2).map((budget, index) => (
+          {userData.budgets.length > 1 ? (
+            userData.budgets.slice(1).map((budget, index) => (
               <div key={index}>
                 <h2>{budget.category}</h2>
                 <p>You have a(n) {budget.interval} budget of ${budget.goal}</p>
@@ -59,7 +59,32 @@ export default function Profile() {
           ) : (
             <p>No budgeting goals set.</p>
           )}
+
+          <h1> Add new goal</h1>
+          <div className="budgetGoal">
+            Spend up to
+            <input type="number" className="amount"/>
+            every 
+            <select className="category">
+              <option>week</option>
+              <option>2 weeks</option>
+              <option>month</option>
+              <option>year</option>
+            </select>
+            on 
+            <select className="category">
+              <option>groceries</option>
+              <option>savings</option>
+              <option>rent</option>
+              <option>total expenses</option>
+            </select>
+            
+          </div>  
+          <br></br>
+          <button className="button">Submit</button>
         </div>
+
+        
       </div>
     </div>
   );

@@ -44,6 +44,27 @@ img {
   border-width: 2px; */
 }
 
+.amount {
+  color: black;
+}
+
+.category {
+  color: black;
+}
+
+input, select {
+  
+  background-color: #FF9BD1; 
+  color: white;
+  padding: 0.5rem 1.5rem;
+  border-radius: 0.5rem;
+  transition: background-color 0.3s;
+  width: auto;
+  display: inline-flex;
+  align-items: center;
+}
+
+
 .profileSection {
   padding: 30px;
   background-color: #000000;
