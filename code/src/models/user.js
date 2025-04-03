@@ -14,7 +14,7 @@ const budgetSchema = new Schema({
     category: {type: String, required: true},
     goal: {type: Number, required: true},
     interval: {type: String,
-        enum: ["daily", "weekly", "biweekly", "monthly", "annually"], 
+        enum: ["daily", "weekly", "biweekly", "monthly", "yearly"], 
         default: "monthly"
     }
 });
@@ -29,8 +29,8 @@ const userSchema = new Schema({
 userSchema.pre("save", function(next) {
     if (this.isNew && this.budgets.length === 0) {
         this.budgets = [
-            { category: "Savings", goal: 0, interval: "monthly" },
-            { category: "Everything", goal: 0, interval: "monthly" }
+            { category: "savings", goal: 0, interval: "monthly" },
+            { category: "total expenses", goal: 0, interval: "monthly" }
         ];
     }
     next();

@@ -14,6 +14,13 @@ interface Expense {
   category: string;
 };
 
+interface Budget {
+  _id: string,
+  category: string,
+  goal: number,
+  interval: string
+};
+
 export default function Expenses() {
   const [name, setName] = useState('');
   const [price, setPrice] = useState('');
@@ -23,10 +30,79 @@ export default function Expenses() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [transactionAdded, setTransactionAdded] = useState(false);
+  const [expenses, setExpenses] = useState<Expense[]>([]);
+  const [budget, setBudget] = useState<Budget[]>([]);
+
+  const fetchExpenses = async () => {
+    try {
+      const res = await fetch("/api/transactions", {
+        method: "GET",
+      });
+      if (!res.ok) throw new Error("Failed to fetch transactions");
+
+      const data = await res.json();
+      setExpenses(data.expenses);
+    } catch (error) {
+      console.error("Error fetching expenses:", error);
+    }
+  };
+
+  const fetchBudget = async () => {
+    try {
+      const res = await fetch("/api/budget", {method: "GET"});
+      if (!res.ok) throw new Error("Failed to fetch budget");
+
+      const data = await res.json();
+      setBudget(data.budgets || []);
+    } catch (error) {
+      console.error("Error fetching budget:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchExpenses();
+    fetchBudget();
+    if (transactionAdded) {
+      setTransactionAdded(false);
+      setName('');
+      setPrice('');
+      setDate('');
+      setVendor('');
+      setCategory('');
+    }
+  }, [transactionAdded]);
 
   const submitTransaction = async(e: any) => {
     try {
       e.preventDefault();
+
+      const categoryExists = budget.some(budgetItem => budgetItem.category === category);
+
+      if (!categoryExists) {
+        const newBudget = {
+          category,
+          goal: 0,
+          interval: "monthly"
+        };
+  
+        try {
+          const response = await fetch("/api/budget", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(newBudget),
+          });
+  
+          if (!response.ok) {
+            throw new Error("Failed to create new budget category.");
+          }
+        } catch (error) {
+          console.error("Error creating new budget category:", error);
+          alert("Failed to create new budget category.");
+          return;
+        }
+      }
     
       try {
           const response = await fetch("/api/transactions", { 
@@ -45,35 +121,6 @@ export default function Expenses() {
       alert("Fields cannot be blank!");
     }
   }
-
-  const [expenses, setExpenses] = useState<Expense[]>([]);
-
-  const fetchExpenses = async () => {
-    try {
-      const res = await fetch("/api/transactions", {
-        method: "GET",
-      });
-      if (!res.ok) throw new Error("Failed to fetch transactions");
-
-      const data = await res.json();
-      setExpenses(data.expenses);
-    } catch (error) {
-      console.error("Error fetching expenses:", error);
-    }
-  };
-
-  useEffect(() => {
-    fetchExpenses();
-    if (transactionAdded) {
-      setTransactionAdded(false);
-
-      setName('');
-      setPrice('');
-      setDate('');
-      setVendor('');
-      setCategory('');
-    }
-  }, [transactionAdded]);
 
   const deleteTransaction = async (transactionId: string) => {
     try {
@@ -184,7 +231,6 @@ export default function Expenses() {
     }
 };
 
-  
   return (
     
     <div className="row">
@@ -206,8 +252,8 @@ export default function Expenses() {
             ))
           )}
         </ul>
-        
       </div>
+
       <div className="column right">
         <h2>Upload Receipt</h2>
         <div className="upload-section">
@@ -245,6 +291,23 @@ export default function Expenses() {
 
                 <label>Category:</label>
                 <input type="text" value={category} onChange={(e) => setCategory(e.target.value)} id="category" name="category" required></input><br></br>
+                <select
+                  onChange={(e) => setCategory(e.target.value)}
+                  value={category}
+                >
+                  <option value="" disabled>Select Category</option>
+                  {budget.length > 0 ? (
+                    budget.map((categoryOption) => (
+                      <option key={categoryOption._id} value={categoryOption.category}>
+                        {categoryOption.category}
+                      </option>
+                    ))
+                  ) : (
+                    <option>No categories available</option>
+                  )}
+                </select>
+
+                <br></br>
             <button className="button" type="submit">Add new expense!</button>
             </form>
           </div>
@@ -259,39 +322,3 @@ export default function Expenses() {
     
   );
 }
-
-// export default function Expenses() {
-//     return (
-//       // <div className="flex flex-col h-screen p-6">
-//       //   <h1 className="text-4xl font-bold">Expenses</h1>
-//       //   <p className="mt-4 text-lg">Welcome to the expenses page!</p>
-//       // </div>
-//       <div className="container">
-//       <div className="left">
-//         <h2>Recent Expenses</h2>
-//         <ul>
-//           {expenses.length === 0 ? (
-//             <li>No recent expenses</li>
-//           ) : (
-//             expenses.map((expense, index) => (
-//               <li key={index}>
-//                 <div><strong>Name:</strong> {expense.name}</div>
-//                 <div><strong>Price:</strong> ${expense.price.toFixed(2)}</div>
-//                 <div><strong>Date:</strong> {expense.date}</div>
-//                 <div><strong>Vendor:</strong> {expense.vendor}</div>
-//                 <div><strong>Category:</strong> {expense.category}</div>
-//               </li>
-//             ))
-//           )}
-//         </ul>
-//       </div>
-//       <div className="right">
-//         <h2>Upload Receipt</h2>
-//         {/* Placeholder for the receipt upload section */}
-//         <div className="upload-section">
-//           <p>No receipt uploaded</p>
-//         </div>
-//       </div>
-//     </div>
-//     );
-//   }
