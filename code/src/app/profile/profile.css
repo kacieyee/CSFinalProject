@@ -12,7 +12,7 @@
   clear: both;
 }
 
-.left {
+.column-left {
   width: 40%;
   /* background-color: white;
   border-radius: 8px;
@@ -24,7 +24,7 @@
   border-width: 5px; */
 }
 
-.right {
+.column-right {
   width: 60%;
   /* background-color: white;
   border-radius: 8px;
@@ -53,14 +53,28 @@ img {
 }
 
 input, select {
-  
   background-color: #FF9BD1; 
   color: white;
-  padding: 0.5rem 1.5rem;
+  padding: 0.4rem 1.5rem;
   border-radius: 0.5rem;
   transition: background-color 0.3s;
   width: auto;
-  display: inline-flex;
+  display: inline-block;
+  margin: 0.5em;
+  justify-content: center;
+  align-items: center;
+}
+
+.goal-input {
+  background-color: #FF9BD1; 
+  color: white;
+  padding: 0.4rem 0.8rem;
+  border-radius: 0.5rem;
+  transition: background-color 0.3s;
+  width: min-content;
+  display: inline-block;
+  margin: 0.5em;
+  justify-content: center;
   align-items: center;
 }
 
@@ -75,4 +89,16 @@ input, select {
   color: #ffffff;
 
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.inline {
+  display: flex;
+  align-items: center;
+}
+
+.delete-button {
+  color: #FF9BD1; 
+  vertical-align: middle;
+  float: right;
+  margin-top: 13px;
 }

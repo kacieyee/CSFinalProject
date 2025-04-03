@@ -1,6 +1,7 @@
 'use client'
 import "./profile.css";
 import { useEffect, useState } from "react";
+import { DeleteRounded, VisibilityRounded, VisibilityOffRounded } from '@mui/icons-material';
 
 interface Budget {
   category: string;
@@ -151,14 +152,19 @@ const handleGoalSubmit = (e: React.KeyboardEvent<HTMLInputElement>, budget: Budg
 
   return (
     <div className="row">
-      <div className="column left">
+      <div className="column-left">
         <h1>Profile</h1>
         <div className="profileSection">
           <p><strong>Name:</strong> {userData.username}</p>
-          <p><strong>Password:</strong> {userData.password}</p>
+          <div style={{ display: "flex", alignSelf: "center" }}>
+            <p style={{ marginRight: "20rem" }}>
+            <strong>Password:</strong> {"•".repeat(userData.password.length)}
+            </p>
+            <VisibilityRounded sx={{ color: '#FF9BD1' }} />
+          </div>
         </div>
       </div>
-      <div className="column right">
+      <div className="column-right">
         <h1>Budgeting Goals</h1>
         <div className="profileSection">
           {userData.budgets.length > 1 ? (
@@ -177,7 +183,7 @@ const handleGoalSubmit = (e: React.KeyboardEvent<HTMLInputElement>, budget: Budg
                     <option value="yearly">yearly</option>
                   </select>
 
-                  <label> budget of $</label>
+                  <label> budget of $ </label>
                   <input 
                     type="number"
                     value={tempGoals[budget.category] || budget.goal}
@@ -190,7 +196,7 @@ const handleGoalSubmit = (e: React.KeyboardEvent<HTMLInputElement>, budget: Budg
                     <button 
                       onClick={() => deleteBudget(budget.category)} 
                       className="delete-button"
-                    >[x]
+                    ><DeleteRounded sx={{ color: '#FF9BD1' }}/>
                     </button>
                   )}
                 </div>
