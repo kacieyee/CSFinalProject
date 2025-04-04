@@ -1,8 +1,7 @@
 'use client'
-import './expenses.css';
+import './allExpenses.css';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
-import AddExpensePopup from './addExpensePopup'; 
 import { BarLoader } from 'react-spinners';
 import { getCookie } from 'cookies-next';
 import { DeleteRounded} from '@mui/icons-material';
@@ -238,10 +237,10 @@ export default function Expenses() {
     
     <div className="row">
       <div className="column left">
-        <h2>Recent Expenses</h2>
+        <h2>All Expenses</h2>
         <ul>
           {expenses.length === 0 ? (
-            <li>No recent expenses</li>
+            <li>No expenses</li>
           ) : (
             expenses.map((expense) => (
               <li key={expense._id}>
@@ -256,76 +255,7 @@ export default function Expenses() {
             ))
           )}
         </ul>
-        <Link href="/allExpenses">
-          <p className="view-all-expenses">
-          View all expenses
-          </p>
-        </Link>
       </div>
-
-      <div className="column right">
-        <h2>Upload Receipt</h2>
-        <div className="upload-section">
-            <form onSubmit={handleFileUpload}>
-              <label className="label">Select a file:</label>
-              <input type="file" id="input" onChange={handleFileChange}></input>
-              <br></br>
-              <input className="button" type="submit"></input>
-            </form>
-        </div>
-
-        {isLoading && (
-          <div className="loading-overlay">
-            <BarLoader color="#00BFFF" width={300} />
-          </div>
-        )}
-
-        <br></br>
-        <div id ="expensePopup" className="popup">
-        <h2>Add new Expense</h2>
-          <div className="popupContent">
-            {/* <span className="closeButton" id="closePopup">&times;</span> */}
-            <form id="expenseForm" onSubmit={submitTransaction}>
-            <label>Expense Name:</label>
-                <input type="text" value={name} onChange={(e) => setName(e.target.value)} id="name" name="name" required></input><br></br>
-
-                <label>Price:</label>
-                <input type="number" value={price} onChange={(e) => setPrice(e.target.value)} id="price" name="price" required></input><br></br>
-
-                <label>Date:</label>
-                <input type="date" value={date} onChange={(e) => setDate(e.target.value)} id="date" name="date" required></input><br></br>
-
-                <label>Vendor:</label>
-                <input type="text" value={vendor} onChange={(e) => setVendor(e.target.value)} id="vendor" name="vendor" required></input><br></br>
-
-                <label>Category:</label>
-                <input type="text" value={category} onChange={(e) => setCategory(e.target.value)} id="category" name="category" required></input><br></br>
-                <select
-                  onChange={(e) => setCategory(e.target.value)}
-                  value={category}
-                >
-                  <option value="" disabled>Select Category</option>
-                  {budget.length > 0 ? (
-                    budget.map((categoryOption) => (
-                      <option key={categoryOption._id} value={categoryOption.category}>
-                        {categoryOption.category}
-                      </option>
-                    ))
-                  ) : (
-                    <option>No categories available</option>
-                  )}
-                </select>
-
-                <br></br>
-              <button className="button" type="submit">Add new expense!</button>
-            </form>
-          </div>
-        </div> 
-        
-        {/* <AddExpensePopup /> */}
-        
-      </div>
-
     </div>
   
     
