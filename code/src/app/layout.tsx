@@ -2,8 +2,7 @@
 import Link from "next/link";
 import "./globals.css";
 import Image from "next/image";
-import pinkLogo from "../assets/pink logo.png"; 
-import whiteLogo from "../assets/white logo.png";
+import whiteLogoNoCalc from "../assets/white logo no calc.png";
 
 //include navbar in the rootlayout so it's on all the pages
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -14,12 +13,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           {/* navbar */}
           <nav className="navbar">
 
-          <Link href="/">
+          <Link href="/home">
               <Image 
-                src={whiteLogo} 
-                alt="Pink Logo" 
-                width={80}
-                height={80} 
+                src={whiteLogoNoCalc} 
+                alt="White Logo No Calc" 
+                style={{ width: '5rem', height: '3rem' }} 
+                width={0}
+                height={0} 
                 className="mr-4"
               />
             </Link>
