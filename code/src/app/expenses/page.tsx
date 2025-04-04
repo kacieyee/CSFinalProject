@@ -56,7 +56,7 @@ export default function Expenses() {
       if (!res.ok) throw new Error("Failed to fetch budget");
 
       const data = await res.json();
-      setBudget(data.budgets || []);
+      setBudget(data.expenses || []);
     } catch (error) {
       console.error("Error fetching budget:", error);
     }
