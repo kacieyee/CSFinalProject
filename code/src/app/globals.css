@@ -22,9 +22,10 @@ body {
 
 h1 {
   font-size: 30px;
-  color: #df4d99;
+  color: #FF9BD1;
   padding-bottom: 15px;
   padding-top: 15px;
+  font-weight: bold;
 }
 
 h2 {
@@ -80,4 +81,18 @@ p {
 
 .button:hover {
   background-color: #df4d99;
+}
+
+
+@import url('https://fonts.googleapis.com/css2?family=Madimi+One&display=swap');
+
+.madimi-one-regular {
+  font-family: "Madimi One", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+
+h1, h2, p {
+  font-family: "Madimi One", sans-serif;
 }

@@ -33,7 +33,7 @@ export default function SignUp() {
 
     return (
       <div className="loginContainer">
-        <div className="heading">Sign Up</div>
+        <h1>Sign Up</h1>
         
         <form onSubmit={submitUser}>
         <div className="loginBox">

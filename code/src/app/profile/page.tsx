@@ -16,6 +16,7 @@ interface UserData {
 
 export default function Profile() {
   const [userData, setUserData] = useState<UserData | null>(null);
+  const [showNewGoalPopup, setShowNewGoalPopup] = useState(false);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -37,6 +38,11 @@ export default function Profile() {
     return <p>Error loading profile...</p>;
   }
 
+  // Function to toggle the visibility of the popup
+  const toggleNewGoalPopup = () => {
+    setShowNewGoalPopup(!showNewGoalPopup);
+  };
+
   return (
     <div className="row">
       <div className="column left">
@@ -52,36 +58,70 @@ export default function Profile() {
           {userData.budgets.length > 1 ? (
             userData.budgets.slice(1).map((budget, index) => (
               <div key={index}>
-                <h2>{budget.category}</h2>
-                <p>You have a(n) {budget.interval} budget of ${budget.goal}</p>
+                <div className="budgetGoal">
+                  Spend up to
+                  <span className="currencySymbol">  $</span>
+                  <input type="number" className="amount" value = {budget.goal}/>
+                  dollars every 
+                  <select className="category" value = {budget.interval}>
+                    <option>day</option>
+                    <option>week</option>
+                    <option>2 weeks</option>
+                    <option>month</option>
+                    <option>year</option>
+                  </select>
+                  on 
+                  <select className="category" value = {budget.category}>
+                    <option>groceries</option>
+                    <option>savings</option>
+                    <option>rent</option>
+                    <option>total expenses</option>
+                  </select>
+
+                  
+                </div>  
+                {/* <p>You have a(n) {budget.interval} budget of ${budget.goal}</p> */}
               </div>
             ))
           ) : (
             <p>No budgeting goals set.</p>
           )}
+          
 
-          <h1> Add new goal</h1>
-          <div className="budgetGoal">
-            Spend up to
-            <input type="number" className="amount"/>
-            every 
-            <select className="category">
-              <option>week</option>
-              <option>2 weeks</option>
-              <option>month</option>
-              <option>year</option>
-            </select>
-            on 
-            <select className="category">
-              <option>groceries</option>
-              <option>savings</option>
-              <option>rent</option>
-              <option>total expenses</option>
-            </select>
-            
-          </div>  
-          <br></br>
-          <button className="button">Submit</button>
+          {showNewGoalPopup && (
+            <div className="newGoalPopup">
+              <h2>Add new goal</h2>
+              <div className="newBudgetGoal">
+                Spend up to
+                <input type="number" className="amount" />
+                dollars every
+                <select className="category">
+                  <option>day</option>
+                  <option>week</option>
+                  <option>2 weeks</option>
+                  <option>month</option>
+                  <option>year</option>
+                </select>
+                on
+                <select className="category">
+                  <option>groceries</option>
+                  <option>savings</option>
+                  <option>rent</option>
+                  <option>total expenses</option>
+                </select>
+              </div>
+              <button className="button">Submit</button>
+              <button className="button" onClick={toggleNewGoalPopup}>Cancel</button>
+            </div>
+          )}
+
+          {!showNewGoalPopup && (
+            <div className="addGoalButtonContainer">
+              <button className="addExpense button" onClick={toggleNewGoalPopup}>
+                +
+              </button>
+            </div>
+          )}
         </div>
 
         
