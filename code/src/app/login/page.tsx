@@ -24,6 +24,7 @@ export default function Login() {
   
           if (checkResult === 0) {
             router.push('/dashboard');
+            router.refresh();
           } else if (checkResult === 1) {
             alert("Incorrect password. Please try again.");
           } else if (checkResult === 2) {
