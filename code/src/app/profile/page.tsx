@@ -59,25 +59,25 @@ export default function Profile() {
             userData.budgets.slice(1).map((budget, index) => (
               <div key={index}>
                 <div className="budgetGoal">
-                  Spend up to
-                  <span className="currencySymbol">  $</span>
-                  <input type="number" className="amount" value = {budget.goal}/>
-                  dollars every 
-                  <select className="category" value = {budget.interval}>
-                    <option>day</option>
-                    <option>week</option>
-                    <option>2 weeks</option>
-                    <option>month</option>
-                    <option>year</option>
-                  </select>
-                  on 
-                  <select className="category" value = {budget.category}>
-                    <option>groceries</option>
-                    <option>savings</option>
-                    <option>rent</option>
-                    <option>total expenses</option>
-                  </select>
-
+                    Spend up to
+                    {/* <span className="currencySymbol">  $</span> */}
+                    <input type="number" className="amount" value = {budget.goal}/>
+                    dollars every 
+                    <select className="category" value = {budget.interval}>
+                      <option>day</option>
+                      <option>week</option>
+                      <option>2 weeks</option>
+                      <option>month</option>
+                      <option>year</option>
+                    </select>
+                    on 
+                    <select className="category" value = {budget.category}>
+                      <option>groceries</option>
+                      <option>savings</option>
+                      <option>rent</option>
+                      <option>total expenses</option>
+                    </select>
+                    {/* <button className= "x">x</button> */}
                   
                 </div>  
                 {/* <p>You have a(n) {budget.interval} budget of ${budget.goal}</p> */}
