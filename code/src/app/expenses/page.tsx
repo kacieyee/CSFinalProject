@@ -255,8 +255,8 @@ export default function Expenses() {
     }
   };
 
-  // TESTING
-  const textToPDF = async(e: any) => {
+  // TESTING JSPDF (IGNORE)
+  const textToPDF = () => {
     const doc = new jsPDF();
     doc.text("On April 9th, 2025, I bought coffee at Starbucks for a cost of $5.99", 10, 10);
     doc.save("transaction.pdf");  
