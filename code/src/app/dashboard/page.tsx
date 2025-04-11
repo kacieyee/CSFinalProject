@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react';``
 import './dashboard.css';
 import { Chart as ChartJS, LineElement, PointElement, LinearScale, Title, Tooltip, Legend, CategoryScale, ArcElement } from 'chart.js';
 import { Line } from 'react-chartjs-2';
-import { useEffect, useState } from 'react';
 import { Doughnut } from 'react-chartjs-2';
 import annotationPlugin from 'chartjs-plugin-annotation';
 import { color } from 'chart.js/helpers';

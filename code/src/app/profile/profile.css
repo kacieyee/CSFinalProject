@@ -91,9 +91,6 @@ input, select, .goal-input {
 input:focus {
   background-image: radial-gradient(circle, transparent 10%, #FF9BD1 120%);
 }
-  margin: .8% 2%;
-
-}
 
 input {
   text-align: center;
