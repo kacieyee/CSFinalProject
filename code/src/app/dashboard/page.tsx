@@ -15,8 +15,14 @@ const hashColor = (str: string) => {
   for (let i = 0; i < str.length; i++) {
     hash = str.charCodeAt(i) + ((hash << 5) - hash);
   }
+    // "rgb(255, 235, 245)",
+    // 'rgb(255, 186, 222)',
+    // 'rgb(255, 114, 187)',
+    // 'rgb(255, 48, 155)',
+    // 'rgb(206, 28, 120)',
+    // 'rgb(134, 14, 76)',
 
-  const hue = hash % 360;
+  const hue = 338;
   const saturation = 55 + (hash % 25);
   const lightness = 55 + (hash % 25);
 
