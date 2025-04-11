@@ -21,6 +21,7 @@ export default function Profile() {
   const [category, setCategory] = useState('');
   const [tempGoals, setTempGoals] = useState<{ [key: string]: string }>({});
   const [budget, setBudget] = useState<Budget[]>([]);
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -158,12 +159,20 @@ const handleGoalSubmit = (e: React.KeyboardEvent<HTMLInputElement>, budget: Budg
         <h1>Profile</h1>
         <div className="profileSection">
           <p><strong>Name:</strong> {userData.username}</p>
-          <div style={{ display: "flex", alignSelf: "center" }}>
-            <p style={{ marginRight: "20rem" }}>
-            <strong>Password:</strong> {"•".repeat(userData.password.length)}
+          <div style={{ display: "flex", alignSelf: "right" }}>
+            <p style={{ marginRight: "19rem" }}>
+              <strong>Password:</strong>{" "}
+              {showPassword ? userData.password : "•".repeat(userData.password.length)}
             </p>
-            <VisibilityRounded sx={{ color: '#FF9BD1' }} />
+            <div onClick={() => setShowPassword(!showPassword)} style={{ cursor: "pointer" }}>
+              {showPassword ? (
+                <VisibilityOffRounded sx={{ color: '#FF9BD1' }} />
+              ) : (
+                <VisibilityRounded sx={{ color: '#FF9BD1' }} />
+              )}
+            </div>
           </div>
+
         </div>
       </div>
       <div className="column-right">
