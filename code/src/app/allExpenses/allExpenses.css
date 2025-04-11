@@ -1,0 +1,136 @@
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f9;
+  }
+
+  .row {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .column {
+    width: 100%;
+    float: left;
+  }
+  
+  .left {
+    width: 40%;
+    padding: 20px;
+  }
+
+  .right {
+    width: 50%;
+    padding: 20px;
+    float: left; 
+
+  }
+
+  .label {
+    float: left;
+    display: block;
+    margin-bottom: 5px;
+    color: #db2a8e;
+    font-weight: bold;
+  }
+
+   label {
+    font-weight: bold;
+    color: #db2a8e;
+   }
+
+
+  input {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+    border-radius: 10px;
+    background-color: rgba(255, 110, 173, 0.5);
+    color: white;
+    border-color: #FF9BD1;
+    border-width: 1px; 
+    }
+
+  .row:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+  
+  ul {
+    list-style-type: none;
+    padding: 0;
+  }
+
+  li {
+    padding: 5rem;
+    font-size: 16px;
+    color: #ffffff;
+  }
+  
+  ul li {
+    margin-bottom: 20px;
+    padding: 10px;
+    background-color: #000000;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+    
+    border-color: #FF9BD1;
+    border-width: 1px; 
+    border-radius: 20px;
+  }
+  
+  ul li div {
+    margin-bottom: 8px;
+    font-size: 16px;
+    color: #ffffff;
+  }
+  
+  ul li div strong {
+    color: #db2a8e;
+  }
+
+  h2 {
+    color: #FF9BD1;
+    padding-bottom: 0px;
+    padding-left: 15px;
+    font-size: 35px;
+    margin-bottom: 20px;
+    font-weight: bold;
+  }
+
+  .delete-button {
+    color: #FF9BD1; 
+    display: inline-block;
+  }
+
+  .expense-item {
+    position: relative;
+    padding: 16px;
+    border-radius: 12px;
+    margin-bottom: 16px;
+  }
+  
+  .expense-info {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .button {
+    background-color: #FF9BD1; 
+    color: white;
+    padding: 0.5rem 1.5rem;
+    border-radius: 0.5rem;
+    transition: background-color 0.3s;
+    margin-left: 0.5rem;
+  }
+
+  @media screen and (max-width: 600px) {
+    .column {
+      width: 100%;
+    }
+  }

@@ -3,10 +3,27 @@ import React, { useEffect, useState } from 'react';``
 import './dashboard.css';
 import { Chart as ChartJS, LineElement, PointElement, LinearScale, Title, Tooltip, Legend, CategoryScale, ArcElement } from 'chart.js';
 import { Line } from 'react-chartjs-2';
+import { useEffect, useState } from 'react';
 import { Doughnut } from 'react-chartjs-2';
 import annotationPlugin from 'chartjs-plugin-annotation';
 import { color } from 'chart.js/helpers';
 ChartJS.register(LineElement, PointElement, LinearScale, CategoryScale, Title, Tooltip, Legend, annotationPlugin, ArcElement);
+
+const hashColor = (str: string) => {
+  if (!str) return "#ccc";
+
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = str.charCodeAt(i) + ((hash << 5) - hash);
+  }
+
+  const hue = hash % 360;
+  const saturation = 55 + (hash % 25);
+  const lightness = 55 + (hash % 25);
+
+  const color = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+  return color;
+};
 
 
 export const data = {
@@ -108,108 +125,97 @@ const lineChartOptions = {
   },
 };
 
+interface Transaction {
+  name: string;
+  price: number;
+  date: string;
+  vendor: string;
+  category: string;
+}
 
-// const [isActive, setIsActive] = useState(false);
-
-// const toggleButton = () => {
-//   setIsActive(prev => !prev);
-// };
+interface BudgetItem {
+  category: string;
+}
 
 export default function Dashboard() {
+    const [transactions, setTransactions] = useState<Transaction[]>([]);
+    const [budgetCategories, setBudgetCategories] = useState<string[]>([]);
+    const [doughnutData, setDoughnutData] = useState<any>(null);
 
-  
-  const [name, setName] = useState('');
-  const [price, setPrice] = useState('');
-  const [date, setDate] = useState('');
-  const [vendor, setVendor] = useState('');
-  const [category, setCategory] = useState('');
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [transactionAdded, setTransactionAdded] = useState(false);
-
-
-  interface Expense {
-    _id: string,
-    name: string;
-    price: number;
-    date: string;
-    vendor: string;
-    category: string;
-  };
-
-
-  const submitTransaction = async(e: any) => {
-    try {
-      e.preventDefault();
-    
-      try {
-          const response = await fetch("/api/transactions", { 
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({name, price, date, vendor, category}),
+    useEffect(() => {
+      const fetchTransactions = async () => {
+        try {
+          const response = await fetch("/api/transactions", {
+            method: "GET",
+            credentials: "include",
           });
-          
+
           if (response.ok) {
-            setTransactionAdded(true);
+            const data = await response.json();
+            const sortedTransactions = data.expenses
+              .sort((a: Transaction, b: Transaction) => new Date(b.date).getTime() - new Date(a.date).getTime())
+              .slice(0, 5);
+            setTransactions(sortedTransactions);
           }
-      } catch (error) {
-          console.error("Error submitting transaction:", error);
-      }      
-    } catch (err) {
-      alert("Fields cannot be blank!");
-    }
-  }
+        } catch (error) {
+          console.error("Error fetching transactions:", error);
+        }
+      };
 
-  const [expenses, setExpenses] = useState<Expense[]>([]);
-
-  const fetchExpenses = async () => {
-    try {
-      const res = await fetch("/api/transactions", {
-        method: "GET",
-      });
-      if (!res.ok) throw new Error("Failed to fetch transactions");
-
-      const data = await res.json();
-      setExpenses(data.expenses);
-    } catch (error) {
-      console.error("Error fetching expenses:", error);
-    }
-  };
-
-  useEffect(() => {
-    fetchExpenses();
-    if (transactionAdded) {
-      setTransactionAdded(false);
-
-      setName('');
-      setPrice('');
-      setDate('');
-      setVendor('');
-      setCategory('');
-    }
-  }, [transactionAdded]);
-
-  const deleteTransaction = async (transactionId: string) => {
-    try {
-      const response = await fetch(`/api/transactions`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({transactionId})
-      });
+      const fetchBudget = async () => {
+        try {
+          const response = await fetch("/api/budget", {
+            method: "GET",
+            credentials: "include",
+          });
   
-      if (response.ok) {
-        setExpenses(expenses.filter(expense => expense._id !== transactionId));
-      } else {
-        console.error("Failed to delete transaction:", await response.json());
+          if (response.ok) {
+            const data = await response.json();
+            const categories = data.expenses.map((item: BudgetItem) => item.category);
+            setBudgetCategories(categories);
+          }
+        } catch (error) {
+          console.error("Error fetching budget:", error);
+        }
+      };
+  
+      fetchTransactions();
+      fetchBudget();
+    }, []);
+
+    useEffect(() => {
+      if (budgetCategories.length > 0 && transactions.length > 0) {
+        const categoryTotals: { [key: string]: number } = {};
+        
+        budgetCategories.forEach(category => {
+          categoryTotals[category] = 0;
+        });
+    
+        transactions.forEach(txn => {
+          if (categoryTotals.hasOwnProperty(txn.category)) {
+            categoryTotals[txn.category] += txn.price;
+          }
+        });
+    
+        setDoughnutData({
+          labels: budgetCategories,
+          datasets: [
+            {
+              label: "Spending Breakdown",
+              data: budgetCategories.map(category => categoryTotals[category] || 0), // Sum of transactions per category
+              backgroundColor: budgetCategories.map(category => hashColor(category)),
+              borderWidth: 0,
+            },
+          ],
+        });
       }
-    } catch (error) {
-      console.error("Error deleting transaction:", error);
-    }
-  };
+    }, [budgetCategories, transactions]);
 
-
+    const groupedCategories = budgetCategories.reduce((acc: string[][], category, index) => {
+      if (index % 3 === 0) acc.push([]);
+      acc[acc.length - 1].push(category);
+      return acc;
+    }, []);
 
     return (
       
@@ -220,25 +226,20 @@ export default function Dashboard() {
 
 
           <div className="button-container">
-          
-              <div className="filter">
-                <button className="button">Savings</button>
-                <button className="button">Groceries</button>
-                <button className="button">For funsies</button>
-              </div>
+          {groupedCategories.map((row, rowIndex) => (
+            <div key={rowIndex} className="filter">
+              {row.map((category, index) => (
+                <button key={index} className="button">{category}</button>
+              ))}
+            </div>
+          ))}
+        </div>
 
-              <div className="filter">
-                <button className="button">Housing</button>
-                <button className="button">Health</button>
-                <button className="button">Transport</button>
-              </div>
-
-              <div className="filter">
-                <button className="button">Misc</button>
-              </div>
-
-          </div>
-
+        {doughnutData ? (
+          <Doughnut data={doughnutData} options={options} />
+        ) : (
+          <p>Loading chart...</p>
+        )}
 
           <div className="subtext">Looks like you are on track to hitting your savings goal! Keep it up girlie!</div>
 
@@ -248,25 +249,17 @@ export default function Dashboard() {
 
           
           <h1>Recent Transactions</h1>
-
-          <ul>
-          {expenses.length === 0 ? (
-            <li>No recent expenses</li>
-          ) : (
-            expenses.map((expense) => (
-              <li key={expense._id}>
-                <div><strong>Name:</strong> {expense.name}</div>
-                <div><strong>Price:</strong> ${expense.price.toFixed(2)}</div>
-                <div><strong>Date:</strong> {new Date(expense.date).toLocaleDateString()}</div>
-                <div><strong>Vendor:</strong> {expense.vendor}</div>
-                <div><strong>Category:</strong> {expense.category}</div>
-                {/* <button className="deleteButton" onClick={() => deleteTransaction(expense._id)}>Delete</button> {} */}
-              </li>
-            ))
-          )}
-        </ul>
-            
-
+          <ul className="text-white">
+            {transactions.length > 0 ? (
+              transactions.map((txn, index) => (
+                <li key={index}>
+                  {txn.name} (${txn.price.toFixed(2)}) on {new Date(txn.date).toLocaleDateString()}.
+                </li>
+              ))
+            ) : (
+              <li>No recent transactions.</li>
+            )}
+          </ul>
         </div>
 
       </div>

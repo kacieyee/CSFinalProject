@@ -6,7 +6,7 @@ import { jwtVerify } from 'jose';
 
 export async function POST(request) {
     try {
-        const {name, price, date, vendor, category} = await request.json();
+        const {category, goal, interval} = await request.json();
         const cookieStore = await cookies();
         const token = cookieStore.get("token")?.value;
         
@@ -26,21 +26,19 @@ export async function POST(request) {
             return NextResponse.json({message: "User not found!"}, {status: 404});
         }
 
-        const transaction = {
-            name,
-            price: Number(price),
-            date: new Date(date),
-            vendor,
-            category
+        const budget = {
+            category,
+            goal: Number(goal),
+            interval: String(interval)
         };
 
-        user.transactions.push(transaction);
+        user.budgets.push(budget);
         await user.save();
 
-        return NextResponse.json({message: "Transaction added successfully"}, {status: 201});
+        return NextResponse.json({message: "Budget added successfully"}, {status: 201});
     } catch (err) {
         console.log(err);
-        return NextResponse.json({message: "Error processing transaction"}, {status: 500});
+        return NextResponse.json({message: "Error processing budget"}, {status: 500});
     }
 }
 
@@ -63,21 +61,21 @@ export async function GET(request) {
 
         if (!user) return NextResponse.json({message: "User not found!"}, {status: 404});
 
-        return NextResponse.json({expenses: user.transactions}, {status: 200});
+        return NextResponse.json({expenses: user.budgets}, {status: 200});
     } catch (err) {
         console.error(err);
-        return NextResponse.json({message: "Error fetching transactions"}, {status: 500});
+        return NextResponse.json({message: "Error fetching budgets"}, {status: 500});
     }
 }
 
 export async function PATCH(request) {
     try {
-        const {transactionId, name, price, date, vendor, category} = await request.json();
+        const { category, newGoal, newInterval } = await request.json();
         const cookieStore = await cookies();
         const token = cookieStore.get("token")?.value;
         
         if (!token) {
-            return NextResponse.json({message: "Unauthorized"}, {status: 401});
+            return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
         }
 
         const secret = process.env.JWT_SECRET;
@@ -92,32 +90,29 @@ export async function PATCH(request) {
             return NextResponse.json({message: "User not found!"}, {status: 404});
         }
 
-        const transaction = user.transactions.find(txn => txn._id.toString() === transactionId);
-        if (!transaction) {
-            return NextResponse.json({message: "Transaction not found!"}, {status: 404});
+        const budget = user.budgets.find(b => b.category === category);
+        if (!budget) {
+            return NextResponse.json({message: "Budget category not found!"}, {status: 404});
         }
 
-        if (name !== undefined) transaction.name = name;
-        if (price !== undefined) transaction.price = Number(price);
-        if (date !== undefined) transaction.date = new Date(date);
-        if (vendor !== undefined) transaction.vendor = vendor;
-        if (category !== undefined) transaction.category = category;
+        if (newGoal !== undefined) budget.goal = Number(newGoal);
+        if (newInterval) budget.interval = String(newInterval);
 
         await user.save();
 
-        return NextResponse.json({message: "Transaction updated successfully", transaction}, {status: 200});
+        return NextResponse.json({message: "Budget updated successfully", budget}, {status: 200});
     } catch (err) {
-        console.error("Error updating transaction:", err);
-        return NextResponse.json({message: "Error updating transaction" }, {status: 500});
+        console.error("Error updating budget:", err);
+        return NextResponse.json({message: "Error updating budget"}, {status: 500});
     }
 }
 
 export async function DELETE(request) {
     try {
-      const {transactionId} = await request.json();
-      const cookieStore = await cookies();
+        const {category} = await request.json();
+        const cookieStore = await cookies();
         const token = cookieStore.get("token")?.value;
-        
+
         if (!token) {
             return NextResponse.json({message: "Unauthorized"}, {status: 401});
         }
@@ -129,21 +124,17 @@ export async function DELETE(request) {
 
         const decoded = await jwtVerify(token, new TextEncoder().encode(secret));
         const user = await User.findOne({username: decoded.payload.username});
-  
-      if (!user) return NextResponse.json({message: "User not found"}, {status: 404});
-  
-      const transactionIndex = user.transactions.findIndex(txn => txn._id.toString() === transactionId);
-      if (transactionIndex === -1) {
-        return NextResponse.json({message: "Transaction not found"}, {status: 404});
-      }
-  
-      user.transactions.splice(transactionIndex, 1);
-      await user.save();
-  
-      return NextResponse.json({message: "Transaction deleted successfully"}, {status: 200});
-    } catch (error) {
-      console.error(error);
-      return NextResponse.json({message: "Error deleting transaction"}, {status: 500});
+
+        if (!user) {
+            return NextResponse.json({message: "User not found!"}, {status: 404});
+        }
+
+        user.budgets = user.budgets.filter(budget => budget.category !== category);
+        await user.save();
+
+        return NextResponse.json({message: "Budget deleted successfully"}, {status: 200});
+    } catch (err) {
+        console.error(err);
+        return NextResponse.json({message: "Error deleting budget"}, {status: 500});
     }
-  }
-  
+}

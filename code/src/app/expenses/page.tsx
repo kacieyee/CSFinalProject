@@ -1,9 +1,12 @@
 'use client'
 import './expenses.css';
-import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
+import React, { useEffect, useRef, useState } from 'react';
 import AddExpensePopup from './addExpensePopup'; 
 import { BarLoader } from 'react-spinners';
 import { getCookie } from 'cookies-next';
+import { DeleteRounded} from '@mui/icons-material';
+import { jsPDF } from "jspdf";
 
 interface Expense {
   _id: string,
@@ -12,6 +15,13 @@ interface Expense {
   date: string;
   vendor: string;
   category: string;
+};
+
+interface Budget {
+  _id: string,
+  category: string,
+  goal: number,
+  interval: string
 };
 
 export default function Expenses() {
@@ -23,30 +33,13 @@ export default function Expenses() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [transactionAdded, setTransactionAdded] = useState(false);
-
-  const submitTransaction = async(e: any) => {
-    try {
-      e.preventDefault();
-    
-      try {
-          const response = await fetch("/api/transactions", { 
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({name, price, date, vendor, category}),
-          });
-          
-          if (response.ok) {
-            setTransactionAdded(true);
-          }
-      } catch (error) {
-          console.error("Error submitting transaction:", error);
-      }      
-    } catch (err) {
-      alert("Fields cannot be blank!");
-    }
-  }
-
   const [expenses, setExpenses] = useState<Expense[]>([]);
+  const [budget, setBudget] = useState<Budget[]>([]);
+  const [audioURL, setAudioURL] = useState<string | undefined>(undefined);
+
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const audioChunksRef = useRef<Blob[]>([]);
+  const audioURLRef = useRef<string | null>(null);
 
   const fetchExpenses = async () => {
     try {
@@ -62,11 +55,23 @@ export default function Expenses() {
     }
   };
 
+  const fetchBudget = async () => {
+    try {
+      const res = await fetch("/api/budget", {method: "GET"});
+      if (!res.ok) throw new Error("Failed to fetch budget");
+
+      const data = await res.json();
+      setBudget(data.expenses || []);
+    } catch (error) {
+      console.error("Error fetching budget:", error);
+    }
+  };
+
   useEffect(() => {
     fetchExpenses();
+    fetchBudget();
     if (transactionAdded) {
       setTransactionAdded(false);
-
       setName('');
       setPrice('');
       setDate('');
@@ -74,6 +79,93 @@ export default function Expenses() {
       setCategory('');
     }
   }, [transactionAdded]);
+
+  const submitTransaction = async(e: any) => {
+    try {
+      e.preventDefault();
+
+      const categoryExists = budget.some(budgetItem => budgetItem.category === category);
+
+      if (!categoryExists) {
+        const newBudget = {
+          category,
+          goal: 0,
+          interval: "monthly"
+        };
+  
+        try {
+          const response = await fetch("/api/budget", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(newBudget),
+          });
+  
+          if (!response.ok) {
+            throw new Error("Failed to create new budget category.");
+          }
+        } catch (error) {
+          console.error("Error creating new budget category:", error);
+          alert("Failed to create new budget category.");
+          return;
+        }
+      }
+    
+      try {
+          const response = await fetch("/api/transactions", { 
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({name, price, date, vendor, category}),
+          });
+          
+          if (response.ok) {
+            setTransactionAdded(true);
+          }
+      } catch (error) {
+          console.error("Error submitting transaction:", error);
+      }      
+    } catch (error) {
+      alert("Fields cannot be blank!");
+    }
+  }
+
+  const updateTransaction = async (transactionId: string, updatedTransaction: Partial<Expense>) => {
+    try {
+      const categoryExists = budget.some(budgetItem => budgetItem.category === category);
+
+      if (!categoryExists) {
+        const newBudget = {
+          category,
+          goal: 0,
+          interval: "monthly"
+        };
+
+        try {
+          const response = await fetch(`/api/transactions`, {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ transactionId, ...updatedTransaction }),
+          });
+      
+          if (response.ok) {
+            const updatedExpenses = expenses.map((expense) =>
+              expense._id === transactionId ? { ...expense, ...updatedTransaction } : expense
+            );
+            setExpenses(updatedExpenses);
+          } else {
+            console.error("Failed to update transaction:", await response.json());
+          }
+        } catch (error) {
+          console.error("Error updating transaction:", error);
+        }
+      }
+    } catch (error) {
+      alert("Fields cannot be blank!");
+    }
+  };  
 
   const deleteTransaction = async (transactionId: string) => {
     try {
@@ -141,15 +233,31 @@ export default function Expenses() {
 
                             if (status === "succeeded") {
                                 console.log("Results:", results);
-                                const merchantName = results.analyzeResult.documents[0].fields.MerchantName.valueString;
-                                const total = results.analyzeResult.documents[0].fields.Total.valueCurrency.amount;
-                                const transactionDate = results.analyzeResult.documents[0].fields.TransactionDate.valueDate;
-                                const receiptType = results.analyzeResult.documents[0].fields.ReceiptType.valueString;
-                                
-                                setVendor(merchantName);
-                                setPrice(total.toString());
-                                setDate(transactionDate);
-                                setCategory(receiptType);
+                                let merchantName;
+                                let total;
+                                let transactionDate;
+                                let receiptType;
+                                if (results.analyzeResult.documents[0].fields.MerchantName) {
+                                  merchantName = results.analyzeResult.documents[0].fields.MerchantName.valueString;
+                                }
+                                if (results.analyzeResult.documents[0].fields.Total) {
+                                  total = results.analyzeResult.documents[0].fields.Total.valueCurrency.amount;
+                                }
+                                if (results.analyzeResult.documents[0].fields.TransactionDate) {
+                                  transactionDate = results.analyzeResult.documents[0].fields.TransactionDate.valueDate;
+                                }
+                                if (results.analyzeResult.documents[0].fields.ReceiptType) {
+                                  receiptType = results.analyzeResult.documents[0].fields.ReceiptType.valueString;
+                                }
+                              
+                                if (merchantName)
+                                  setVendor(merchantName);
+                                if (total)
+                                  setPrice(total.toString());
+                                if (transactionDate)
+                                  setDate(transactionDate);
+                                if (receiptType)
+                                  setCategory(receiptType);
 
                                 break;
                             }
@@ -182,32 +290,93 @@ export default function Expenses() {
     } finally {
       setIsLoading(false);
     }
-};
+  };
 
-  
+  // TESTING JSPDF (IGNORE)
+  const textToPDF = () => {
+    const doc = new jsPDF();
+    doc.text("On April 9th, 2025, I bought coffee at Starbucks for a cost of $5.99", 10, 10);
+    doc.save("transaction.pdf");  
+  };
+
+  const startRecording = () => {
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+      navigator.mediaDevices
+        .getUserMedia(
+          {
+            audio: true,
+          },
+        )
+    
+        .then((stream) => {
+          const mediaRecorder = new MediaRecorder(stream);
+          mediaRecorderRef.current = mediaRecorder;
+          audioChunksRef.current = [];
+
+          mediaRecorder.ondataavailable = (e) => {
+            if (e.data.size > 0) {
+              audioChunksRef.current.push(e.data);
+            }
+          };
+
+          mediaRecorder.onstop = () => {
+            const blob = new Blob(audioChunksRef.current, { type: "audio/ogg; codecs=opus" });
+            const url = URL.createObjectURL(blob);
+            audioURLRef.current = url;
+            setAudioURL(url);
+            console.log("recording stopped");
+          };
+
+          mediaRecorder.start();
+          console.log("recording started");
+        })
+    
+        .catch((err) => {
+          console.error(`The following getUserMedia error occurred: ${err}`);
+        });
+    } else {
+      console.log("getUserMedia not supported on your browser");
+    }
+  };
+
+  const stopRecording = () => {
+    const mediaRecorder = mediaRecorderRef.current;
+    if (mediaRecorder && mediaRecorder.state !== "inactive") {
+      mediaRecorder.stop();
+      console.log("stoppped recording");
+    }
+  };
+
   return (
     
     <div className="row">
       <div className="column left">
-        <h2>Recent Expenses</h2>
-        <ul>
-          {expenses.length === 0 ? (
-            <li>No recent expenses</li>
-          ) : (
-            expenses.map((expense) => (
-              <li key={expense._id}>
-                <div><strong>Name:</strong> {expense.name}</div>
-                <div><strong>Price:</strong> ${expense.price.toFixed(2)}</div>
-                <div><strong>Date:</strong> {new Date(expense.date).toLocaleDateString()}</div>
-                <div><strong>Vendor:</strong> {expense.vendor}</div>
-                <div><strong>Category:</strong> {expense.category}</div>
-                <button className="deleteButton" onClick={() => deleteTransaction(expense._id)}>Delete</button> {}
-              </li>
-            ))
-          )}
-        </ul>
-        
+      <h2>Recent Expenses</h2>
+      <ul>
+        {expenses.length === 0 ? (
+          <li>No recent expenses</li>
+        ) : (
+        expenses.map((expense) => (
+        <li key={expense._id} className="expense-item">
+          <div className="expense-info">
+            <div><strong>Date:</strong> {new Date(expense.date).toLocaleDateString()}</div>
+            <div>${expense.price.toFixed(2)} spent on {expense.category} at {expense.vendor}.</div>
+          </div>
+          <button className="deleteButton" onClick={() => deleteTransaction(expense._id)}>
+            <DeleteRounded sx={{ color: '#FF9BD1' }}/>
+          </button>
+          </li>
+          ))
+        )}
+      </ul>
+
+        <Link href="/allExpenses">
+          <p className="view-all-expenses">
+          View all expenses
+          </p>
+        </Link>
       </div>
+
       <div className="column right">
         <h2>Upload Receipt</h2>
         <div className="upload-section">
@@ -243,55 +412,52 @@ export default function Expenses() {
                 <label>Vendor:</label>
                 <input type="text" value={vendor} onChange={(e) => setVendor(e.target.value)} id="vendor" name="vendor" required></input><br></br>
 
-                <label>Category:</label>
-                <input type="text" value={category} onChange={(e) => setCategory(e.target.value)} id="category" name="category" required></input><br></br>
-            <button className="button" type="submit">Add new expense!</button>
+              <div className="button-row">
+              <label>Category:</label>
+              <input 
+                list="categories" 
+                value={category} 
+                onChange={(e) => setCategory(e.target.value)} 
+              />
+              <datalist id="categories">
+                {budget.length > 0 ? (
+                  budget.map((categoryOption) => (
+                    <option key={categoryOption._id} value={categoryOption.category} />
+                  ))
+                ) : (
+                  <option>No categories available</option>
+                )}
+              </datalist>
+              <br></br>
+
+              <button className="button" type="submit">Add new expense!</button>
+            </div>
             </form>
           </div>
         </div> 
         
         {/* <AddExpensePopup /> */}
-        
-      </div>
 
+        <div>
+          <h1>Voice Record</h1>
+          <button className="button" onClick={startRecording}>Record</button>
+          <button className="button" onClick={stopRecording}>Stop</button>
+          {audioURL && (
+            <audio
+              controls
+              src={audioURL}
+              style={{
+                width: "100%",
+                marginTop: "1rem",
+                backgroundColor: "#fff",
+                borderRadius: "10px",
+                padding: "10px",
+              }}></audio>
+          )}
+        
+        </div>
+
+      </div>  
     </div>
-  
-    
   );
 }
-
-// export default function Expenses() {
-//     return (
-//       // <div className="flex flex-col h-screen p-6">
-//       //   <h1 className="text-4xl font-bold">Expenses</h1>
-//       //   <p className="mt-4 text-lg">Welcome to the expenses page!</p>
-//       // </div>
-//       <div className="container">
-//       <div className="left">
-//         <h2>Recent Expenses</h2>
-//         <ul>
-//           {expenses.length === 0 ? (
-//             <li>No recent expenses</li>
-//           ) : (
-//             expenses.map((expense, index) => (
-//               <li key={index}>
-//                 <div><strong>Name:</strong> {expense.name}</div>
-//                 <div><strong>Price:</strong> ${expense.price.toFixed(2)}</div>
-//                 <div><strong>Date:</strong> {expense.date}</div>
-//                 <div><strong>Vendor:</strong> {expense.vendor}</div>
-//                 <div><strong>Category:</strong> {expense.category}</div>
-//               </li>
-//             ))
-//           )}
-//         </ul>
-//       </div>
-//       <div className="right">
-//         <h2>Upload Receipt</h2>
-//         {/* Placeholder for the receipt upload section */}
-//         <div className="upload-section">
-//           <p>No receipt uploaded</p>
-//         </div>
-//       </div>
-//     </div>
-//     );
-//   }
