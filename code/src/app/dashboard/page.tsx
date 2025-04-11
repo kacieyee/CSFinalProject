@@ -234,11 +234,7 @@ export default function Dashboard() {
           ))}
         </div>
 
-        {doughnutData ? (
-          <Doughnut data={doughnutData} options={options} />
-        ) : (
-          <p>Loading chart...</p>
-        )}
+        
 
           <div className="subtext">Looks like you are on track to hitting your savings goal! Keep it up girlie!</div>
 
@@ -271,7 +267,13 @@ export default function Dashboard() {
           </div>
         </div>
         <div className="column right2">
-        <Doughnut data={data} options={options} />
+
+        {/* <Doughnut data={data} options={options} /> */}
+        {doughnutData ? (
+          <Doughnut data={doughnutData} options={options} />
+        ) : (
+          <p>Loading chart...</p>
+        )}
 
         </div>
 
