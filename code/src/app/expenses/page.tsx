@@ -56,7 +56,7 @@ export default function Expenses() {
       if (!res.ok) throw new Error("Failed to fetch budget");
 
       const data = await res.json();
-      setBudget(data.budgets || []);
+      setBudget(data.expenses || []);
     } catch (error) {
       console.error("Error fetching budget:", error);
     }
@@ -120,10 +120,47 @@ export default function Expenses() {
       } catch (error) {
           console.error("Error submitting transaction:", error);
       }      
-    } catch (err) {
+    } catch (error) {
       alert("Fields cannot be blank!");
     }
   }
+
+  const updateTransaction = async (transactionId: string, updatedTransaction: Partial<Expense>) => {
+    try {
+      const categoryExists = budget.some(budgetItem => budgetItem.category === category);
+
+      if (!categoryExists) {
+        const newBudget = {
+          category,
+          goal: 0,
+          interval: "monthly"
+        };
+
+        try {
+          const response = await fetch(`/api/transactions`, {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ transactionId, ...updatedTransaction }),
+          });
+      
+          if (response.ok) {
+            const updatedExpenses = expenses.map((expense) =>
+              expense._id === transactionId ? { ...expense, ...updatedTransaction } : expense
+            );
+            setExpenses(updatedExpenses);
+          } else {
+            console.error("Failed to update transaction:", await response.json());
+          }
+        } catch (error) {
+          console.error("Error updating transaction:", error);
+        }
+      }
+    } catch (error) {
+      alert("Fields cannot be blank!");
+    }
+  };  
 
   const deleteTransaction = async (transactionId: string) => {
     try {

@@ -18,11 +18,14 @@ interface UserData {
 export default function Profile() {
   const [userData, setUserData] = useState<UserData | null>(null);
   const [category, setCategory] = useState('');
-  const [tempGoals, setTempGoals] = useState<{ [key: string]: string }>({});
+  const [tempGoals, setTempGoals] = useState<{[key: string]: string}>({});
+  const [newUsername, setNewUsername] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
 
   useEffect(() => {
     const fetchUserData = async () => {
-      const response = await fetch("/api/profile", {
+      const response = await fetch("/api/users", {
         method: "GET",
         credentials: "include"
       });
@@ -37,14 +40,60 @@ export default function Profile() {
   }, []);
 
   if (!userData) {
-    return <p>Error loading profile...</p>;
+    return <p>Loading profile...</p>;
   }
+
+  const updateUser = async (e: any) => {
+    e.preventDefault();
+
+    if (newPassword && newPassword !== confirmPassword) {
+      alert("Passwords must match.");
+      return;
+    }
+
+    try {
+      const response = await fetch("/api/users", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: newUsername || userData.username,
+          password: newPassword || userData.password,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to update user.");
+      }
+
+      const updatedUserResponse = await fetch("/api/users", {
+        method: "GET",
+        credentials: "include"
+      });
+
+      if (updatedUserResponse.ok) {
+        const updatedUserData = await updatedUserResponse.json();
+        setUserData(updatedUserData);
+        alert("Profile updated successfully!");
+      }
+
+    } catch (err) {
+      console.error("Error updating user:", err);
+      alert("An error occurred while updating the profile.");
+    }
+  };
 
   const submitBudget = async (e: any) => {
     e.preventDefault();
 
     if (!category.trim()) {
         alert("Category cannot be blank!");
+        return;
+    }
+
+    const categoryExists = userData?.budgets.some(budget => budget.category.toLowerCase() === category.toLowerCase());
+
+    if (categoryExists) {
+        alert("This budget category already exists!");
         return;
     }
 
@@ -63,7 +112,7 @@ export default function Profile() {
             throw new Error("Failed to add budget");
         }
 
-        const updatedUserResponse = await fetch("/api/profile", {
+        const updatedUserResponse = await fetch("/api/users", {
             method: "GET",
             credentials: "include"
         });
@@ -93,7 +142,7 @@ const updateBudget = async (category: string, newGoal: number, newInterval: stri
           throw new Error("Failed to update budget");
       }
 
-      const updatedUserResponse = await fetch("/api/profile", {
+      const updatedUserResponse = await fetch("/api/users", {
           method: "GET",
           credentials: "include"
       });
@@ -111,6 +160,23 @@ const updateBudget = async (category: string, newGoal: number, newInterval: stri
 
 const deleteBudget = async (category: string) => {
   try {
+    const transactionResponse = await fetch("/api/transactions", {
+      method: "GET",
+      credentials: "include",
+    });
+
+    if (!transactionResponse.ok) {
+      throw new Error("Failed to fetch transactions");
+    }
+
+    const transactionData = await transactionResponse.json();
+    const hasTransactions = transactionData.expenses.some(txn => txn.category === category);
+
+    if (hasTransactions) {
+      alert(`Cannot delete the "${category}" category because transactions exist under it.`);
+      return;
+    }
+
     const response = await fetch("/api/budget", {
       method: "DELETE",
       headers: {"Content-Type": "application/json"},
@@ -215,20 +281,6 @@ const handleGoalSubmit = (e: React.KeyboardEvent<HTMLInputElement>, budget: Budg
               onChange={(e) => setCategory(e.target.value)}
               className="category"
             />
-            {/* every 
-            <select className="category">
-              <option>week</option>
-              <option>2 weeks</option>
-              <option>month</option>
-              <option>year</option>
-            </select>
-            on 
-            <select className="category">
-              <option>groceries</option>
-              <option>savings</option>
-              <option>rent</option>
-              <option>total expenses</option>
-            </select> */}
           </div>  
           <br></br>
           <button type="submit" className="button">Submit</button>
