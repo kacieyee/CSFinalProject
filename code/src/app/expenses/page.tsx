@@ -314,24 +314,25 @@ export default function Expenses() {
     
     <div className="row">
       <div className="column left">
-        <h2>Recent Expenses</h2>
-        <ul>
-          {expenses.length === 0 ? (
-            <li>No recent expenses</li>
-          ) : (
-            expenses.map((expense) => (
-              <li key={expense._id}>
-                <div><strong>Name:</strong> {expense.name}</div>
-                <div><strong>Price:</strong> ${expense.price.toFixed(2)}</div>
-                <div><strong>Date:</strong> {new Date(expense.date).toLocaleDateString()}</div>
-                <div><strong>Vendor:</strong> {expense.vendor}</div>
-                <div><strong>Category:</strong> {expense.category}</div>
-                <button className="deleteButton" onClick={() => deleteTransaction(expense._id)}>
-                  <DeleteRounded sx={{ color: '#FF9BD1' }}/></button> {}
-              </li>
-            ))
-          )}
-        </ul>
+      <h2>Recent Expenses</h2>
+      <ul>
+        {expenses.length === 0 ? (
+          <li>No recent expenses</li>
+        ) : (
+        expenses.map((expense) => (
+        <li key={expense._id} className="expense-item">
+          <div className="expense-info">
+            <div><strong>Date:</strong> {new Date(expense.date).toLocaleDateString()}</div>
+            <div>${expense.price.toFixed(2)} spent on {expense.category} at {expense.vendor}.</div>
+          </div>
+          <button className="deleteButton" onClick={() => deleteTransaction(expense._id)}>
+            <DeleteRounded sx={{ color: '#FF9BD1' }}/>
+          </button>
+          </li>
+          ))
+        )}
+      </ul>
+
         <Link href="/allExpenses">
           <p className="view-all-expenses">
           View all expenses
@@ -374,26 +375,26 @@ export default function Expenses() {
                 <label>Vendor:</label>
                 <input type="text" value={vendor} onChange={(e) => setVendor(e.target.value)} id="vendor" name="vendor" required></input><br></br>
 
-                <label>Category:</label>
-                <input type="text" value={category} onChange={(e) => setCategory(e.target.value)} id="category" name="category" required></input><br></br>
-                <select
-                  onChange={(e) => setCategory(e.target.value)}
-                  value={category}
-                >
-                  <option value="" disabled>Select Category</option>
-                  {budget.length > 0 ? (
-                    budget.map((categoryOption) => (
-                      <option key={categoryOption._id} value={categoryOption.category}>
-                        {categoryOption.category}
-                      </option>
-                    ))
-                  ) : (
-                    <option>No categories available</option>
-                  )}
-                </select>
+              <div className="button-row">
+              <label>Category:</label>
+              <input 
+                list="categories" 
+                value={category} 
+                onChange={(e) => setCategory(e.target.value)} 
+              />
+              <datalist id="categories">
+                {budget.length > 0 ? (
+                  budget.map((categoryOption) => (
+                    <option key={categoryOption._id} value={categoryOption.category} />
+                  ))
+                ) : (
+                  <option>No categories available</option>
+                )}
+              </datalist>
+              <br></br>
 
-                <br></br>
               <button className="button" type="submit">Add new expense!</button>
+            </div>
             </form>
           </div>
         </div> 

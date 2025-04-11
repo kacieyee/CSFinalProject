@@ -181,6 +181,35 @@ body {
     border-radius: 0.5rem;
     transition: background-color 0.3s;
     margin-left: 0.5rem;
+    
+  }
+
+  .button-row {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  select {
+    padding: 8px;
+    border-radius: 10px;
+    background-color: rgba(255, 110, 173, 0.5);
+    color: white;
+    border-color: #FF9BD1;
+    border-width: 1px;
+    width: auto; 
+  }
+
+  .expense-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0.5rem;
+  }
+
+  .expense-info {
+    display: flex;
+    flex-direction: column;
   }
 
   .view-all-expenses {
