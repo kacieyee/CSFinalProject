@@ -1,12 +1,12 @@
 'use client'
 import './expenses.css';
 import Link from 'next/link';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import AddExpensePopup from './addExpensePopup'; 
 import { BarLoader } from 'react-spinners';
 import { getCookie } from 'cookies-next';
 import { DeleteRounded} from '@mui/icons-material';
-
+import { jsPDF } from "jspdf";
 
 interface Expense {
   _id: string,
@@ -35,6 +35,11 @@ export default function Expenses() {
   const [transactionAdded, setTransactionAdded] = useState(false);
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [budget, setBudget] = useState<Budget[]>([]);
+  const [audioURL, setAudioURL] = useState<string | undefined>(undefined);
+
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const audioChunksRef = useRef<Blob[]>([]);
+  const audioURLRef = useRef<string | null>(null);
 
   const fetchExpenses = async () => {
     try {
@@ -285,7 +290,62 @@ export default function Expenses() {
     } finally {
       setIsLoading(false);
     }
-};
+  };
+
+  // TESTING JSPDF (IGNORE)
+  const textToPDF = () => {
+    const doc = new jsPDF();
+    doc.text("On April 9th, 2025, I bought coffee at Starbucks for a cost of $5.99", 10, 10);
+    doc.save("transaction.pdf");  
+  };
+
+  const startRecording = () => {
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+      navigator.mediaDevices
+        .getUserMedia(
+          {
+            audio: true,
+          },
+        )
+    
+        .then((stream) => {
+          const mediaRecorder = new MediaRecorder(stream);
+          mediaRecorderRef.current = mediaRecorder;
+          audioChunksRef.current = [];
+
+          mediaRecorder.ondataavailable = (e) => {
+            if (e.data.size > 0) {
+              audioChunksRef.current.push(e.data);
+            }
+          };
+
+          mediaRecorder.onstop = () => {
+            const blob = new Blob(audioChunksRef.current, { type: "audio/ogg; codecs=opus" });
+            const url = URL.createObjectURL(blob);
+            audioURLRef.current = url;
+            setAudioURL(url);
+            console.log("recording stopped");
+          };
+
+          mediaRecorder.start();
+          console.log("recording started");
+        })
+    
+        .catch((err) => {
+          console.error(`The following getUserMedia error occurred: ${err}`);
+        });
+    } else {
+      console.log("getUserMedia not supported on your browser");
+    }
+  };
+
+  const stopRecording = () => {
+    const mediaRecorder = mediaRecorderRef.current;
+    if (mediaRecorder && mediaRecorder.state !== "inactive") {
+      mediaRecorder.stop();
+      console.log("stoppped recording");
+    }
+  };
 
   return (
     
@@ -376,11 +436,27 @@ export default function Expenses() {
         </div> 
         
         {/* <AddExpensePopup /> */}
-        
-      </div>
 
+        <div>
+          <h1>Voice Record</h1>
+          <button className="button" onClick={startRecording}>Record</button>
+          <button className="button" onClick={stopRecording}>Stop</button>
+          {audioURL && (
+            <audio
+              controls
+              src={audioURL}
+              style={{
+                width: "100%",
+                marginTop: "1rem",
+                backgroundColor: "#fff",
+                borderRadius: "10px",
+                padding: "10px",
+              }}></audio>
+          )}
+        
+        </div>
+
+      </div>  
     </div>
-  
-    
   );
 }
