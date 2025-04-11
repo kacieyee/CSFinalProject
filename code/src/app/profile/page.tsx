@@ -4,10 +4,11 @@ import { useEffect, useState } from "react";
 import { DeleteRounded, VisibilityRounded, VisibilityOffRounded } from '@mui/icons-material';
 
 interface Budget {
-  category: string;
-  goal: number;
-  interval: string;
-}
+  _id: string,
+  category: string,
+  goal: number,
+  interval: string
+};
 
 interface UserData {
   username: string;
@@ -19,6 +20,7 @@ export default function Profile() {
   const [userData, setUserData] = useState<UserData | null>(null);
   const [category, setCategory] = useState('');
   const [tempGoals, setTempGoals] = useState<{ [key: string]: string }>({});
+  const [budget, setBudget] = useState<Budget[]>([]);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -210,11 +212,20 @@ const handleGoalSubmit = (e: React.KeyboardEvent<HTMLInputElement>, budget: Budg
           <form onSubmit={submitBudget}>
           <div className="budgetGoal">
             For what category? 
-            <input
-              type="text"
-              onChange={(e) => setCategory(e.target.value)}
-              className="category"
-            />
+            <input 
+                list="categories" 
+                value={category} 
+                onChange={(e) => setCategory(e.target.value)} 
+              />
+              <datalist id="categories">
+                {budget.length > 0 ? (
+                  budget.map((categoryOption) => (
+                    <option key={categoryOption._id} value={categoryOption.category} />
+                  ))
+                ) : (
+                  <option>No categories available</option>
+                )}
+              </datalist>
             {/* every 
             <select className="category">
               <option>week</option>
