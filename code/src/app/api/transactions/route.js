@@ -70,6 +70,48 @@ export async function GET(request) {
     }
 }
 
+export async function PATCH(request) {
+    try {
+        const {transactionId, name, price, date, vendor, category} = await request.json();
+        const cookieStore = await cookies();
+        const token = cookieStore.get("token")?.value;
+        
+        if (!token) {
+            return NextResponse.json({message: "Unauthorized"}, {status: 401});
+        }
+
+        const secret = process.env.JWT_SECRET;
+        if (!secret) {
+            throw new Error("JWT_SECRET is not defined");
+        }
+
+        const decoded = await jwtVerify(token, new TextEncoder().encode(secret));
+        const user = await User.findOne({username: decoded.payload.username});
+
+        if (!user) {
+            return NextResponse.json({message: "User not found!"}, {status: 404});
+        }
+
+        const transaction = user.transactions.find(txn => txn._id.toString() === transactionId);
+        if (!transaction) {
+            return NextResponse.json({message: "Transaction not found!"}, {status: 404});
+        }
+
+        if (name !== undefined) transaction.name = name;
+        if (price !== undefined) transaction.price = Number(price);
+        if (date !== undefined) transaction.date = new Date(date);
+        if (vendor !== undefined) transaction.vendor = vendor;
+        if (category !== undefined) transaction.category = category;
+
+        await user.save();
+
+        return NextResponse.json({message: "Transaction updated successfully", transaction}, {status: 200});
+    } catch (err) {
+        console.error("Error updating transaction:", err);
+        return NextResponse.json({message: "Error updating transaction" }, {status: 500});
+    }
+}
+
 export async function DELETE(request) {
     try {
       const {transactionId} = await request.json();

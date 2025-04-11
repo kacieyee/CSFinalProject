@@ -11,27 +11,32 @@ export default function SignUp() {
     const [showPassword, setShowPassword] = useState(false);
     const router = useRouter();
 
-    const submitUser = async(e: any) => {
+    const submitUser = async (e: any) => {
       try {
         e.preventDefault();
-
-        if (password === confirm) {
-          const response = await fetch("/api/users", { 
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({username, password}),
-          });
-
-          if (response.ok) {
-            router.push('/login');
-          }
+    
+        if (password !== confirm) {
+          alert("Passwords must match.");
+          return;
+        }
+    
+        const response = await fetch("/api/users", { 
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, password }),
+        });
+    
+        const data = await response.json();
+    
+        if (response.ok) {
+          router.push('/login');
         } else {
-          alert("Passwords must be matching.");
+          alert(data.message || "Error signing up. Please try again.");
         }
       } catch (err) {
-        alert("Fields cannot be blank!");
+        alert("Something went wrong. Please try again.");
       }
-    }
+    };    
 
     return (
       <div className="loginContainer">
