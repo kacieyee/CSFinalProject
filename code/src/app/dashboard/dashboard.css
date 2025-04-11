@@ -6,10 +6,27 @@ body {
     background-color: #f4f4f9;
   }
 
+  .main {
+    width: 80%
+  }
+
   .row {
     /* border-color: red;
     border-width: 5px; */
     width: 100%;
+    vertical-align:middle;
+
+    /* border: aqua 3px solid; */
+    
+    
+  }
+
+  .row2 {
+    width: 100%;
+    /* border: red 3px solid; */
+  }
+  p{
+    color:white;
   }
   
   .column {
@@ -17,15 +34,35 @@ body {
     float: left;
   }
   
-  .left {
-    width: 50%;
-    padding: 20px;
-  }
-
-  .right {
+  .left1 {
     width: 40%;
     padding: 20px;
+    /* border: rgb(183, 233, 255) 3px solid; */
+
+    /* border: red 3px solid; */
+  }
+
+  .right1 {
+    width: 60%;
+    padding: 20px;
     float: left; 
+    /* border:rgb(208, 106, 255) 2px solid; */
+  }
+
+  .left2 {
+    flex: 2;
+    margin-right: 0px;
+    padding: 0%;
+    width: 61%;
+
+    /* border: aqua 2px solid; */
+  }
+  .right2 {
+    flex: 1;
+    padding: 0%;
+    margin: 0px;
+    width: 39%;
+    /* border: rgb(0, 255, 38) 2px solid; */
   }
 
   .button-container {
@@ -41,13 +78,21 @@ body {
     /* justify-content: space-evenly; */
 }
 
-  .button {
+.button {
     flex-grow: 1;
-    background-color: #ef9cc7;
+    border-color: #ef9cc7;
+    border-width: 2px;
+    background-color: black;
     color: white;
     padding: 0.5rem 1.5rem;
-    border-radius: 0.5rem;
+    border-radius: 3rem;
     transition: background-color 0.3s;
+    margin: 0px;
+}
+
+.button.active{
+  background-color: #ef9cc7;
+  color: white;
 }
 
 .subtext{
@@ -55,8 +100,37 @@ body {
     align-items: center;
     justify-content: center;
     color: #ef9cc7;
-    font-size: 2rem;
+    font-size: 1rem;
 }
+
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+ul li {
+  margin-bottom: 20px;
+  padding: 10px;
+  background-color: #000000;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+  
+  border-color: #FF9BD1;
+  border-width: 1px; 
+  border-radius: 20px;
+}
+
+ul li div {
+  margin-bottom: 8px;
+  font-size: 16px;
+  color: #ffffff;
+} 
+
+ul li div strong {
+  color: #db2a8e;
+}
+
 
 .line-chart-container {
   color: white;
