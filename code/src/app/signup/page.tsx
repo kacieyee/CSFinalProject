@@ -85,7 +85,7 @@ export default function SignUp() {
           <div style={{ position: 'relative' }}>
             <input
               type={showPassword ? "text" : "password"}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => setConfirm(e.target.value)}
               placeholder="Re-enter your password"
               className="inputField"
               style={{ paddingRight: '2.5rem' }}

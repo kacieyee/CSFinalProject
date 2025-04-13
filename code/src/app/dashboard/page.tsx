@@ -16,7 +16,7 @@ const hashColor = (str: string) => {
     hash = str.charCodeAt(i) + ((hash << 5) - hash);
   }
 
-  const hue = hash % 360;
+  const hue = 338;
   const saturation = 55 + (hash % 25);
   const lightness = 55 + (hash % 25);
 
