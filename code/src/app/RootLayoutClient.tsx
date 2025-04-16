@@ -13,7 +13,12 @@ interface RootLayoutClientProps {
 
 //include navbar in the rootlayout so it's on all the pages
 export default function RootLayoutClient({ token, children }: RootLayoutClientProps) {
-    return (
+  const handleLogout = async () => {
+    await fetch("/api/logout", { method: "POST" });
+    window.location.href = "/login";
+  }
+  
+  return (
         <html lang="en">
           <body className="bg-black">
             <div className="flex flex-col h-screen">
@@ -42,7 +47,13 @@ export default function RootLayoutClient({ token, children }: RootLayoutClientPr
                   
                   <Link href="/profile" className="hover:text-gray-300">Profile</Link>
                   
-                  <Link href="/login" className="hover:text-gray-300">Login</Link>
+                  <Link href="/login" onClick={(e) => {
+                    e.preventDefault();
+                    handleLogout();
+                  }} className="hover:text-gray-300">
+                    Logout
+                  </Link>
+
                 </div>
               </nav>
               )}
