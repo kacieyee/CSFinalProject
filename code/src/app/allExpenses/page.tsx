@@ -78,8 +78,8 @@ export default function Expenses() {
   const filterExpensesByDate = (expenses: Expense[]) => {
     const filtered = expenses.filter((expense) => {
       const expenseDate = new Date(expense.date);
-      const start = startDate ? new Date(startDate) : new Date(0); // Default to earliest date
-      const end = endDate ? new Date(endDate) : new Date(); // Default to current date
+      const start = startDate ? new Date(startDate) : new Date(0); 
+      const end = endDate ? new Date(endDate) : new Date(); 
 
       return expenseDate >= start && expenseDate <= end;
     });
@@ -263,7 +263,6 @@ export default function Expenses() {
     <div className="row">
       <div className="column left">
         <h2>All Expenses</h2>
-        {/* Filter inputs */}
         <label>
           Start Date:
           <input
@@ -277,6 +276,7 @@ export default function Expenses() {
           <input
             type="date"
             value={endDate}
+            min={startDate ? new Date(new Date(startDate).getTime() + 86400000).toISOString().split('T')[0] : ''}
             onChange={(e) => setEndDate(e.target.value)}
           />
         </label>
