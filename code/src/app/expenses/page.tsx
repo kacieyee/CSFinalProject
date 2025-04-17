@@ -4,7 +4,6 @@ import Link from 'next/link';
 import React, { useEffect, useRef, useState } from 'react';
 import AddExpensePopup from './addExpensePopup'; 
 import { BarLoader } from 'react-spinners';
-import { getCookie } from 'cookies-next';
 import { DeleteRounded} from '@mui/icons-material';
 import { jsPDF } from "jspdf";
 
@@ -200,10 +199,15 @@ export default function Expenses() {
         return;
     }
 
+    processFile(selectedFile);
+  };
+
+  const processFile = async (file: File) => {
     setIsLoading(true);
 
     const formData = new FormData();
-    formData.append("document", selectedFile);
+    const filename = file.name || "transcription.pdf";
+    formData.append("document", file, filename);
 
     try {
         const uploadResponse = await fetch("/api/sendDocument", {
@@ -318,7 +322,7 @@ export default function Expenses() {
             const url = URL.createObjectURL(blob);
             audioURLRef.current = url;
             setAudioURL(url);
-            transcribeAudio(file);
+            processAudio(file);
           };
 
           mediaRecorder.start();
@@ -340,7 +344,7 @@ export default function Expenses() {
     }
   };
 
-  const transcribeAudio = async (audioFile: File) => {
+  const processAudio = async (audioFile: File) => {
     const formData = new FormData();
     formData.append("audio", audioFile);
   
@@ -351,7 +355,16 @@ export default function Expenses() {
       });
   
       const data = await response.json();
-      console.log("Transcription:", data.text);
+
+      console.log(data.text);
+
+      // convert to pdf
+      const pdf = new jsPDF();
+      pdf.text(data.text, 10, 10);
+      const pdfBlob = pdf.output('blob');
+
+      // process pdf
+      processFile(pdfBlob as File);
     } catch (error) {
       console.error("Error transcribing audio:", error);
     }
