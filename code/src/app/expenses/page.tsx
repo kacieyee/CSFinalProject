@@ -206,7 +206,7 @@ export default function Expenses() {
         return;
     }
 
-    processFile(selectedFile);
+    processFile(selectedFile, null);
   };
 
   const processFile = async (file: File, extractedPriceFromAudio: number | null) => {
