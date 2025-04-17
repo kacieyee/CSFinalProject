@@ -84,6 +84,13 @@ export default function Expenses() {
     try {
       e.preventDefault();
 
+      const disallowedCategories = ["total expenses", "temp total"];
+
+      if (disallowedCategories.includes(category.trim().toLowerCase())) {
+          alert(`"${category}" is a reserved category and cannot be added.`);
+          return;
+      }
+
       const categoryExists = budget.some(budgetItem => budgetItem.category === category);
 
       if (!categoryExists) {
@@ -421,7 +428,9 @@ export default function Expenses() {
               />
               <datalist id="categories">
                 {budget.length > 0 ? (
-                  budget.map((categoryOption) => (
+                  budget.filter((categoryOption) => 
+                    !["total expenses", "temp total"].includes(categoryOption.category.toLowerCase())
+                  ).map((categoryOption) => (
                     <option key={categoryOption._id} value={categoryOption.category} />
                   ))
                 ) : (

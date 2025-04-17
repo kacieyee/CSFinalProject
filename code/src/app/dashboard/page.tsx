@@ -15,40 +15,13 @@ const hashColor = (str: string) => {
   for (let i = 0; i < str.length; i++) {
     hash = str.charCodeAt(i) + ((hash << 5) - hash);
   }
-    // "rgb(255, 235, 245)",
-    // 'rgb(255, 186, 222)',
-    // 'rgb(255, 114, 187)',
-    // 'rgb(255, 48, 155)',
-    // 'rgb(206, 28, 120)',
-    // 'rgb(134, 14, 76)',
 
-  const hue = 338;
+  const hue = 325;
   const saturation = 55 + (hash % 25);
   const lightness = 55 + (hash % 25);
 
   const color = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
   return color;
-};
-
-
-export const data = {
-  labels: ['Savings', 'Groceries', 'Housing', 'Health', 'Transport', 'For funsies'],
-  datasets: [
-    {
-      label: 'Amount Spent',
-      data: [12, 19, 3, 5, 2, 3],
-      backgroundColor: [
-        "rgb(255, 235, 245)",
-        'rgb(255, 186, 222)',
-        'rgb(255, 114, 187)',
-        'rgb(255, 48, 155)',
-        'rgb(206, 28, 120)',
-        'rgb(134, 14, 76)',
-      ],
-      radius: 150,
-      borderWidth: 0,
-    },
-  ],
 };
 
 export const options = {
@@ -190,9 +163,13 @@ export default function Dashboard() {
 
     useEffect(() => {
       if (budgetCategories.length > 0 && transactions.length > 0) {
+        const filteredCategories = budgetCategories.filter(
+          (category) => !["total expenses", "temp total"].includes(category.toLowerCase())
+        );
+
         const categoryTotals: { [key: string]: number } = {};
         
-        budgetCategories.forEach(category => {
+        filteredCategories.forEach(category => {
           categoryTotals[category] = 0;
         });
     
@@ -203,12 +180,12 @@ export default function Dashboard() {
         });
     
         setDoughnutData({
-          labels: budgetCategories,
+          labels: filteredCategories,
           datasets: [
             {
               label: "Spending Breakdown",
-              data: budgetCategories.map(category => categoryTotals[category] || 0), // Sum of transactions per category
-              backgroundColor: budgetCategories.map(category => hashColor(category)),
+              data: filteredCategories.map(category => categoryTotals[category] || 0),
+              backgroundColor: filteredCategories.map(category => hashColor(category)),
               borderWidth: 0,
             },
           ],
@@ -216,7 +193,11 @@ export default function Dashboard() {
       }
     }, [budgetCategories, transactions]);
 
-    const groupedCategories = budgetCategories.reduce((acc: string[][], category, index) => {
+    const visibleCategories = budgetCategories.filter(
+      (category) => !["total expenses", "temp total"].includes(category.toLowerCase())
+    );
+
+    const groupedCategories = visibleCategories.reduce((acc: string[][], category, index) => {
       if (index % 3 === 0) acc.push([]);
       acc[acc.length - 1].push(category);
       return acc;
@@ -228,8 +209,6 @@ export default function Dashboard() {
       <div className="row">
         <div className="column left1">
           <h1>Filter</h1>
-
-
           <div className="button-container">
           {groupedCategories.map((row, rowIndex) => (
             <div key={rowIndex} className="filter">
@@ -240,14 +219,11 @@ export default function Dashboard() {
           ))}
         </div>
 
-        
-
           <div className="subtext">Looks like you are on track to hitting your savings goal! Keep it up girlie!</div>
 
         </div>
 
         <div className="column right1">
-
           
           <h1>Recent Transactions</h1>
           <ul className="text-white">
@@ -274,11 +250,10 @@ export default function Dashboard() {
         </div>
         <div className="column right2">
 
-        {/* <Doughnut data={data} options={options} /> */}
         {doughnutData ? (
           <Doughnut data={doughnutData} options={options} />
         ) : (
-          <p>Loading chart...</p>
+          <p></p>
         )}
 
         </div>

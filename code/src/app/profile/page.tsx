@@ -74,12 +74,6 @@ export default function Profile() {
         credentials: "include"
       });
 
-      if (updatedUserResponse.ok) {
-        const updatedUserData = await updatedUserResponse.json();
-        setUserData(updatedUserData);
-        alert("Profile updated successfully!");
-      }
-
     } catch (err) {
       console.error("Error updating user:", err);
       alert("An error occurred while updating the profile.");
@@ -91,6 +85,13 @@ export default function Profile() {
 
     if (!category.trim()) {
         alert("Category cannot be blank!");
+        return;
+    }
+
+    const disallowedCategories = ["total expenses", "temp total"];
+
+    if (disallowedCategories.includes(category.trim().toLowerCase())) {
+        alert(`"${category}" is a reserved category and cannot be added.`);
         return;
     }
 
@@ -200,17 +201,14 @@ const deleteBudget = async (category: string) => {
 };
 
 const handleGoalChange = (category: string, value: string) => {
-  if (value === '') {
-    setTempGoals((prevGoals) => ({
-      ...prevGoals,
-      [category]: value,
-    }));
-  } else {
-    setTempGoals((prevGoals) => ({
-      ...prevGoals,
-      [category]: value,
-    }));
-  }
+  setTempGoals((prevGoals) => ({
+    ...prevGoals,
+    [category]: value,
+  }));
+};
+
+const handleIntervalChange = (budget: Budget, newInterval: string) => {
+  updateBudget(budget.category, budget.goal, newInterval);
 };
 
 const handleGoalSubmit = (e: React.KeyboardEvent<HTMLInputElement>, budget: Budget) => {
@@ -250,14 +248,16 @@ const handleGoalSubmit = (e: React.KeyboardEvent<HTMLInputElement>, budget: Budg
       <div className="column-right">
         <h1>Budgeting Goals</h1>
         <div className="profileSection">
-          {userData.budgets.length > 1 ? (
-            userData.budgets.slice(1).map((budget, index) => (
+        {userData.budgets.filter(b => !["temp total"].includes(b.category.toLowerCase())).length > 0 ? (
+          userData.budgets
+            .filter(b => !["temp total"].includes(b.category.toLowerCase()))
+            .map((budget, index) => (
               <div key={index}>
                 <div>
                   <label>You have a </label>
                   <select 
                     value={budget.interval} 
-                    onChange={(e) => updateBudget(budget.category, budget.goal, e.target.value)}
+                    onChange={(e) => handleIntervalChange(budget, e.target.value)}
                   >
                     <option value="daily">daily</option>
                     <option value="weekly">weekly</option>
