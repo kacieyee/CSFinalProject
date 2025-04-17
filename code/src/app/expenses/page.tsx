@@ -202,7 +202,7 @@ export default function Expenses() {
     processFile(selectedFile);
   };
 
-  const processFile = async (file: File) => {
+  const processFile = async (file: File, extractedPriceFromAudio: number | null) => {
     setIsLoading(true);
 
     const formData = new FormData();
@@ -262,6 +262,11 @@ export default function Expenses() {
                                   setDate(transactionDate);
                                 if (receiptType)
                                   setCategory(receiptType);
+
+                                if (extractedPriceFromAudio !== null) {
+                                  setPrice(extractedPriceFromAudio.toString());
+                                  console.log("Set price field to:", extractedPriceFromAudio);
+                                }
 
                                 break;
                             }
@@ -355,8 +360,18 @@ export default function Expenses() {
       });
   
       const data = await response.json();
+      const transcribedText = data.text;
+      let extractedPriceValue: number | null = null;
 
-      console.log(data.text);
+      const priceMatch = transcribedText.match(/\$\s*(\d+(\.\d{1,2})?)/);
+
+      if (priceMatch && priceMatch[1]) {
+        extractedPriceValue = parseFloat(priceMatch[1]);
+        console.log(transcribedText);
+        console.log(extractedPriceValue);
+      } else {
+        console.log("Price not found");
+      }
 
       // convert to pdf
       const pdf = new jsPDF();
@@ -364,7 +379,7 @@ export default function Expenses() {
       const pdfBlob = pdf.output('blob');
 
       // process pdf
-      processFile(pdfBlob as File);
+      processFile(pdfBlob as File, extractedPriceValue);
     } catch (error) {
       console.error("Error transcribing audio:", error);
     }
