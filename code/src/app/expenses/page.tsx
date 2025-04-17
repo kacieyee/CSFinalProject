@@ -292,13 +292,6 @@ export default function Expenses() {
     }
   };
 
-  // TESTING JSPDF (IGNORE)
-  const textToPDF = () => {
-    const doc = new jsPDF();
-    doc.text("On April 9th, 2025, I bought coffee at Starbucks for a cost of $5.99", 10, 10);
-    doc.save("transaction.pdf");  
-  };
-
   const startRecording = () => {
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
       navigator.mediaDevices
@@ -321,14 +314,14 @@ export default function Expenses() {
 
           mediaRecorder.onstop = () => {
             const blob = new Blob(audioChunksRef.current, { type: "audio/ogg; codecs=opus" });
+            const file = new File([blob], "recording.ogg", { type: blob.type });
             const url = URL.createObjectURL(blob);
             audioURLRef.current = url;
             setAudioURL(url);
-            console.log("recording stopped");
+            transcribeAudio(file);
           };
 
           mediaRecorder.start();
-          console.log("recording started");
         })
     
         .catch((err) => {
@@ -347,6 +340,23 @@ export default function Expenses() {
     }
   };
 
+  const transcribeAudio = async (audioFile: File) => {
+    const formData = new FormData();
+    formData.append("audio", audioFile);
+  
+    try {
+      const response = await fetch("/api/whisper", {
+        method: "POST",
+        body: formData,
+      });
+  
+      const data = await response.json();
+      console.log("Transcription:", data.text);
+    } catch (error) {
+      console.error("Error transcribing audio:", error);
+    }
+  };
+  
   return (
     
     <div className="row">
