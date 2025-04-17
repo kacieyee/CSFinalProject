@@ -29,8 +29,8 @@ const userSchema = new Schema({
 userSchema.pre("save", function(next) {
     if (this.isNew && this.budgets.length === 0) {
         this.budgets = [
-            { category: "savings", goal: 0, interval: "monthly" },
-            { category: "total expenses", goal: 0, interval: "monthly" }
+            { category: "total expenses", goal: 0, interval: "monthly" },
+            { category: "temp total", goal: 0, interval: "monthly" }
         ];
     }
     next();
