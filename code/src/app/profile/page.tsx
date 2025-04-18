@@ -26,6 +26,7 @@ export default function Profile() {
   const [budget, setBudget] = useState<Budget[]>([]);
   const [showPassword, setShowPassword] = useState(false);
   const [showNewGoalPopup, setShowNewGoalPopup] = useState(false);
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -200,17 +201,7 @@ const deleteBudget = async (category: string) => {
 };
 
 const handleGoalChange = (category: string, value: string) => {
-  if (value === '') {
-    setTempGoals((prevGoals) => ({
-      ...prevGoals,
-      [category]: value,
-    }));
-  } else {
-    setTempGoals((prevGoals) => ({
-      ...prevGoals,
-      [category]: value,
-    }));
-  }
+  setTempGoals((prevGoals) => ({ ...prevGoals, [category]: value }));
 };
 
 const handleGoalSubmit = (e: React.KeyboardEvent<HTMLInputElement>, budget: Budget) => {
@@ -220,113 +211,106 @@ const handleGoalSubmit = (e: React.KeyboardEvent<HTMLInputElement>, budget: Budg
   }
 };
 
-  // Function to toggle the visibility of the popup
-  const toggleNewGoalPopup = () => {
-    setShowNewGoalPopup(!showNewGoalPopup);
-  };
+const toggleNewGoalPopup = () => {
+  setShowNewGoalPopup(!showNewGoalPopup);
+};
 
-  return (
-    <div className="row">
-      <div className="column-left">
-        <h1>Profile</h1>
-        <div className="profileSection">
-          <p><strong>Name:</strong> {userData.username}</p>
-          <div style={{ display: "flex", alignSelf: "right" }}>
-            <p style={{ marginRight: "19rem" }}>
-              <strong>Password:</strong>{" "}
-              {showPassword ? userData.password : "•".repeat(userData.password.length)}
-            </p>
-            <div onClick={() => setShowPassword(!showPassword)} style={{ cursor: "pointer" }}>
-              {showPassword ? (
-                <VisibilityOffRounded sx={{ color: '#FF9BD1' }} />
-              ) : (
-                <VisibilityRounded sx={{ color: '#FF9BD1' }} />
-              )}
-            </div>
+return (
+  <div className="row">
+    <div className="column-left">
+      <h1>Profile</h1>
+      <div className="profileSection">
+        <p><strong>Name:</strong> {userData.username}</p>
+        <div style={{ display: "flex", alignSelf: "right" }}>
+          <p style={{ marginRight: "15rem" }}>
+            <strong>Password:</strong>{" "}
+            {showPassword ? userData.password : "•".repeat(userData.password.length)}
+          </p>
+          <div onClick={() => setShowPassword(!showPassword)} style={{ cursor: "pointer" }}>
+            {showPassword ? (
+              <VisibilityRounded sx={{ color: '#FF9BD1' }} />
+            ) : (
+              <VisibilityOffRounded sx={{ color: '#FF9BD1' }} />
+            )}
           </div>
-
         </div>
       </div>
-      <div className="column-right">
-        <h1>Budgeting Goals</h1>
-        <div className="profileSection">
-          {userData.budgets.length > 1 ? (
-            userData.budgets.slice(1).map((budget, index) => (
-              <div key={index}>
-                <div>
-                  <label>You have a </label>
-                  <select 
-                    value={budget.interval} 
-                    onChange={(e) => updateBudget(budget.category, budget.goal, e.target.value)}
+      <button
+        onClick={() => setIsEditingProfile(!isEditingProfile)}
+        className="button"
+        style={{ marginTop: "1rem" }}
+      >
+        {isEditingProfile ? "Finish Editing" : "Edit Goals"}
+      </button>
+    </div>
+    <div className="column-right">
+      <h1>Budgeting Goals</h1>
+      <div className="profileSection">
+        {userData.budgets.length > 1 ? (
+          userData.budgets.slice(1).map((budget, index) => (
+            <div key={index}>
+              <div>
+                <label>You have a </label>
+                <select 
+                  value={budget.interval} 
+                  onChange={(e) => updateBudget(budget.category, budget.goal, e.target.value)}
+                  disabled={!isEditingProfile}
+                >
+                  <option value="daily">daily</option>
+                  <option value="weekly">weekly</option>
+                  <option value="biweekly">biweekly</option>
+                  <option value="monthly">monthly</option>
+                  <option value="yearly">yearly</option>
+                </select>
+                <label> budget of $ </label>
+                <input 
+                  type="number"
+                  value={tempGoals[budget.category] || budget.goal}
+                  onChange={(e) => handleGoalChange(budget.category, e.target.value)} 
+                  onKeyDown={(e) => handleGoalSubmit(e, budget)}
+                  className="goal-input"
+                  disabled={!isEditingProfile}
+                />
+                <label> for {budget.category}.</label>
+                {budget.category.toLowerCase() !== "total expenses" && isEditingProfile && (
+                  <button 
+                    onClick={() => deleteBudget(budget.category)} 
+                    className="delete-button"
                   >
-                    <option value="daily">daily</option>
-                    <option value="weekly">weekly</option>
-                    <option value="biweekly">biweekly</option>
-                    <option value="monthly">monthly</option>
-                    <option value="yearly">yearly</option>
-                  </select>
-
-                  <label> budget of $ </label>
-                  <input 
-                    type="number"
-                    value={tempGoals[budget.category] || budget.goal}
-                    onChange={(e) => handleGoalChange(budget.category, e.target.value)} 
-                    onKeyDown={(e) => handleGoalSubmit(e, budget)}
-                    className="goal-input"
-                  />
-                  <label> for {budget.category}.</label>
-                  {budget.category.toLowerCase() !== "total expenses" && (
-                    <button 
-                      onClick={() => deleteBudget(budget.category)} 
-                      className="delete-button"
-                    ><DeleteRounded sx={{ color: '#FF9BD1' }}/>
-                    </button>
-                  )}
-                </div>
-              </div>
-            ))
-          ) : (
-            <p>No budgeting goals set.</p>
-          )}
-
-          <h1> Add a new goal!</h1>
-          <form onSubmit={submitBudget}>
-          <div className="budgetGoal">
-            For what category? 
-            <input 
-                list="categories" 
-                value={category} 
-                onChange={(e) => setCategory(e.target.value)} 
-              />
-              <datalist id="categories">
-                {budget.length > 0 ? (
-                  budget.map((categoryOption) => (
-                    <option key={categoryOption._id} value={categoryOption.category} />
-                  ))
-                ) : (
-                  <option>No categories available</option>
+                    <DeleteRounded sx={{ color: '#FF9BD1' }}/>
+                  </button>
                 )}
-              </datalist>
-            {/* every 
-            <select className="category">
-              <option>week</option>
-              <option>2 weeks</option>
-              <option>month</option>
-              <option>year</option>
-            </select>
-            on 
-            <select className="category">
-              <option>groceries</option>
-              <option>savings</option>
-              <option>rent</option>
-              <option>total expenses</option>
-            </select> */}
-          </div>  
-          <br></br>
-          <button type="submit" className="button">Submit</button>
-          </form>
-        </div>
+              </div>
+            </div>
+          ))
+        ) : (
+          <p>No budgeting goals set.</p>
+        )}
+
+        <h1> Add a new goal!</h1>
+        <form onSubmit={submitBudget}>
+        <div className="budgetGoal">
+          For what category? 
+          <input 
+              list="categories" 
+              value={category} 
+              onChange={(e) => setCategory(e.target.value)} 
+            />
+            <datalist id="categories">
+              {budget.length > 0 ? (
+                budget.map((categoryOption) => (
+                  <option key={categoryOption._id} value={categoryOption.category} />
+                ))
+              ) : (
+                <option>No categories available</option>
+              )}
+            </datalist>
+        </div>  
+        <br></br>
+        <button type="submit" className="button">Submit</button>
+        </form>
       </div>
     </div>
-  );
+  </div>
+);
 }

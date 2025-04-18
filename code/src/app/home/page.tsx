@@ -9,8 +9,6 @@ export default function Home() {
               <Image 
                 src={pinkLogo} 
                 alt="Pink Logo" 
-                width={0}
-                height={0} 
                 className="logo"
               />
       <h1 className="heading">
@@ -20,12 +18,12 @@ export default function Home() {
 
       <div className="buttonContainer">
         <Link href="/login">
-          <button className="button">
+          <button className="pink-button">
             Login
           </button>
         </Link>
         <Link href="/signup">
-          <button className="button">
+          <button className="pink-button">
             Sign Up
           </button>
         </Link>

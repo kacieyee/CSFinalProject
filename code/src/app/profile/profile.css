@@ -9,13 +9,13 @@
 }
 
 .column-left {
-  width: 40%;
+  width: 35%;
   padding: 20px;
   float: left;
 }
 
 .column-right {
-  width: 60%;
+  width: 65%;
   padding: 20px;
   float: left; 
 }
@@ -51,9 +51,7 @@ h2 {
 
 .budgetGoal {
   font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-
   padding: 4%;
-
 }
 
 button {
@@ -64,37 +62,21 @@ button {
   width: 5%;
   text-align: center;
   color: #d22b84;
-
 }
 
-
 input, select, .goal-input {
-  background-color: transparent;
-  color: white;
   padding: 0.4rem 1.5rem;
-  border: 2px solid #FF9BD1; 
   border-radius: 4rem;
-  width: auto;
+  background-color: rgba(255, 110, 173, 0.5);
+  color: white;
+  border-color: #FF9BD1;
+  border-width: 1px;
+  width: auto; 
   display: inline-block;
   margin: 0.5em;
   justify-content: center;
   align-items: center;
   font-size: 16px;
-
-  /* gradient fade effect */
-  background-image: radial-gradient(circle, transparent 10%, #FF9BD1 140%);
-  background-size: 100% 100%;
-  background-position: center;
-  transition: background-color 0.5s ease-in-out;
-}
-
-input:focus {
-  background-image: radial-gradient(circle, transparent 10%, #FF9BD1 120%);
-}
-
-input {
-  text-align: center;
-  width:fit-content;
 }
 
 .currencySymbol {
@@ -113,7 +95,6 @@ input {
   border-width: 2px;
   text-align: left;
   color: #ffffff;
-
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
@@ -132,15 +113,12 @@ input {
 .addExpenseButton {
   display: flex;
   justify-content: flex-end;
-
   text-align: right;
-
   background-color: #FF9BD1; 
   color: white;
   padding: 0.5rem 1.5rem;
   border-radius: 0.5rem;
   transition: background-color 0.3s;
-  
   
   /* position: absolute; */
   right: 10px;
