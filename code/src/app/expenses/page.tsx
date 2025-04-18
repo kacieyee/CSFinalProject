@@ -374,7 +374,9 @@ export default function Expenses() {
       });
   
       const data = await response.json();
-      const transcribedText = data.text;
+      const trimmedText = data.text.trim();
+      const transcribedText = trimmedText.endsWith('.') ? trimmedText.slice(0, -1) : trimmedText;
+      console.log(transcribedText);
       let extractedPriceValue: number | null = null;
       let extractedDateValue: Date | null = null;
 
@@ -383,34 +385,29 @@ export default function Expenses() {
             
       if (priceMatch && priceMatch[1]) {
         extractedPriceValue = parseFloat(priceMatch[1]);
-        console.log(transcribedText);
-        console.log(extractedPriceValue);
-      } else {
-        console.log("Price not found");
       }
 
-      if (dateMatch[1]) { // text format
-        const monthString = dateMatch[1];
-        const day = parseInt(dateMatch[2], 10);
-        const year = parseInt(dateMatch[3], 10);
-        const monthIndex = new Date(Date.parse(monthString + " 1, 2000")).getMonth();
-        extractedDateValue = new Date(year, monthIndex, day);
-        console.log(extractedDateValue);
-      } else if (dateMatch[4]) { // MM-DD-YY or MM-DD-YYYY format
-        const month = parseInt(dateMatch[4], 10) - 1;
-        const day = parseInt(dateMatch[5], 10);
-        let year = parseInt(dateMatch[6], 10);
-    
-        if (year >= 0 && year <= 99) {
-          year += 2000;
+      if (dateMatch) {
+        if (dateMatch[1]) { // text format
+          const monthString = dateMatch[1];
+          const day = parseInt(dateMatch[2], 10);
+          const year = parseInt(dateMatch[3], 10);
+          const monthIndex = new Date(Date.parse(monthString + " 1, 2000")).getMonth();
+          extractedDateValue = new Date(year, monthIndex, day);
+        } else if (dateMatch[4]) { // MM-DD-YY or MM-DD-YYYY format
+          const month = parseInt(dateMatch[4], 10) - 1;
+          const day = parseInt(dateMatch[5], 10);
+          let year = parseInt(dateMatch[6], 10);
+      
+          if (year >= 0 && year <= 99) {
+            year += 2000;
+          }
+          extractedDateValue = new Date(year, month, day);
         }
-        extractedDateValue = new Date(year, month, day);
-        console.log(extractedDateValue);
       }
-    
       // convert to pdf
       const pdf = new jsPDF();
-      pdf.text(data.text, 10, 10);
+      pdf.text(transcribedText, 10, 10);
       const pdfBlob = pdf.output('blob');
 
       // process pdf
