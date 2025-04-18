@@ -91,11 +91,11 @@ export default function Expenses() {
           return;
       }
 
-      const categoryExists = budget.some(budgetItem => budgetItem.category === category);
+      const categoryExists = budget.some(budgetItem => budgetItem.category.toLowerCase() === category.toLowerCase());
 
       if (!categoryExists) {
         const newBudget = {
-          category,
+          category: category.toLowerCase(),
           goal: 0,
           interval: "monthly"
         };
@@ -123,7 +123,7 @@ export default function Expenses() {
           const response = await fetch("/api/transactions", { 
             method: "POST",
             headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({name, price, date, vendor, category}),
+            body: JSON.stringify({name, price, date, vendor, category: category.toLowerCase()}),
           });
           
           if (response.ok) {
@@ -139,11 +139,11 @@ export default function Expenses() {
 
   const updateTransaction = async (transactionId: string, updatedTransaction: Partial<Expense>) => {
     try {
-      const categoryExists = budget.some(budgetItem => budgetItem.category === category);
+      const categoryExists = budget.some(budgetItem => budgetItem.category.toLowerCase() === category.toLowerCase());
 
       if (!categoryExists) {
         const newBudget = {
-          category,
+          category: category.toLowerCase(),
           goal: 0,
           interval: "monthly"
         };
@@ -154,7 +154,7 @@ export default function Expenses() {
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify({ transactionId, ...updatedTransaction }),
+            body: JSON.stringify({ transactionId, ...updatedTransaction, category: updatedTransaction.category?.toLowerCase() }),
           });
       
           if (response.ok) {
@@ -264,7 +264,7 @@ export default function Expenses() {
                                 if (transactionDate)
                                   setDate(transactionDate);
                                 if (receiptType)
-                                  setCategory(receiptType);
+                                  setCategory(receiptType.toLowerCase());
 
                                 break;
                             }
@@ -424,7 +424,7 @@ export default function Expenses() {
               <input 
                 list="categories" 
                 value={category} 
-                onChange={(e) => setCategory(e.target.value)} 
+                onChange={(e) => setCategory(e.target.value.toLowerCase())} 
               />
               <datalist id="categories">
                 {budget.length > 0 ? (

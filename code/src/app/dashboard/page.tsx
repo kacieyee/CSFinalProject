@@ -60,6 +60,7 @@ export default function Dashboard() {
     const [totalExpenseLimit, setTotalExpenseLimit] = useState<number | null>(null);
     const [activeCategories, setActiveCategories] = useState<string[]>([]);
     const [groupedCategories, setGroupedCategories] = useState<string[][]>([]);
+    const [motivationMessage, setMotivationMessage] = useState("");
 
     const groupCategories = (categories: string[]) => {
       return categories.reduce((acc: string[][], category, index) => {
@@ -160,13 +161,20 @@ export default function Dashboard() {
 
     useEffect(() => {
       if (visibleCategories.length > 0 && transactions.length > 0) {
-        const categoryTotals: { [key: string]: number } = {};
+        const now = new Date();
+        const sixMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 5, 1);
     
+        const recentTransactions = transactions.filter(txn => {
+          const txnDate = new Date(txn.date);
+          return txnDate >= sixMonthsAgo && visibleCategories.includes(txn.category);
+        });
+    
+        const categoryTotals: { [key: string]: number } = {};
         visibleCategories.forEach(category => {
           categoryTotals[category] = 0;
         });
     
-        transactions.forEach(txn => {
+        recentTransactions.forEach(txn => {
           if (categoryTotals.hasOwnProperty(txn.category)) {
             categoryTotals[txn.category] += txn.price;
           }
@@ -213,7 +221,7 @@ export default function Dashboard() {
           ],
         });
       }
-    }, [visibleCategories, transactions]);
+    }, [visibleCategories, transactions]);    
 
     useEffect(() => {
       const monthSums: { [month: string]: number } = {};
@@ -251,6 +259,45 @@ export default function Dashboard() {
       });
     };
 
+    useEffect(() => {
+      if (!totalExpenseLimit || transactions.length === 0) return;
+    
+      const latestTxn = [...transactions].sort(
+        (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+      )[0];
+    
+      const latestMonth = new Date(latestTxn.date).getMonth();
+      const latestYear = new Date(latestTxn.date).getFullYear();
+    
+      const monthlyTotal = transactions.reduce((sum, txn) => {
+        const txnDate = new Date(txn.date);
+        if (
+          txnDate.getMonth() === latestMonth &&
+          txnDate.getFullYear() === latestYear &&
+          visibleCategories.includes(txn.category)
+        ) {
+          return sum + txn.price;
+        }
+        return sum;
+      }, 0);
+    
+      const percentage = (monthlyTotal / totalExpenseLimit) * 100;
+    
+      let message = "";
+    
+      if (percentage < 50) {
+        message = "You’re spending way under budget! Treat yourself a little!";
+      } else if (percentage < 90) {
+        message = "Keep it up girlie! You’re on track!";
+      } else if (percentage < 100) {
+        message = "Almost at your budget! Slow it down girlie!";
+      } else {
+        message = "Careful! You’ve gone over budget this month!";
+      }
+    
+      setMotivationMessage(message);
+    }, [transactions, totalExpenseLimit, visibleCategories]);
+
     return (
       
       <div className="main">
@@ -273,7 +320,7 @@ export default function Dashboard() {
             ))}
           </div>
 
-          <div className="subtext">Looks like you are on track to hitting your savings goal! Keep it up girlie!</div>
+          <div className="subtext">{motivationMessage}</div>
 
         </div>
 
