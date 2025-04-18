@@ -53,7 +53,7 @@ export async function POST(request) {
         }
 
         const budget = {
-            category,
+            category: category.toLowerCase(),
             goal: Number(goal),
             interval: String(interval)
         };
