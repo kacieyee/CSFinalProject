@@ -4,7 +4,6 @@ import Link from 'next/link';
 import React, { useEffect, useRef, useState } from 'react';
 import AddExpensePopup from './addExpensePopup'; 
 import { BarLoader } from 'react-spinners';
-import { getCookie } from 'cookies-next';
 import { DeleteRounded} from '@mui/icons-material';
 import { jsPDF } from "jspdf";
 
@@ -85,11 +84,18 @@ export default function Expenses() {
     try {
       e.preventDefault();
 
-      const categoryExists = budget.some(budgetItem => budgetItem.category === category);
+      const disallowedCategories = ["total expenses", "temp total"];
+
+      if (disallowedCategories.includes(category.trim().toLowerCase())) {
+          alert(`"${category}" is a reserved category and cannot be added.`);
+          return;
+      }
+
+      const categoryExists = budget.some(budgetItem => budgetItem.category.toLowerCase() === category.toLowerCase());
 
       if (!categoryExists) {
         const newBudget = {
-          category,
+          category: category.toLowerCase(),
           goal: 0,
           interval: "monthly"
         };
@@ -117,7 +123,7 @@ export default function Expenses() {
           const response = await fetch("/api/transactions", { 
             method: "POST",
             headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({name, price, date, vendor, category}),
+            body: JSON.stringify({name, price, date, vendor, category: category.toLowerCase()}),
           });
           
           if (response.ok) {
@@ -133,11 +139,11 @@ export default function Expenses() {
 
   const updateTransaction = async (transactionId: string, updatedTransaction: Partial<Expense>) => {
     try {
-      const categoryExists = budget.some(budgetItem => budgetItem.category === category);
+      const categoryExists = budget.some(budgetItem => budgetItem.category.toLowerCase() === category.toLowerCase());
 
       if (!categoryExists) {
         const newBudget = {
-          category,
+          category: category.toLowerCase(),
           goal: 0,
           interval: "monthly"
         };
@@ -148,7 +154,7 @@ export default function Expenses() {
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify({ transactionId, ...updatedTransaction }),
+            body: JSON.stringify({ transactionId, ...updatedTransaction, category: updatedTransaction.category?.toLowerCase() }),
           });
       
           if (response.ok) {
@@ -201,10 +207,15 @@ export default function Expenses() {
         return;
     }
 
+    processFile(selectedFile, null, null);
+  };
+
+  const processFile = async (file: File, extractedPriceFromAudio: number | null, extractedDateFromAudio: Date | null) => {
     setIsLoading(true);
 
     const formData = new FormData();
-    formData.append("document", selectedFile);
+    const filename = file.name || "transcription.pdf";
+    formData.append("document", file, filename);
 
     try {
         const uploadResponse = await fetch("/api/sendDocument", {
@@ -258,7 +269,19 @@ export default function Expenses() {
                                 if (transactionDate)
                                   setDate(transactionDate);
                                 if (receiptType)
-                                  setCategory(receiptType);
+                                  setCategory(receiptType.toLowerCase());
+
+                                if (extractedPriceFromAudio !== null) {
+                                  setPrice(extractedPriceFromAudio.toString());
+                                }
+
+                                if (extractedDateFromAudio !== null) {
+                                  const year = extractedDateFromAudio.getFullYear();
+                                  const month = (extractedDateFromAudio.getMonth() + 1).toString().padStart(2, '0');
+                                  const day = extractedDateFromAudio.getDate().toString().padStart(2, '0');
+                                  const formattedDate = `${year}-${month}-${day}`;
+                                  setDate(formattedDate);
+                                }
 
                                 break;
                             }
@@ -293,13 +316,6 @@ export default function Expenses() {
     }
   };
 
-  // TESTING JSPDF (IGNORE)
-  const textToPDF = () => {
-    const doc = new jsPDF();
-    doc.text("On April 9th, 2025, I bought coffee at Starbucks for a cost of $5.99", 10, 10);
-    doc.save("transaction.pdf");  
-  };
-
   const toggleRecording = () => {
     if (isRecording) {
       stopRecording();
@@ -330,16 +346,16 @@ export default function Expenses() {
 
           mediaRecorder.onstop = () => {
             const blob = new Blob(audioChunksRef.current, { type: "audio/ogg; codecs=opus" });
+            const file = new File([blob], "recording.ogg", { type: blob.type });
             const url = URL.createObjectURL(blob);
             audioURLRef.current = url;
             setAudioURL(url);
             setIsRecording(false); 
-            console.log("recording stopped");
+            processAudio(file);
           };
 
           mediaRecorder.start();
           setIsRecording(true);
-          console.log("recording started");
         })
     
         .catch((err) => {
@@ -359,6 +375,60 @@ export default function Expenses() {
     }
   };
 
+  const processAudio = async (audioFile: File) => {
+    const formData = new FormData();
+    formData.append("audio", audioFile);
+  
+    try {
+      const response = await fetch("/api/whisper", {
+        method: "POST",
+        body: formData,
+      });
+  
+      const data = await response.json();
+      const trimmedText = data.text.trim();
+      const transcribedText = trimmedText.endsWith('.') ? trimmedText.slice(0, -1) : trimmedText;
+      console.log(transcribedText);
+      let extractedPriceValue: number | null = null;
+      let extractedDateValue: Date | null = null;
+
+      const priceMatch = transcribedText.match(/\$\s*(\d+(\.\d{1,2})?)/);
+      const dateMatch = transcribedText.match(/(January|February|March|April|May|June|July|August|September|October|November|December)\s(\d{1,2})(?:st|nd|rd|th)?,\s(\d{4})|(\d{1,2})-(\d{1,2})-(\d{2,4})/);
+            
+      if (priceMatch && priceMatch[1]) {
+        extractedPriceValue = parseFloat(priceMatch[1]);
+      }
+
+      if (dateMatch) {
+        if (dateMatch[1]) { // text format
+          const monthString = dateMatch[1];
+          const day = parseInt(dateMatch[2], 10);
+          const year = parseInt(dateMatch[3], 10);
+          const monthIndex = new Date(Date.parse(monthString + " 1, 2000")).getMonth();
+          extractedDateValue = new Date(year, monthIndex, day);
+        } else if (dateMatch[4]) { // MM-DD-YY or MM-DD-YYYY format
+          const month = parseInt(dateMatch[4], 10) - 1;
+          const day = parseInt(dateMatch[5], 10);
+          let year = parseInt(dateMatch[6], 10);
+      
+          if (year >= 0 && year <= 99) {
+            year += 2000;
+          }
+          extractedDateValue = new Date(year, month, day);
+        }
+      }
+      // convert to pdf
+      const pdf = new jsPDF();
+      pdf.text(transcribedText, 10, 10);
+      const pdfBlob = pdf.output('blob');
+
+      // process pdf
+      processFile(pdfBlob as File, extractedPriceValue, extractedDateValue);
+    } catch (error) {
+      console.error("Error transcribing audio:", error);
+    }
+  };
+  
   return (
     
     <div className="row">
@@ -431,11 +501,13 @@ export default function Expenses() {
               <input 
                 list="categories" 
                 value={category} 
-                onChange={(e) => setCategory(e.target.value)} 
+                onChange={(e) => setCategory(e.target.value.toLowerCase())} 
               />
               <datalist id="categories">
                 {budget.length > 0 ? (
-                  budget.map((categoryOption) => (
+                  budget.filter((categoryOption) => 
+                    !["total expenses", "temp total"].includes(categoryOption.category.toLowerCase())
+                  ).map((categoryOption) => (
                     <option key={categoryOption._id} value={categoryOption.category} />
                   ))
                 ) : (

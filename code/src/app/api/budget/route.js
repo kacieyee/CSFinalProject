@@ -4,6 +4,32 @@ import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { jwtVerify } from 'jose';
 
+const intervalMultipliers = {
+    daily: 30,
+    weekly: 4,
+    biweekly: 2,
+    monthly: 1,
+    yearly: 1 / 12,
+};
+
+function normalizeTo(targetInterval, amount, sourceInterval) {
+    const monthlyValue = amount * intervalMultipliers[sourceInterval];
+    return monthlyValue / intervalMultipliers[targetInterval];
+}
+
+function calculateTempGoal(budgets, targetInterval) {
+    let total = 0;
+  
+    for (const budget of budgets) {
+      if (budget.category !== "total expenses" && budget.category !== "temp total") {
+        const value = normalizeTo(targetInterval, budget.goal, budget.interval);
+        total += value;
+      }
+    }
+  
+    return total;
+}
+
 export async function POST(request) {
     try {
         const {category, goal, interval} = await request.json();
@@ -27,7 +53,7 @@ export async function POST(request) {
         }
 
         const budget = {
-            category,
+            category: category.toLowerCase(),
             goal: Number(goal),
             interval: String(interval)
         };
@@ -96,7 +122,43 @@ export async function PATCH(request) {
         }
 
         if (newGoal !== undefined) budget.goal = Number(newGoal);
-        if (newInterval) budget.interval = String(newInterval);
+        if (newInterval) {
+            budget.interval = String(newInterval);
+
+            if (category.toLowerCase() === "total expenses") {
+                const tempTotal = user.budgets.find(b => b.category === "temp total");
+                if (tempTotal) {
+                    const tempGoal = await calculateTempGoal(user.budgets, budget.interval);
+
+                    if (budget.goal == tempTotal.goal) {
+                        budget.goal = 0;
+                    }
+
+                    tempTotal.goal = tempGoal;
+                }
+
+                if (budget.goal < (tempTotal?.goal || 0)) {
+                    budget.goal = tempTotal?.goal || 0;
+                }
+            }
+        }
+
+        const totalExpenses = user.budgets.find(b => b.category === "total expenses");
+        const tempTotal = user.budgets.find(b => b.category === "temp total");
+
+        if (tempTotal && totalExpenses) {
+            const tempGoal = await calculateTempGoal(user.budgets, totalExpenses.interval);
+
+            if (totalExpenses.goal == tempTotal.goal) {
+                totalExpenses.goal = 0;
+            }
+
+            tempTotal.goal = tempGoal;
+
+            if (totalExpenses.goal < tempGoal) {
+                totalExpenses.goal = tempGoal;
+            }
+        }
 
         await user.save();
 
@@ -130,6 +192,24 @@ export async function DELETE(request) {
         }
 
         user.budgets = user.budgets.filter(budget => budget.category !== category);
+
+        const totalExpenses = user.budgets.find(b => b.category === "total expenses");
+        const tempTotal = user.budgets.find(b => b.category === "temp total");
+
+        if (tempTotal && totalExpenses) {
+            const tempGoal = await calculateTempGoal(user.budgets, totalExpenses.interval);
+
+            if (totalExpenses.goal == tempTotal.goal) {
+                totalExpenses.goal = 0;
+            }
+
+            tempTotal.goal = tempGoal;
+
+            if (totalExpenses.goal < tempGoal) {
+                totalExpenses.goal = tempGoal;
+            }
+        }
+
         await user.save();
 
         return NextResponse.json({message: "Budget deleted successfully"}, {status: 200});
