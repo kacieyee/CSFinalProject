@@ -8,9 +8,10 @@ body {
 
   .row {
     
-    /* border-color: red;
-    border-width: 5px; */
+    /* border: red 2px solid; */
+
     width: 100%;
+    display:flex;
   }
   
   .column {
@@ -19,11 +20,11 @@ body {
   }
   
   .left {
-    width: 50%;
+    width: 60%;
     /* background-color: white;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); */
-    padding: 20px;
+    padding: 40px;
     /* float: left; */
 /*     
     border-color: red;
@@ -35,7 +36,7 @@ body {
     /* background-color: white;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);*/
-    padding: 20px;
+    padding: 40px;
     float: left; 
 
   }
@@ -149,15 +150,23 @@ body {
 
   .popupContent {
     margin-bottom: 20px;
+    margin-top: 30px;
     padding: 20px;
     background-color: #000000;
     border-radius: 8px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    text-align: left;
 
     
     border-color: #FF9BD1;
     border-width: 1px; 
     border-radius: 20px;
+  }
+
+  .submitReceipt {
+    width: 100%;
+    float: left;
+    padding-left: 0px;
   }
 
   .closeButton {
@@ -180,9 +189,23 @@ body {
     padding: 0.5rem 1.5rem;
     border-radius: 0.5rem;
     transition: background-color 0.3s;
-    margin-left: 0.5rem;
     
   }
+
+  .recordButton {
+    border-radius: 5rem;
+    background-color: #D4384D;
+
+    border: black 4px solid;
+    outline: #D4384D 3px solid;
+  }
+
+  /* button after
+  
+
+
+  */
+
 
   .button-row {
     display: flex;
@@ -218,6 +241,52 @@ body {
     cursor: pointer;
     margin-top: 1rem;
     text-align: center;
+  }
+
+  .upload-left {
+    width: 40%;
+    /* border:aqua solid 2px; */
+  }
+
+  .upload-middle {
+    width: 15%;
+  }
+
+  .upload-right {
+    width: 40%;
+    align-items: left;
+    /* border:aqua solid 2px; */
+  }
+
+  .submitAudio {
+    margin-top: 10px;
+  }
+
+
+  img {
+    width: 40px;
+    height: 40px;
+    padding: 5px;
+  }
+
+  h3 {
+    font-size: 25px;
+    color: #FF9BD1;
+    padding-bottom: 15px;
+    padding-top: 15px;
+    font-weight: bold;
+    text-align: left;
+  }
+
+  h4 {
+    font-size: 25px;
+    color: white;
+    padding-bottom: 15px;
+    padding-top: 15px;
+
+    font-weight: bold;
+    text-align: center;
+
   }
 
   @media screen and (max-width: 600px) {

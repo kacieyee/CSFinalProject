@@ -36,6 +36,7 @@ export default function Expenses() {
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [budget, setBudget] = useState<Budget[]>([]);
   const [audioURL, setAudioURL] = useState<string | undefined>(undefined);
+  const [isRecording, setIsRecording] = useState(false);
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
@@ -299,6 +300,14 @@ export default function Expenses() {
     doc.save("transaction.pdf");  
   };
 
+  const toggleRecording = () => {
+    if (isRecording) {
+      stopRecording();
+    } else {
+      startRecording();
+    }
+  };
+
   const startRecording = () => {
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
       navigator.mediaDevices
@@ -324,10 +333,12 @@ export default function Expenses() {
             const url = URL.createObjectURL(blob);
             audioURLRef.current = url;
             setAudioURL(url);
+            setIsRecording(false); 
             console.log("recording stopped");
           };
 
           mediaRecorder.start();
+          setIsRecording(true);
           console.log("recording started");
         })
     
@@ -343,6 +354,7 @@ export default function Expenses() {
     const mediaRecorder = mediaRecorderRef.current;
     if (mediaRecorder && mediaRecorder.state !== "inactive") {
       mediaRecorder.stop();
+      setIsRecording(false);
       console.log("stoppped recording");
     }
   };
@@ -351,53 +363,55 @@ export default function Expenses() {
     
     <div className="row">
       <div className="column left">
-      <h2>Recent Expenses</h2>
-      <ul>
-        {expenses.length === 0 ? (
-          <li>No recent expenses</li>
-        ) : (
-        expenses.map((expense) => (
-        <li key={expense._id} className="expense-item">
-          <div className="expense-info">
-            <div><strong>Date:</strong> {new Date(expense.date).toLocaleDateString()}</div>
-            <div>${expense.price.toFixed(2)} spent on {expense.category} at {expense.vendor}.</div>
-          </div>
-          <button className="deleteButton" onClick={() => deleteTransaction(expense._id)}>
-            <DeleteRounded sx={{ color: '#FF9BD1' }}/>
-          </button>
-          </li>
-          ))
-        )}
-      </ul>
-
-        <Link href="/allExpenses">
-          <p className="view-all-expenses">
-          View all expenses
-          </p>
-        </Link>
-      </div>
-
-      <div className="column right">
-        <h2>Upload Receipt</h2>
+        <h2>Add New Expense</h2>
         <div className="upload-section">
+          <div className="row">
+          <div className="upload-left">
+            <h3>Add with Receipt</h3>
             <form onSubmit={handleFileUpload}>
               <label className="label">Select a file:</label>
               <input type="file" id="input" onChange={handleFileChange}></input>
               <br></br>
-              <input className="button" type="submit"></input>
+              <input className="submitReceipt button" type="submit"></input>
             </form>
-        </div>
-
-        {isLoading && (
-          <div className="loading-overlay">
-            <BarLoader color="#00BFFF" width={300} />
           </div>
-        )}
 
-        <br></br>
-        <div id ="expensePopup" className="popup">
-        <h2>Add new Expense</h2>
-          <div className="popupContent">
+          <div className="upload-middle">
+              <h4>or</h4>
+          </div>
+
+          <div className="upload-right">
+
+            <h3>Add with Voice</h3>
+            <button className="recordButton" onClick={toggleRecording}>
+            <img src={isRecording ? "https://i.ibb.co/5XggJSKx/pause.png": "https://i.ibb.co/KjMwJ7mD/micIcon.png"}></img></button>
+            {/* <button className="button" onClick={stopRecording}>Stop</button> */}
+            {audioURL && (
+              <audio
+                controls
+                src={audioURL}
+                style={{
+                  width: "100%",
+                  marginTop: "1rem",
+                  backgroundColor: "#fff",
+                  borderRadius: "10px",
+                  padding: "10px",
+                }}></audio>
+            )}
+            
+            <input className="submitAudio button" type="submit"></input>
+          </div>
+          
+          </div>
+
+
+
+
+
+
+
+            {/* <div id ="expensePopup" className="popup"> */}
+            <div className="popupContent">
             {/* <span className="closeButton" id="closePopup">&times;</span> */}
             <form id="expenseForm" onSubmit={submitTransaction}>
             <label>Expense Name:</label>
@@ -434,28 +448,48 @@ export default function Expenses() {
             </div>
             </form>
           </div>
-        </div> 
+        </div>
+
+        {isLoading && (
+          <div className="loading-overlay">
+            <BarLoader color="#00BFFF" width={300} />
+          </div>
+        )}
+
+        <br></br>
+          
         
         {/* <AddExpensePopup /> */}
 
-        <div>
-          <h1>Voice Record</h1>
-          <button className="button" onClick={startRecording}>Record</button>
-          <button className="button" onClick={stopRecording}>Stop</button>
-          {audioURL && (
-            <audio
-              controls
-              src={audioURL}
-              style={{
-                width: "100%",
-                marginTop: "1rem",
-                backgroundColor: "#fff",
-                borderRadius: "10px",
-                padding: "10px",
-              }}></audio>
-          )}
         
-        </div>
+      
+      </div>
+
+      <div className="column right"><h2>Recent Expenses</h2>
+      <ul>
+        {expenses.length === 0 ? (
+          <li>No recent expenses</li>
+        ) : (
+        expenses.map((expense) => (
+        <li key={expense._id} className="expense-item">
+          <div className="expense-info">
+            <div><strong>Date:</strong> {new Date(expense.date).toLocaleDateString()}</div>
+            <div>${expense.price.toFixed(2)} spent on {expense.category} at {expense.vendor}.</div>
+          </div>
+          <button className="deleteButton" onClick={() => deleteTransaction(expense._id)}>
+            <DeleteRounded sx={{ color: '#FF9BD1' }}/>
+          </button>
+          </li>
+          ))
+        )}
+      </ul>
+
+        <Link href="/allExpenses">
+          <p className="view-all-expenses">
+          View all expenses
+          </p>
+        </Link>
+        
 
       </div>  
     </div>
