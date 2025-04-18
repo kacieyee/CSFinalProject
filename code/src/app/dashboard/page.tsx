@@ -238,8 +238,13 @@ export default function Dashboard() {
       }
     
       filteredAllTransactions.forEach((txn) => {
-        const date = new Date(txn.date);
-        const key = date.toLocaleString('default', { month: 'short', year: 'numeric' });
+        const utcDate = new Date(txn.date);
+        const localDate = new Date(
+          utcDate.getUTCFullYear(),
+          utcDate.getUTCMonth(),
+          utcDate.getUTCDate()
+        );
+        const key = localDate.toLocaleString('default', { month: 'short', year: 'numeric' });
         if (monthSums.hasOwnProperty(key)) {
           monthSums[key] += txn.price;
         }
@@ -331,7 +336,7 @@ export default function Dashboard() {
             {recentTransactions.length > 0 ? (
               recentTransactions.map((txn, index) => (
                 <li key={index}>
-                  {txn.name} (${txn.price.toFixed(2)}) on {new Date(txn.date).toLocaleDateString()}.
+                  {txn.name} (${txn.price.toFixed(2)}) on {new Date(txn.date).toLocaleDateString('en-US', {timeZone: 'UTC'})}.
                 </li>
               ))
             ) : (

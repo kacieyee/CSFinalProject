@@ -49,6 +49,7 @@ export default function Expenses() {
       if (!res.ok) throw new Error("Failed to fetch transactions");
 
       const data = await res.json();
+      console.log(data.expenses);
       setExpenses(data.expenses);
     } catch (error) {
       console.error("Error fetching expenses:", error);
@@ -530,7 +531,7 @@ export default function Expenses() {
         expenses.map((expense) => (
         <li key={expense._id} className="expense-item">
           <div className="expense-info">
-            <div><strong>Date:</strong> {new Date(expense.date).toLocaleDateString()}</div>
+            <div><strong>Date:</strong> {new Date(expense.date).toLocaleDateString('en-US', {timeZone: 'UTC'})}</div>
             <div>${expense.price.toFixed(2)} spent on {expense.category} at {expense.vendor}.</div>
           </div>
           <button className="deleteButton" onClick={() => deleteTransaction(expense._id)}>
