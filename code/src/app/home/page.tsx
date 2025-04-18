@@ -1,6 +1,7 @@
 import Link from "next/link";
 import pinkLogo from "../../assets/pink logo.png";
 import Image from "next/image";
+import "./home.css";
 
 export default function Home() {
   return (
@@ -8,10 +9,7 @@ export default function Home() {
               <Image 
                 src={pinkLogo} 
                 alt="Pink Logo" 
-                style={{ width: '20rem', height: '14rem' }} 
-                width={0}
-                height={0} 
-                className="mr-4"
+                className="logo"
               />
       <h1 className="heading">
         Reaching our budgeting goals together.<br />
@@ -20,12 +18,12 @@ export default function Home() {
 
       <div className="buttonContainer">
         <Link href="/login">
-          <button className="button">
+          <button className="pink-button">
             Login
           </button>
         </Link>
         <Link href="/signup">
-          <button className="button">
+          <button className="pink-button">
             Sign Up
           </button>
         </Link>

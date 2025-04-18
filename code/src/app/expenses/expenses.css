@@ -1,6 +1,4 @@
-/* General body styles */
 body {
-    font-family: 'Arial', sans-serif;
     margin: 0;
     padding: 0;
     background-color: #f4f4f9;
@@ -43,21 +41,16 @@ body {
 
   .label {
     float: left;
-    /* border-color: red;
-    border-width: 5px; */
     display: block;
     margin-bottom: 5px;
     color: #db2a8e;
-
     font-weight: bold;
-
   }
 
-   label {
-    font-weight: bold;
+  label {
     color: #db2a8e;
-   }
-
+    font-weight: bold;
+  }
 
   input {
     width: 100%;
@@ -69,7 +62,6 @@ body {
     color: white;
     border-color: #FF9BD1;
     border-width: 1px; 
-
     }
 
   .row:after {
@@ -78,7 +70,6 @@ body {
     clear: both;
   }
   
-  /* List of expenses */
   ul {
     list-style-type: none;
     padding: 0;
@@ -88,13 +79,10 @@ body {
     margin-bottom: 20px;
     padding: 10px;
     background-color: #000000;
-    border-radius: 8px;
+    border-radius: 10px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-
-    
     border-color: #FF9BD1;
     border-width: 1px; 
-    border-radius: 20px;
   }
   
   ul li div {
@@ -122,11 +110,9 @@ body {
     border-radius: 8px;
     text-align: center;
     color: #777;
-
     border-color: #FF9BD1;
     border-width: 1px; 
     border-radius: 20px;
-    
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   }
   
@@ -134,7 +120,6 @@ body {
     margin: 0;
     font-size: 16px;
   }
-  
 
   .submit {
     background-color: #d25176;
