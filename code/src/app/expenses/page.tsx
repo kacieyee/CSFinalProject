@@ -456,26 +456,17 @@ export default function Expenses() {
             <button className="recordButton" onClick={toggleRecording}>
             <img src={isRecording ? "https://i.ibb.co/5XggJSKx/pause.png": "https://i.ibb.co/KjMwJ7mD/micIcon.png"}></img></button>
             {/* <button className="button" onClick={stopRecording}>Stop</button> */}
-            {audioURL && (
-              <audio
-                controls
-                src={audioURL}
-                style={{
-                  width: "100%",
-                  marginTop: "1rem",
-                  backgroundColor: "#fff",
-                  borderRadius: "10px",
-                  padding: "10px",
-                }}></audio>
-            )}
             
-            <input className="submitAudio button" type="submit"></input>
           </div>
           
           </div>
 
 
-
+          {isLoading && (
+          <div className="loading-overlay">
+            <BarLoader color="#00BFFF" width={300} />
+          </div>
+          )}
 
 
 
@@ -521,12 +512,6 @@ export default function Expenses() {
             </form>
           </div>
         </div>
-
-        {isLoading && (
-          <div className="loading-overlay">
-            <BarLoader color="#00BFFF" width={300} />
-          </div>
-        )}
 
         <br></br>
           
