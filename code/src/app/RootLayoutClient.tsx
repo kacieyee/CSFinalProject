@@ -38,9 +38,7 @@ export default function RootLayoutClient({ token, children }: RootLayoutClientPr
                 </Link>
     
                 <div className="max-w-4xl mx-auto flex justify-center gap-8 text-lg">
-                  
-                  <Link href="/home" className="hover:text-gray-300">Home</Link>
-                  
+                                    
                   <Link href="/dashboard" className="hover:text-gray-300">Dashboard</Link>
                   
                   <Link href="/expenses" className="hover:text-gray-300">Expenses</Link>
