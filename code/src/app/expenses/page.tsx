@@ -6,6 +6,7 @@ import AddExpensePopup from './addExpensePopup';
 import { BarLoader } from 'react-spinners';
 import { DeleteRounded} from '@mui/icons-material';
 import { jsPDF } from "jspdf";
+import { useSearchParams } from 'next/navigation';
 
 interface Expense {
   _id: string,
@@ -49,7 +50,6 @@ export default function Expenses() {
       if (!res.ok) throw new Error("Failed to fetch transactions");
 
       const data = await res.json();
-      console.log(data.expenses);
       setExpenses(data.expenses);
     } catch (error) {
       console.error("Error fetching expenses:", error);
@@ -80,6 +80,27 @@ export default function Expenses() {
       setCategory('');
     }
   }, [transactionAdded]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+  
+    const name = params.get('name');
+    const price = params.get('price');
+    const date = params.get('date');
+    const vendor = params.get('vendor');
+    const category = params.get('category');
+  
+    if (name) setName(name);
+    if (price) setPrice(price);
+    if (date) setDate(date);
+    if (vendor) setVendor(vendor);
+    if (category) setCategory(category);
+  
+    if (window.history.replaceState) {
+      const newUrl = window.location.pathname;
+      window.history.replaceState({}, document.title, newUrl);
+    }
+  }, []);  
 
   const submitTransaction = async(e: any) => {
     try {
@@ -138,43 +159,6 @@ export default function Expenses() {
     }
   }
 
-  const updateTransaction = async (transactionId: string, updatedTransaction: Partial<Expense>) => {
-    try {
-      const categoryExists = budget.some(budgetItem => budgetItem.category.toLowerCase() === category.toLowerCase());
-
-      if (!categoryExists) {
-        const newBudget = {
-          category: category.toLowerCase(),
-          goal: 0,
-          interval: "monthly"
-        };
-
-        try {
-          const response = await fetch(`/api/transactions`, {
-            method: "PATCH",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ transactionId, ...updatedTransaction, category: updatedTransaction.category?.toLowerCase() }),
-          });
-      
-          if (response.ok) {
-            const updatedExpenses = expenses.map((expense) =>
-              expense._id === transactionId ? { ...expense, ...updatedTransaction } : expense
-            );
-            setExpenses(updatedExpenses);
-          } else {
-            console.error("Failed to update transaction:", await response.json());
-          }
-        } catch (error) {
-          console.error("Error updating transaction:", error);
-        }
-      }
-    } catch (error) {
-      alert("Fields cannot be blank!");
-    }
-  };  
-
   const deleteTransaction = async (transactionId: string) => {
     try {
       const response = await fetch(`/api/transactions`, {
@@ -193,6 +177,16 @@ export default function Expenses() {
     } catch (error) {
       console.error("Error deleting transaction:", error);
     }
+  };
+
+  const editTransaction = (expense: Expense) => {
+    setName(expense.name);
+    setPrice(expense.price.toString());
+    setDate(expense.date.slice(0, 10));
+    setVendor(expense.vendor);
+    setCategory(expense.category.toLowerCase());
+  
+    deleteTransaction(expense._id);
   };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -462,16 +456,11 @@ export default function Expenses() {
           
           </div>
 
-
           {isLoading && (
           <div className="loading-overlay">
             <BarLoader color="#00BFFF" width={300} />
           </div>
           )}
-
-
-
-
             {/* <div id ="expensePopup" className="popup"> */}
             <div className="popupContent">
             {/* <span className="closeButton" id="closePopup">&times;</span> */}
@@ -515,11 +504,8 @@ export default function Expenses() {
         </div>
 
         <br></br>
-          
-        
+  
         {/* <AddExpensePopup /> */}
-
-        
       
       </div>
 
@@ -534,9 +520,12 @@ export default function Expenses() {
             <div><strong>Date:</strong> {new Date(expense.date).toLocaleDateString('en-US', {timeZone: 'UTC'})}</div>
             <div>${expense.price.toFixed(2)} spent on {expense.category} at {expense.vendor}.</div>
           </div>
-          <button className="deleteButton" onClick={() => deleteTransaction(expense._id)}>
-            <DeleteRounded sx={{ color: '#FF9BD1' }}/>
-          </button>
+            <button className="editButton" onClick={() => editTransaction(expense)}>
+              [Edit]
+            </button>
+            <button className="deleteButton" onClick={() => deleteTransaction(expense._id)}>
+              <DeleteRounded sx={{ color: '#FF9BD1' }}/>
+            </button>
           </li>
           ))
         )}

@@ -20,9 +20,6 @@ export default function Profile() {
   const [userData, setUserData] = useState<UserData | null>(null);
   const [category, setCategory] = useState('');
   const [tempGoals, setTempGoals] = useState<{[key: string]: string}>({});
-  const [newUsername, setNewUsername] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
   const [budget, setBudget] = useState<Budget[]>([]);
   const [showPassword, setShowPassword] = useState(false);
   const [showNewGoalPopup, setShowNewGoalPopup] = useState(false);
@@ -47,39 +44,6 @@ export default function Profile() {
   if (!userData) {
     return <p>Loading profile...</p>;
   }
-
-  const updateUser = async (e: any) => {
-    e.preventDefault();
-
-    if (newPassword && newPassword !== confirmPassword) {
-      alert("Passwords must match.");
-      return;
-    }
-
-    try {
-      const response = await fetch("/api/users", {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          username: newUsername || userData.username,
-          password: newPassword || userData.password,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to update user.");
-      }
-
-      const updatedUserResponse = await fetch("/api/users", {
-        method: "GET",
-        credentials: "include"
-      });
-
-    } catch (err) {
-      console.error("Error updating user:", err);
-      alert("An error occurred while updating the profile.");
-    }
-  };
 
   const submitBudget = async (e: any) => {
     e.preventDefault();
@@ -258,37 +222,47 @@ return (
           userData.budgets
             .filter(b => !["temp total"].includes(b.category.toLowerCase()))
             .map((budget, index) => (
-              <div key={index}>
+              <div key={index} className={!isEditingProfile ? "goals" : ""}>
                 <div>
-                  <label>You have a </label>
-                  <select 
-                    value={budget.interval} 
-                    onChange={(e) => handleIntervalChange(budget, e.target.value)}
-                    disabled={!isEditingProfile}
-                  >
-                    <option value="daily">daily</option>
-                    <option value="weekly">weekly</option>
-                    <option value="biweekly">biweekly</option>
-                    <option value="monthly">monthly</option>
-                    <option value="yearly">yearly</option>
-                  </select>
-
-                  <label> budget of $ </label>
-                  <input 
-                    type="number"
-                    value={tempGoals[budget.category] || budget.goal}
-                    onChange={(e) => handleGoalChange(budget.category, e.target.value)} 
-                    onKeyDown={(e) => handleGoalSubmit(e, budget)}
-                    className="goal-input"
-                    disabled={!isEditingProfile}
-                  />
-                  <label> for {budget.category}.</label>
-                  {budget.category.toLowerCase() !== "total expenses" && (
-                    <button 
-                      onClick={() => deleteBudget(budget.category)} 
-                      className="delete-button"
-                    ><DeleteRounded sx={{ color: '#FF9BD1' }}/>
-                    </button>
+                  {isEditingProfile ? (
+                    <>
+                      <label>You have a </label>
+                      <select 
+                        value={budget.interval} 
+                        onChange={(e) => handleIntervalChange(budget, e.target.value)}
+                      >
+                        <option value="daily">daily</option>
+                        <option value="weekly">weekly</option>
+                        <option value="biweekly">biweekly</option>
+                        <option value="monthly">monthly</option>
+                        <option value="yearly">yearly</option>
+                      </select>
+                      <label> budget of $ </label>
+                      <input 
+                        type="number"
+                        value={tempGoals[budget.category] || budget.goal}
+                        onChange={(e) => handleGoalChange(budget.category, e.target.value)} 
+                        onKeyDown={(e) => handleGoalSubmit(e, budget)}
+                        className="goal-input"
+                      />
+                      <label> for {budget.category}.</label>
+                        {budget.category.toLowerCase() !== "total expenses" && (
+                          <button 
+                            onClick={() => deleteBudget(budget.category)} 
+                            className="delete-button"
+                          ><DeleteRounded sx={{ color: '#FF9BD1' }}/>
+                          </button>
+                        )}
+                    </>
+                  ) : (
+                    <p>
+                      <span className="budget-label">You have a </span>
+                      <span className="budget-variable">{budget.interval}</span>
+                      <span className="budget-label"> budget of $</span>
+                      <span className="budget-variable">{budget.goal}</span>
+                      <span className="budget-label"> for </span>
+                      <span className="budget-variable">{budget.category}</span>.
+                    </p>
                   )}
                 </div>
               </div>

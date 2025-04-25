@@ -134,3 +134,17 @@ input, select, .goal-input {
   font-size: larger;
   font-weight: bolder;;
 }
+
+.goals {
+  margin-top: 0.75rem;
+}
+
+.budget-label {
+  color: #E21399;
+  font-weight: bold;
+}
+
+.budget-variable {
+  color: #E646AE;
+  font-weight: bold;
+}
