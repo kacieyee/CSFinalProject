@@ -36,7 +36,6 @@ export default function Profile() {
       if (response.ok) {
         const data = await response.json();
         setUserData(data);
-        setNewUsername(data.username);
       }
     };
 
@@ -196,30 +195,12 @@ export default function Profile() {
       <div className="column-left">
         <h1>Profile</h1>
         <div className="profileSection">
-          <p><strong>Name:</strong> {isEditingUserInfo ? (
-            <input
-              type="text"
-              value={newUsername}
-              onChange={(e) => setNewUsername(e.target.value)}
-              className="goal-input"
-            />
-          ) : userData.username}</p>
+          <p><strong>Name:</strong></p>
 
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
             <p style={{ marginRight: "1rem", flex: 1 }}>
               <strong>Password:</strong>{" "}
-              {isEditingUserInfo ? (
-                <input
-                  type={showPassword ? "text" : "password"}
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                  className="goal-input"
-                />
-              ) : (
-                showPassword ? userData.password : "•".repeat(userData.password.length)
-              )}
             </p>
-            {!isEditingUserInfo && (
               <div onClick={() => setShowPassword(!showPassword)} style={{ cursor: "pointer" }}>
                 {showPassword ? (
                   <VisibilityRounded sx={{ color: '#FF9BD1' }} />
@@ -227,24 +208,7 @@ export default function Profile() {
                   <VisibilityOffRounded sx={{ color: '#FF9BD1' }} />
                 )}
               </div>
-            )}
           </div>
-
-          {isEditingUserInfo && (
-            <div>
-              <div className="space-below">
-                <strong>Re-enter:
-                  <input
-                    type="password"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="goal-input"
-                  />
-                </strong>
-              </div>
-              <button className="save-button" onClick={updateUser}>Save Changes</button>
-            </div>
-          )}
         </div>
 
         <button
@@ -314,11 +278,12 @@ export default function Profile() {
                     </p>
                   )}
                 </div>
-              ))
+              </div>
+            ))
           ) : (
             <p>No budgeting goals set.</p>
           )}
-
+          
           <h1>Add a new goal!</h1>
           <form onSubmit={submitBudget} className="new-goal-form">
             <div className="budgetGoal">
