@@ -449,20 +449,21 @@ export default function Expenses() {
 
             <h3>Add with Voice</h3>
             <label className="label">Record a voice memo:</label>
-            <br></br>
             <button className="recordButton" onClick={toggleRecording}>
             <img src={isRecording ? "https://i.ibb.co/5XggJSKx/pause.png": "https://i.ibb.co/KjMwJ7mD/micIcon.png"}></img></button>
             {/* <button className="button" onClick={stopRecording}>Stop</button> */}
             
+            
+            {isLoading && (
+              <div className="loading-overlay">
+                <BarLoader color="#FF9BD1" width={300} />
+              </div>
+            )}
           </div>
           
           </div>
 
-          {isLoading && (
-          <div className="loading-overlay">
-            <BarLoader color="#00BFFF" width={300} />
-          </div>
-          )}
+          
             {/* <div id ="expensePopup" className="popup"> */}
             <div className="popupContent">
             {/* <span className="closeButton" id="closePopup">&times;</span> */}
@@ -522,13 +523,14 @@ export default function Expenses() {
             <div className="date"><strong></strong> {new Date(expense.date).toLocaleDateString('en-US', {weekday: "long", day: "numeric", month: "long", year: "numeric"})}</div>
             <div className="expenseprice">${expense.price.toFixed(2)} at {expense.vendor}.</div>
           </div>
-            <button className="editButton" onClick={() => editTransaction(expense)}>
+            {/* <button className="editButton" onClick={() => editTransaction(expense)}>
               [Edit]
-            </button>
-            <div className="expense-category">{expense.category}</div>
-            {/* <button className="deleteButton" onClick={() => deleteTransaction(expense._id)}>
-              <DeleteRounded sx={{ color: '#FF9BD1' }}/>
             </button> */}
+            <div className="expense-category">{expense.category}</div>
+            {/* <button className="deleteButton" onClick={() => deleteTransaction(expense._id)}>x
+              <x sx={{ color: '#FF9BD1' }}/>
+            </button> */}
+            
           </li>
           ))
         )}

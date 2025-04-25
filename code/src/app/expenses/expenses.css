@@ -42,7 +42,7 @@ body {
   .label {
     float: left;
     display: block;
-    margin-bottom: 5px;
+    margin-bottom: 9px;
     color: #db2a8e;
     font-weight: bold;
   }
@@ -166,17 +166,19 @@ body {
   }
 
   .expense-category {
-    border: 5px #FF9BD1 solid;
-    background-color: #FF9BD1;
-    padding: 1.5rem;
-    border-radius: 2.3rem;
-    color: black;
+    border: 5px #ac477d solid;
+    background-color: #ac477d;
+    /* padding: 1.5rem; */
+    border-radius: 1rem;
+    color: white;
     font-size: large;
 
     margin-bottom: 0px;
+    margin-right: 0.8rem;
 
     width: 10rem;
-    height: 5rem;
+    margin-top: 0;
+    /* height: 5rem; */
 
     text-align: center;
     vertical-align: center;
@@ -186,9 +188,14 @@ body {
     margin-bottom: 0px;
   }
 
-  .delete-button {
-    color: #FF9BD1; 
+  .deleteButton {
+    color: #ac477d; 
     display: inline-block;
+    padding-top: 0px;
+    margin-right: 1rem;
+    /* padding-right: 0.4rem; */
+
+
   }
 
   .button {
@@ -205,6 +212,7 @@ body {
     background-color: #D4384D;
     border: black 4px solid;
     outline: #D4384D 3px solid;
+    margin-bottom: 1.3rem;
 
     align-items: left;
     
@@ -239,7 +247,7 @@ body {
     align-items: center;
     /* padding: 1rem 2rem; */
     padding: 0px 0rem;
-    border-radius: 2.5rem;
+    border-radius: 1.5rem;
     border-width: 2px;
 
     
@@ -280,9 +288,9 @@ body {
 
   .upload-right {
     width: 40%;
-    align-items: left;
-    float: left;
-    /* border:aqua solid 2px; */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
   }
 
   .submitAudio {

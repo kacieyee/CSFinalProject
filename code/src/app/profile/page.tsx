@@ -42,7 +42,13 @@ export default function Profile() {
   }, []);
 
   if (!userData) {
-    return <p>Loading profile...</p>;
+    return (
+      <div className="loading-container">
+        <div className="spinner"></div>
+        <p>Loading profile...</p>
+      </div>
+
+    );
   }
 
   const submitBudget = async (e: any) => {
