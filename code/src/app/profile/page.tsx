@@ -195,21 +195,21 @@ export default function Profile() {
       <div className="column-left">
         <h1>Profile</h1>
         <div className="profileSection">
-          <p><strong>Name:</strong></p>
-
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-            <p style={{ marginRight: "1rem", flex: 1 }}>
-              <strong>Password:</strong>{" "}
-            </p>
-              <div onClick={() => setShowPassword(!showPassword)} style={{ cursor: "pointer" }}>
-                {showPassword ? (
-                  <VisibilityRounded sx={{ color: '#FF9BD1' }} />
-                ) : (
-                  <VisibilityOffRounded sx={{ color: '#FF9BD1' }} />
-                )}
-              </div>
+        <p><strong>Name:</strong> {userData.username}</p>
+        <div style={{ display: "flex", alignSelf: "right" }}>
+          <p style={{ marginRight: "15rem" }}>
+            <strong>Password:</strong>{" "}
+            {showPassword ? userData.password : "•".repeat(userData.password.length)}
+          </p>
+          <div onClick={() => setShowPassword(!showPassword)} style={{ cursor: "pointer" }}>
+            {showPassword ? (
+              <VisibilityRounded sx={{ color: '#FF9BD1' }} />
+            ) : (
+              <VisibilityOffRounded sx={{ color: '#FF9BD1' }} />
+            )}
           </div>
         </div>
+      </div>
 
         <button
           onClick={() => setIsEditingProfile(!isEditingProfile)}
