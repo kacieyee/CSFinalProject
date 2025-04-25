@@ -9,6 +9,23 @@ import Link from 'next/link';
 import { color } from 'chart.js/helpers';
 ChartJS.register(LineElement, PointElement, LinearScale, CategoryScale, Title, Tooltip, Legend, annotationPlugin, ArcElement);
 
+const generateGradientColors = (numColors: number): string[] => {
+  const hue = 330;
+  const saturation = 100;
+  const startLightness = 86;
+  const endLightness = 31;
+
+  const colors: string[] = [];
+
+  for (let i = 0; i < numColors; i++) {
+    const ratio = i / Math.max(numColors - 1, 1);
+    const lightness = Math.round(startLightness * (1 - ratio) + endLightness * ratio);
+    colors.push(`hsl(${hue}, ${saturation}%, ${lightness}%)`);
+  }
+
+  return colors;
+};
+
 const hashColor = (str: string) => {
   if (!str) return "#ccc";
 
@@ -50,6 +67,8 @@ interface Transaction {
 
 interface BudgetItem {
   category: string;
+  goal: number;
+  interval: string;
 }
 
 export default function Dashboard() {
@@ -58,10 +77,12 @@ export default function Dashboard() {
     const [doughnutData, setDoughnutData] = useState<any>(null);
     const [monthlySums, setMonthlySums] = useState<number[]>([]);
     const [monthlyLabels, setMonthlyLabels] = useState<string[]>([]);
+    const [allBudgetItems, setAllBudgetItems] = useState<BudgetItem[]>([]);
     const [totalExpenseLimit, setTotalExpenseLimit] = useState<number | null>(null);
     const [activeCategories, setActiveCategories] = useState<string[]>([]);
     const [groupedCategories, setGroupedCategories] = useState<string[][]>([]);
     const [motivationMessage, setMotivationMessage] = useState("");
+    const [percentage, setPercentage] = useState(Number);
 
     const groupCategories = (categories: string[]) => {
       return categories.reduce((acc: string[][], category, index) => {
@@ -121,13 +142,13 @@ export default function Dashboard() {
               .map((item: BudgetItem) => item.category)
               .filter((cat) => !["total expenses", "temp total"].includes(cat.toLowerCase()))
             setGroupedCategories(groupCategories(filteredCategories));
+            setAllBudgetItems(data.expenses);
           }
         } catch (error) {
           console.error("Error fetching budget:", error);
         }
       };
       
-  
       fetchTransactions();
       fetchBudget();
     }, []);
@@ -149,14 +170,16 @@ export default function Dashboard() {
         visibleCategories.includes(txn.category)
       );
     }, [transactions, visibleCategories]);
-    
+
     useEffect(() => {
       if (filteredTransactions.length > 0) {
-        const sortedTransactions = filteredTransactions
-          .sort((a: Transaction, b: Transaction) => new Date(b.date).getTime() - new Date(a.date).getTime())
+        const sortedTransactions = [...filteredTransactions]
+          .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
           .slice(0, 5);
         
         setRecentTransactions(sortedTransactions);
+      } else {
+        setRecentTransactions([]);
       }
     }, [filteredTransactions]);
 
@@ -180,18 +203,28 @@ export default function Dashboard() {
             categoryTotals[txn.category] += txn.price;
           }
         });
-    
-        const dataValues = visibleCategories.map(category => categoryTotals[category] || 0);
-        const hasNonZeroData = dataValues.some(val => val > 0);
+            
+        const categoryPairs = visibleCategories.map(category => ({
+          category,
+          value: categoryTotals[category] || 0
+        }));
+
+        categoryPairs.sort((a, b) => b.value - a.value);
+
+        const sortedLabels = categoryPairs.map(pair => pair.category);
+        const sortedData = categoryPairs.map(pair => pair.value);
+        const hasNonZeroData = sortedData.some(val => val > 0);
+        const gradientColors = generateGradientColors(sortedLabels.length);
     
         if (hasNonZeroData) {
           setDoughnutData({
-            labels: visibleCategories,
+            labels: sortedLabels,
             datasets: [
               {
                 label: "Spending Breakdown",
-                data: dataValues,
-                backgroundColor: visibleCategories.map(category => hashColor(category)),
+                data: sortedData,
+                // backgroundColor: sortedLabels.map(category => hashColor(category)),
+                backgroundColor: gradientColors,
                 borderWidth: 0,
               },
             ],
@@ -222,7 +255,47 @@ export default function Dashboard() {
           ],
         });
       }
-    }, [visibleCategories, transactions]);    
+    }, [visibleCategories, transactions]);
+    
+    const getIntervalCoefficient = (interval: string): number => {
+      switch (interval.toLowerCase()) {
+        case 'daily':
+          return 30
+        case 'weekly':
+          return 4;
+        case 'biweekly':
+          return 2;
+        case 'monthly':
+          return 1;
+        case 'yearly':
+          return 1 / 12;
+        default:
+          return 1;
+      }
+    };
+
+    useEffect(() => {
+      const customVisible = visibleCategories.filter(
+        (cat) => !["total expenses", "temp total"].includes(cat.toLowerCase())
+      );
+    
+      if (customVisible.length === 1) {
+        const matching = allBudgetItems.find(
+          (item) => item.category === customVisible[0]
+        );
+        if (matching) {
+          const monthlyAdjusted = matching.goal * getIntervalCoefficient(matching.interval);
+          setTotalExpenseLimit(monthlyAdjusted);
+        }
+      } else {
+        const total = allBudgetItems.find(
+          (item) => item.category.toLowerCase() === "total expenses"
+        );
+        if (total) {
+          setTotalExpenseLimit(total.goal);
+        }
+      }
+    }, [visibleCategories, allBudgetItems]);
 
     useEffect(() => {
       const monthSums: { [month: string]: number } = {};
@@ -287,7 +360,7 @@ export default function Dashboard() {
         return sum;
       }, 0);
     
-      const percentage = (monthlyTotal / totalExpenseLimit) * 100;
+      setPercentage((monthlyTotal / totalExpenseLimit) * 100);
     
       let message = "";
     
@@ -390,11 +463,15 @@ export default function Dashboard() {
                         borderColor: 'rgb(206, 28, 120)',
                         borderWidth: 4,
                         label: {
-                          content: 'Set Budget',
-                          position: 'end' as const,
-                          backgroundColor: 'green',
-                          color: 'white',
-                          padding: 4,
+                          content: `Goal: $${totalExpenseLimit.toFixed(2)}\n(${percentage.toFixed(1)}% there!)`,
+                          display: true,
+                          backgroundColor: 'rgba(0,0,0,0.7)',
+                          color: '#fff',
+                          font: {
+                            weight: 'bold'
+                          },
+                          padding: 8,
+                          position: 'end',
                         },
                       },
                     },
@@ -434,13 +511,6 @@ export default function Dashboard() {
 
         </div>
 
-        {/* <div className="column left">
-
-          
-        </div>
-        <div className="column right">
-
-        </div> */}
       </div>
       
         <script src="dashboard.js"></script>
@@ -456,7 +526,6 @@ export default function Dashboard() {
           });
         });
       </script> */}
-
 
       </div>
 

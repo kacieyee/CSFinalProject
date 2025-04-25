@@ -138,7 +138,6 @@ input, select, .goal-input {
   float: right;
   margin-top: 13px;
 }
-
 .addExpenseButton {
   display: flex;
   justify-content: flex-end;
@@ -162,4 +161,41 @@ input, select, .goal-input {
 .addExpense {
   font-size: larger;
   font-weight: bolder;;
+}
+
+.goals {
+  margin-top: 0.75rem;
+}
+
+.budget-label {
+  color: #E21399;
+  font-weight: bold;
+}
+
+.budget-variable {
+  color: #E646AE;
+  font-weight: bold;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 60vh;
+}
+
+.spinner {
+  border: 6px solid #808080; 
+  border-top: 6px solid #e879b4; 
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }

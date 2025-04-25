@@ -6,6 +6,7 @@ import AddExpensePopup from './addExpensePopup';
 import { BarLoader } from 'react-spinners';
 import { DeleteRounded} from '@mui/icons-material';
 import { jsPDF } from "jspdf";
+import { useSearchParams } from 'next/navigation';
 
 interface Expense {
   _id: string,
@@ -49,7 +50,6 @@ export default function Expenses() {
       if (!res.ok) throw new Error("Failed to fetch transactions");
 
       const data = await res.json();
-      console.log(data.expenses);
       setExpenses(data.expenses);
     } catch (error) {
       console.error("Error fetching expenses:", error);
@@ -80,6 +80,27 @@ export default function Expenses() {
       setCategory('');
     }
   }, [transactionAdded]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+  
+    const name = params.get('name');
+    const price = params.get('price');
+    const date = params.get('date');
+    const vendor = params.get('vendor');
+    const category = params.get('category');
+  
+    if (name) setName(name);
+    if (price) setPrice(price);
+    if (date) setDate(date);
+    if (vendor) setVendor(vendor);
+    if (category) setCategory(category);
+  
+    if (window.history.replaceState) {
+      const newUrl = window.location.pathname;
+      window.history.replaceState({}, document.title, newUrl);
+    }
+  }, []);  
 
   const submitTransaction = async(e: any) => {
     try {
@@ -138,43 +159,6 @@ export default function Expenses() {
     }
   }
 
-  const updateTransaction = async (transactionId: string, updatedTransaction: Partial<Expense>) => {
-    try {
-      const categoryExists = budget.some(budgetItem => budgetItem.category.toLowerCase() === category.toLowerCase());
-
-      if (!categoryExists) {
-        const newBudget = {
-          category: category.toLowerCase(),
-          goal: 0,
-          interval: "monthly"
-        };
-
-        try {
-          const response = await fetch(`/api/transactions`, {
-            method: "PATCH",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ transactionId, ...updatedTransaction, category: updatedTransaction.category?.toLowerCase() }),
-          });
-      
-          if (response.ok) {
-            const updatedExpenses = expenses.map((expense) =>
-              expense._id === transactionId ? { ...expense, ...updatedTransaction } : expense
-            );
-            setExpenses(updatedExpenses);
-          } else {
-            console.error("Failed to update transaction:", await response.json());
-          }
-        } catch (error) {
-          console.error("Error updating transaction:", error);
-        }
-      }
-    } catch (error) {
-      alert("Fields cannot be blank!");
-    }
-  };  
-
   const deleteTransaction = async (transactionId: string) => {
     try {
       const response = await fetch(`/api/transactions`, {
@@ -195,6 +179,16 @@ export default function Expenses() {
     }
   };
 
+  const editTransaction = (expense: Expense) => {
+    setName(expense.name);
+    setPrice(expense.price.toString());
+    setDate(expense.date.slice(0, 10));
+    setVendor(expense.vendor);
+    setCategory(expense.category.toLowerCase());
+  
+    deleteTransaction(expense._id);
+  };
+
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
       setSelectedFile(event.target.files[0]);
@@ -208,10 +202,10 @@ export default function Expenses() {
         return;
     }
 
-    processFile(selectedFile, null, null);
+    processFile(selectedFile, null, null, null);
   };
 
-  const processFile = async (file: File, extractedPriceFromAudio: number | null, extractedDateFromAudio: Date | null) => {
+  const processFile = async (file: File, extractedPriceFromAudio: number | null, extractedDateFromAudio: Date | null, extractedCategoryFromAudio: string | null) => {
     setIsLoading(true);
 
     const formData = new FormData();
@@ -282,6 +276,10 @@ export default function Expenses() {
                                   const day = extractedDateFromAudio.getDate().toString().padStart(2, '0');
                                   const formattedDate = `${year}-${month}-${day}`;
                                   setDate(formattedDate);
+                                }
+
+                                if (extractedCategoryFromAudio !== null) {
+                                  setCategory(extractedCategoryFromAudio.toLowerCase());
                                 }
 
                                 break;
@@ -377,6 +375,8 @@ export default function Expenses() {
   };
 
   const processAudio = async (audioFile: File) => {
+    setIsLoading(true);
+
     const formData = new FormData();
     formData.append("audio", audioFile);
   
@@ -392,39 +392,57 @@ export default function Expenses() {
       console.log(transcribedText);
       let extractedPriceValue: number | null = null;
       let extractedDateValue: Date | null = null;
+      let extractedCategory: string | null = null;
 
-      const priceMatch = transcribedText.match(/\$\s*(\d+(\.\d{1,2})?)/);
-      const dateMatch = transcribedText.match(/(January|February|March|April|May|June|July|August|September|October|November|December)\s(\d{1,2})(?:st|nd|rd|th)?,\s(\d{4})|(\d{1,2})-(\d{1,2})-(\d{2,4})/);
-            
-      if (priceMatch && priceMatch[1]) {
-        extractedPriceValue = parseFloat(priceMatch[1]);
+      // if a user's budget category was stated, extract it
+      fetchBudget();
+      for (const item of budget) {
+        if (transcribedText.toLowerCase().includes(item.category.toLowerCase())) {
+          extractedCategory = item.category;
+          break;
+        }
       }
 
+      // if a price was stated, extract it
+      const priceMatch = transcribedText.match(/\$\d{1,3}(?:,\d{3})+(?:\.\d{2})?|\$\d+(?:\.\d{2})?/g);
+
+      if (priceMatch && priceMatch.length > 0) {
+        const cleaned = priceMatch[0].replace(/[$,]/g, '');
+        extractedPriceValue = parseFloat(cleaned);
+      }
+
+      // if a date was stated, extract it
+      const dateMatch = transcribedText.match(/(January|February|March|April|May|June|July|August|September|October|November|December)\s(\d{1,2})(?:st|nd|rd|th)?(?:,\s(\d{4}))?|(\d{1,2})-(\d{1,2})(-(\d{2,4}))?/i);
+
       if (dateMatch) {
-        if (dateMatch[1]) { // text format
+        // get current year in case year is not mentioned
+        const currentYear = new Date().getFullYear();
+
+        if (dateMatch[1]) { // text format, year optional
           const monthString = dateMatch[1];
           const day = parseInt(dateMatch[2], 10);
-          const year = parseInt(dateMatch[3], 10);
+          const year = dateMatch[3] ? parseInt(dateMatch[3], 10) : currentYear;
           const monthIndex = new Date(Date.parse(monthString + " 1, 2000")).getMonth();
           extractedDateValue = new Date(year, monthIndex, day);
-        } else if (dateMatch[4]) { // MM-DD-YY or MM-DD-YYYY format
+        } else if (dateMatch[4]) { // MM-DD-YY or MM-DD-YYYY format, year optional
           const month = parseInt(dateMatch[4], 10) - 1;
           const day = parseInt(dateMatch[5], 10);
-          let year = parseInt(dateMatch[6], 10);
+          let year = dateMatch[6] ? parseInt(dateMatch[6], 10) : currentYear;
       
-          if (year >= 0 && year <= 99) {
+          if (year >= 0 && year <= 99 && !dateMatch[6] || (dateMatch[6] && dateMatch[6].length === 2)) {
             year += 2000;
           }
           extractedDateValue = new Date(year, month, day);
         }
       }
+
       // convert to pdf
       const pdf = new jsPDF();
       pdf.text(transcribedText, 10, 10);
       const pdfBlob = pdf.output('blob');
 
       // process pdf
-      processFile(pdfBlob as File, extractedPriceValue, extractedDateValue);
+      processFile(pdfBlob as File, extractedPriceValue, extractedDateValue, extractedCategory);
     } catch (error) {
       console.error("Error transcribing audio:", error);
     }
@@ -454,24 +472,22 @@ export default function Expenses() {
           <div className="upload-right">
 
             <h3>Add with Voice</h3>
+            <label className="label">Record a voice memo:</label>
             <button className="recordButton" onClick={toggleRecording}>
             <img src={isRecording ? "https://i.ibb.co/5XggJSKx/pause.png": "https://i.ibb.co/KjMwJ7mD/micIcon.png"}></img></button>
             {/* <button className="button" onClick={stopRecording}>Stop</button> */}
             
+            
+            {isLoading && (
+              <div className="loading-overlay">
+                <BarLoader color="#FF9BD1" width={300} />
+              </div>
+            )}
           </div>
           
           </div>
 
-
-          {isLoading && (
-          <div className="loading-overlay">
-            <BarLoader color="#00BFFF" width={300} />
-          </div>
-          )}
-
-
-
-
+          
             {/* <div id ="expensePopup" className="popup"> */}
             <div className="popupContent">
             {/* <span className="closeButton" id="closePopup">&times;</span> */}
@@ -515,11 +531,8 @@ export default function Expenses() {
         </div>
 
         <br></br>
-          
-        
+  
         {/* <AddExpensePopup /> */}
-
-        
       
       </div>
 
@@ -531,12 +544,17 @@ export default function Expenses() {
         expenses.map((expense) => (
         <li key={expense._id} className="expense-item">
           <div className="expense-info">
-            <div><strong>Date:</strong> {new Date(expense.date).toLocaleDateString('en-US', {timeZone: 'UTC'})}</div>
-            <div>${expense.price.toFixed(2)} spent on {expense.category} at {expense.vendor}.</div>
+            <div className="date"><strong></strong> {new Date(expense.date).toLocaleDateString('en-US', {weekday: "long", day: "numeric", month: "long", year: "numeric"})}</div>
+            <div className="expenseprice">${expense.price.toFixed(2)} at {expense.vendor}.</div>
           </div>
-          <button className="deleteButton" onClick={() => deleteTransaction(expense._id)}>
-            <DeleteRounded sx={{ color: '#FF9BD1' }}/>
-          </button>
+            {/* <button className="editButton" onClick={() => editTransaction(expense)}>
+              [Edit]
+            </button> */}
+            <div className="expense-category">{expense.category}</div>
+            {/* <button className="deleteButton" onClick={() => deleteTransaction(expense._id)}>x
+              <DeleteRounded sx={{ color: '#FF9BD1' }}/>
+            </button> */}
+            
           </li>
           ))
         )}
