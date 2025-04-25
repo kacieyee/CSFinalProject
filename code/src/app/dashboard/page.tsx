@@ -24,21 +24,6 @@ const hashColor = (str: string) => {
   return color;
 };
 
-export const options = {
-  plugins: {
-    legend: {
-      position: 'left' as const, 
-      labels: {
-        color: 'white', 
-      },
-    },
-    layout: {
-      autoPadding: false,
-      padding: 0, //don't think this is even working
-    }, 
-  },
-};
-
 interface Transaction {
   name: string;
   price: number;
@@ -61,6 +46,21 @@ export default function Dashboard() {
     const [activeCategories, setActiveCategories] = useState<string[]>([]);
     const [groupedCategories, setGroupedCategories] = useState<string[][]>([]);
     const [motivationMessage, setMotivationMessage] = useState("");
+
+    const doughnutOptions = useMemo (() => ({
+      plugins: {
+        legend: {
+          position: 'left' as const, 
+          labels: {
+            color: 'white', 
+          },
+        },
+        layout: {
+          autoPadding: false,
+          padding: 0, //don't think this is even working
+        }, 
+      },
+    }), []);
 
     const groupCategories = (categories: string[]) => {
       return categories.reduce((acc: string[][], category, index) => {
@@ -420,7 +420,7 @@ export default function Dashboard() {
         <div className="column right2">
 
         {doughnutData ? (
-          <Doughnut data={doughnutData} options={options} />
+          <Doughnut data={doughnutData} options={doughnutOptions} />
         ) : (
           <p></p>
         )}

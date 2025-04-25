@@ -1,5 +1,26 @@
-import { userLogin } from "../users/route.js";
 import { cookies } from 'next/headers';
+
+async function userLogin(username, password) {
+  try {
+      const user = await User.findOne({username});
+      if (!user) {
+          return {status: 2}; 
+      } else if (user.password != password) {
+          return {status: 1};
+      } else {
+          const token = jwt.sign(
+              {username: user.username},
+              SECRET_KEY,
+              {expiresIn: "1h"}
+          );
+
+          return {status: 0, token};
+      }
+  } catch(err) {
+      console.log(err);
+      return -1;
+  }
+}
 
 export async function POST(req) {
     const { username, password } = await req.json();
