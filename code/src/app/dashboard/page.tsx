@@ -5,8 +5,26 @@ import { Chart as ChartJS, LineElement, PointElement, LinearScale, Title, Toolti
 import { Line } from 'react-chartjs-2';
 import { Doughnut } from 'react-chartjs-2';
 import annotationPlugin from 'chartjs-plugin-annotation';
+import Link from 'next/link';
 import { color } from 'chart.js/helpers';
 ChartJS.register(LineElement, PointElement, LinearScale, CategoryScale, Title, Tooltip, Legend, annotationPlugin, ArcElement);
+
+const generateGradientColors = (numColors: number): string[] => {
+  const hue = 330;
+  const saturation = 100;
+  const startLightness = 86;
+  const endLightness = 31;
+
+  const colors: string[] = [];
+
+  for (let i = 0; i < numColors; i++) {
+    const ratio = i / Math.max(numColors - 1, 1);
+    const lightness = Math.round(startLightness * (1 - ratio) + endLightness * ratio);
+    colors.push(`hsl(${hue}, ${saturation}%, ${lightness}%)`);
+  }
+
+  return colors;
+};
 
 const hashColor = (str: string) => {
   if (!str) return "#ccc";
@@ -196,6 +214,7 @@ export default function Dashboard() {
         const sortedLabels = categoryPairs.map(pair => pair.category);
         const sortedData = categoryPairs.map(pair => pair.value);
         const hasNonZeroData = sortedData.some(val => val > 0);
+        const gradientColors = generateGradientColors(sortedLabels.length);
     
         if (hasNonZeroData) {
           setDoughnutData({
@@ -204,7 +223,8 @@ export default function Dashboard() {
               {
                 label: "Spending Breakdown",
                 data: sortedData,
-                backgroundColor: sortedLabels.map(category => hashColor(category)),
+                // backgroundColor: sortedLabels.map(category => hashColor(category)),
+                backgroundColor: gradientColors,
                 borderWidth: 0,
               },
             ],
@@ -398,6 +418,12 @@ export default function Dashboard() {
               <li>No recent transactions.</li>
             )}
           </ul>
+
+          <Link href="/allExpenses">
+          <p className="view-all-expenses">
+          View all expenses
+          </p>
+          </Link>
         </div>
 
       </div>

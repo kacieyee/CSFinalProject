@@ -63,8 +63,8 @@ export default function Expenses() {
   const filterExpensesByDate = (expenses: Expense[]) => {
     const filtered = expenses.filter((expense) => {
       const expenseDate = new Date(expense.date);
-      const start = startDate ? new Date(startDate) : new Date(0); 
-      const end = endDate ? new Date(endDate) : new Date(); 
+      const start = startDate ? new Date(startDate) : new Date(0);
+      const end = endDate ? new Date(endDate) : new Date();
 
       return expenseDate >= start && expenseDate <= end;
     });
@@ -107,7 +107,6 @@ export default function Expenses() {
   };
 
   return (
-
     <div className="row">
       <div className="column left">
         <h2>All Expenses</h2>
@@ -134,29 +133,28 @@ export default function Expenses() {
           {filterExpensesByDate(expenses).length === 0 ? (
             <li>No expenses in this date range.</li>
             ) : (
-            filterExpensesByDate(expenses).map((expense) => (
+              [...filterExpensesByDate(expenses)]
+              .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+              .map((expense) => (
               <li key={expense._id} className="expense-item">
                 <div className="expense-info">
-                  <div><strong>Date:</strong> {new Date(expense.date).toLocaleDateString('en-US', {timeZone: 'UTC'})}</div>
+                  <div><strong>Date:</strong> {new Date(expense.date).toLocaleDateString()}</div>
                   <div><strong>Name:</strong> {expense.name}</div>
                   <div><strong>Price:</strong> ${expense.price.toFixed(2)}</div>
                   <div><strong>Vendor:</strong> {expense.vendor}</div>
                   <div><strong>Category:</strong> {expense.category}</div>
                   </div>
-                  <button className="editButton" onClick={() => editTransaction(expense)}>
-                    [Edit]
-                  </button>
-                  <button
-                    className="deleteButton"
-                    onClick={() => deleteTransaction(expense._id)}
-                  >
-                    <DeleteRounded sx={{ color: '#FF9BD1' }} />
-                  </button>
+                
+                  
+                  <div className="expense-right">
+                    <div className="expense-category">{expense.category}</div>
+                    <button className="deleteButton" onClick={() => deleteTransaction(expense._id)}>x
+                    </button>
+                  </div>
               </li>
             ))
           )}
         </ul>
-
       </div>
     </div>
   );

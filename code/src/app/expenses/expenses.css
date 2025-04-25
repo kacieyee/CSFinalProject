@@ -42,7 +42,7 @@ body {
   .label {
     float: left;
     display: block;
-    margin-bottom: 5px;
+    margin-bottom: 9px;
     color: #db2a8e;
     font-weight: bold;
   }
@@ -152,6 +152,8 @@ body {
     width: 100%;
     float: left;
     padding-left: 0px;
+
+    margin: 0px;
   }
 
   .closeButton {
@@ -163,9 +165,37 @@ body {
     color:aqua;
   }
 
-  .delete-button {
-    color: #FF9BD1; 
+  .expense-category {
+    border: 5px #ac477d solid;
+    background-color: #ac477d;
+    /* padding: 1.5rem; */
+    border-radius: 1rem;
+    color: white;
+    font-size: large;
+
+    margin-bottom: 0px;
+    margin-right: 0.8rem;
+
+    width: 10rem;
+    margin-top: 0;
+    /* height: 5rem; */
+
+    text-align: center;
+    vertical-align: center;
+  }
+
+  .expenseprice {
+    margin-bottom: 0px;
+  }
+
+  .deleteButton {
+    color: #ac477d; 
     display: inline-block;
+    padding-top: 0px;
+    margin-right: 1rem;
+    /* padding-right: 0.4rem; */
+
+
   }
 
   .button {
@@ -182,6 +212,10 @@ body {
     background-color: #D4384D;
     border: black 4px solid;
     outline: #D4384D 3px solid;
+    margin-bottom: 1.3rem;
+
+    align-items: left;
+    
   }
 
   /* button after
@@ -211,12 +245,28 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.5rem 0.5rem;
+    /* padding: 1rem 2rem; */
+    padding: 0px 0rem;
+    border-radius: 1.5rem;
+    border-width: 2px;
+
+    
+
+  }
+
+  .date {
+    color: #FF9BD1;
+    font-weight: bold;
+    margin-bottom: 0px;
   }
 
   .expense-info {
     display: flex;
     flex-direction: column;
+    margin: 0px;
+    padding: 0.7rem;
+    padding-left: 1.6rem;
+    margin-bottom: 0px;
   }
 
   .view-all-expenses {
@@ -238,8 +288,9 @@ body {
 
   .upload-right {
     width: 40%;
-    align-items: left;
-    /* border:aqua solid 2px; */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
   }
 
   .submitAudio {
