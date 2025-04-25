@@ -137,21 +137,18 @@ export default function Expenses() {
             filterExpensesByDate(expenses).map((expense) => (
               <li key={expense._id} className="expense-item">
                 <div className="expense-info">
-                  <div><strong>Date:</strong> {new Date(expense.date).toLocaleDateString('en-US', {timeZone: 'UTC'})}</div>
-                  <div><strong>Name:</strong> {expense.name}</div>
-                  <div><strong>Price:</strong> ${expense.price.toFixed(2)}</div>
-                  <div><strong>Vendor:</strong> {expense.vendor}</div>
-                  <div><strong>Category:</strong> {expense.category}</div>
-                  </div>
+                  <div className="date"><strong></strong> {new Date(expense.date).toLocaleDateString('en-US', {weekday: "long", day: "numeric", month: "long", year: "numeric"})}</div>
+                  <div className="expenseprice">${expense.price.toFixed(2)} at {expense.vendor}.</div>
+                </div>
                   <button className="editButton" onClick={() => editTransaction(expense)}>
                     [Edit]
                   </button>
-                  <button
-                    className="deleteButton"
-                    onClick={() => deleteTransaction(expense._id)}
-                  >
-                    <DeleteRounded sx={{ color: '#FF9BD1' }} />
-                  </button>
+                  
+                  <div className="expense-right">
+                    <div className="expense-category">{expense.category}</div>
+                    <button className="deleteButton" onClick={() => deleteTransaction(expense._id)}>x
+                    </button>
+                  </div>
               </li>
             ))
           )}

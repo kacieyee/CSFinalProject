@@ -528,7 +528,7 @@ export default function Expenses() {
             </button> */}
             <div className="expense-category">{expense.category}</div>
             {/* <button className="deleteButton" onClick={() => deleteTransaction(expense._id)}>x
-              <x sx={{ color: '#FF9BD1' }}/>
+              <DeleteRounded sx={{ color: '#FF9BD1' }}/>
             </button> */}
             
           </li>
