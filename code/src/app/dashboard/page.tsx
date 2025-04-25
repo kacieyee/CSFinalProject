@@ -5,6 +5,7 @@ import { Chart as ChartJS, LineElement, PointElement, LinearScale, Title, Toolti
 import { Line } from 'react-chartjs-2';
 import { Doughnut } from 'react-chartjs-2';
 import annotationPlugin from 'chartjs-plugin-annotation';
+import Link from 'next/link';
 import { color } from 'chart.js/helpers';
 ChartJS.register(LineElement, PointElement, LinearScale, CategoryScale, Title, Tooltip, Legend, annotationPlugin, ArcElement);
 
@@ -343,6 +344,12 @@ export default function Dashboard() {
               <li>No recent transactions.</li>
             )}
           </ul>
+
+          <Link href="/allExpenses">
+          <p className="view-all-expenses">
+          View all expenses
+          </p>
+          </Link>
         </div>
 
       </div>

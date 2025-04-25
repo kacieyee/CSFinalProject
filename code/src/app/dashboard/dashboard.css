@@ -90,6 +90,14 @@ body {
     margin: 0px;
 }
 
+.view-all-expenses {
+  text-decoration: underline;
+  color: #FF9BD1;
+  cursor: pointer;
+  margin-top: 1rem;
+  text-align: center;
+}
+
 .button.active{
   background-color: #ef9cc7;
   color: white;
