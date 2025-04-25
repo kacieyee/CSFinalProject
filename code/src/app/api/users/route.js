@@ -105,7 +105,7 @@ export async function PATCH(request) {
     }
 }
 
-async function userLogin(username, password) {
+export async function userLogin(username, password) {
     try {
         const user = await User.findOne({username});
         if (!user) {
