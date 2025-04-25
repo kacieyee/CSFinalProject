@@ -212,14 +212,6 @@ export default function Profile() {
         </div>
 
         <button
-          onClick={() => setIsEditingUserInfo(!isEditingUserInfo)}
-          className="button"
-          style={{ marginTop: "1rem" }}
-        >
-          {isEditingUserInfo ? "Cancel Edit" : "Edit Profile"}
-        </button>
-
-        <button
           onClick={() => setIsEditingProfile(!isEditingProfile)}
           className="button"
           style={{ marginTop: "1rem", marginBottom: "1rem" }}
