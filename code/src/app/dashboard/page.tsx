@@ -272,7 +272,8 @@ export default function Dashboard() {
           (item) => item.category.toLowerCase() === "total expenses"
         );
         if (total) {
-          setTotalExpenseLimit(total.goal);
+          const monthlyAdjusted = total.goal * getIntervalCoefficient(total.interval);
+          setTotalExpenseLimit(monthlyAdjusted);
         }
       }
     }, [visibleCategories, allBudgetItems]);
