@@ -152,6 +152,8 @@ body {
     width: 100%;
     float: left;
     padding-left: 0px;
+
+    margin: 0px;
   }
 
   .closeButton {
@@ -161,6 +163,27 @@ body {
     font-size: 24px;
     cursor: pointer;
     color:aqua;
+  }
+
+  .expense-category {
+    border: 5px #FF9BD1 solid;
+    background-color: #FF9BD1;
+    padding: 1.5rem;
+    border-radius: 2.3rem;
+    color: black;
+    font-size: large;
+
+    margin-bottom: 0px;
+
+    width: 10rem;
+    height: 5rem;
+
+    text-align: center;
+    vertical-align: center;
+  }
+
+  .expenseprice {
+    margin-bottom: 0px;
   }
 
   .delete-button {
@@ -182,6 +205,9 @@ body {
     background-color: #D4384D;
     border: black 4px solid;
     outline: #D4384D 3px solid;
+
+    align-items: left;
+    
   }
 
   /* button after
@@ -211,12 +237,28 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.5rem 0.5rem;
+    /* padding: 1rem 2rem; */
+    padding: 0px 0rem;
+    border-radius: 2.5rem;
+    border-width: 2px;
+
+    
+
+  }
+
+  .date {
+    color: #FF9BD1;
+    font-weight: bold;
+    margin-bottom: 0px;
   }
 
   .expense-info {
     display: flex;
     flex-direction: column;
+    margin: 0px;
+    padding: 0.7rem;
+    padding-left: 1.6rem;
+    margin-bottom: 0px;
   }
 
   .view-all-expenses {
@@ -239,6 +281,7 @@ body {
   .upload-right {
     width: 40%;
     align-items: left;
+    float: left;
     /* border:aqua solid 2px; */
   }
 

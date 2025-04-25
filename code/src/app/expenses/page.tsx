@@ -448,6 +448,8 @@ export default function Expenses() {
           <div className="upload-right">
 
             <h3>Add with Voice</h3>
+            <label className="label">Record a voice memo:</label>
+            <br></br>
             <button className="recordButton" onClick={toggleRecording}>
             <img src={isRecording ? "https://i.ibb.co/5XggJSKx/pause.png": "https://i.ibb.co/KjMwJ7mD/micIcon.png"}></img></button>
             {/* <button className="button" onClick={stopRecording}>Stop</button> */}
@@ -517,15 +519,16 @@ export default function Expenses() {
         expenses.map((expense) => (
         <li key={expense._id} className="expense-item">
           <div className="expense-info">
-            <div><strong>Date:</strong> {new Date(expense.date).toLocaleDateString('en-US', {timeZone: 'UTC'})}</div>
-            <div>${expense.price.toFixed(2)} spent on {expense.category} at {expense.vendor}.</div>
+            <div className="date"><strong></strong> {new Date(expense.date).toLocaleDateString('en-US', {weekday: "long", day: "numeric", month: "long", year: "numeric"})}</div>
+            <div className="expenseprice">${expense.price.toFixed(2)} at {expense.vendor}.</div>
           </div>
             <button className="editButton" onClick={() => editTransaction(expense)}>
               [Edit]
             </button>
-            <button className="deleteButton" onClick={() => deleteTransaction(expense._id)}>
+            <div className="expense-category">{expense.category}</div>
+            {/* <button className="deleteButton" onClick={() => deleteTransaction(expense._id)}>
               <DeleteRounded sx={{ color: '#FF9BD1' }}/>
-            </button>
+            </button> */}
           </li>
           ))
         )}
