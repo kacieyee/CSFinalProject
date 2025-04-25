@@ -109,7 +109,6 @@ input, select, .goal-input {
   float: right;
   margin-top: 13px;
 }
-
 .addExpenseButton {
   display: flex;
   justify-content: flex-end;
