@@ -233,6 +233,7 @@ export default function Profile() {
                     <>
                       <label>You have a </label>
                       <select 
+                        className={styles.select}
                         value={budget.interval} 
                         onChange={(e) => handleIntervalChange(budget, e.target.value)}
                       >
