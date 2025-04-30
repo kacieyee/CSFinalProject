@@ -1,9 +1,9 @@
-body {
+/* .body {
     font-family: 'Arial', sans-serif;
     margin: 0;
     padding: 0;
     background-color: #f4f4f9;
-  }
+  } */
 
   .row {
     width: 100%;
@@ -36,13 +36,13 @@ body {
     font-weight: bold;
   }
 
-   label {
+   .dashboardLabel {
     font-weight: bold;
     color: #db2a8e;
    }
 
 
-  input {
+  .input {
     width: 100%;
     padding: 8px;
     margin-bottom: 10px;
@@ -60,18 +60,17 @@ body {
     clear: both;
   }
   
-  ul {
+  .ul {
     list-style-type: none;
     padding: 0;
   }
 
-  li {
+  .li {
     padding: 5rem;
     font-size: 16px;
     color: #ffffff;
-  }
-  
-  ul li {
+
+    /*originally in ul li*/
     margin-bottom: 20px;
     padding: 10px;
     background-color: #000000;
@@ -84,17 +83,17 @@ body {
     border-radius: 20px;
   }
   
-  ul li div {
+  .nestedDiv {
     margin-bottom: 8px;
     font-size: 16px;
     color: #ffffff;
   }
   
-  ul li div strong {
+  .strong {
     color: #db2a8e;
   }
 
-  h2 {
+  .allExpH2 {
     color: #FF9BD1;
     padding-bottom: 0px;
     padding-left: 15px;

@@ -1,6 +1,6 @@
 'use client';
 import React, { useEffect, useState, useMemo } from 'react';``
-import './dashboard.css';
+import styles from './dashboard.module.css';
 import { Chart as ChartJS, LineElement, PointElement, LinearScale, Title, Tooltip, Legend, CategoryScale, ArcElement } from 'chart.js';
 import { Line } from 'react-chartjs-2';
 import { Doughnut } from 'react-chartjs-2';
@@ -380,17 +380,17 @@ export default function Dashboard() {
 
     return (
       
-      <div className="main">
-      <div className="row">
-        <div className="column left1">
+      <div className={styles.main}>
+      <div className={styles.row}>
+        <div className={`${styles.column} ${styles.left1}`}>
           <h1>Filter</h1>
-          <div className="button-container">
+          <div className={styles["button-container"]}>
             {groupedCategories.map((row, rowIndex) => (
-              <div key={rowIndex} className="filter">
+              <div key={rowIndex} className={styles.filter}>
                 {row.map((category, index) => (
                   <button
                     key={index}
-                    className={`button ${activeCategories.includes(category) ? 'active' : ''}`}
+                    className={`${styles.button} ${activeCategories.includes(category) ? styles.active : ''}`}
                     onClick={() => toggleCategory(category)}
                   >
                     {category}
@@ -400,27 +400,27 @@ export default function Dashboard() {
             ))}
           </div>
 
-          <div className="subtext">{motivationMessage}</div>
+          <div className={styles.subtext}>{motivationMessage}</div>
 
         </div>
 
-        <div className="column right1">
+        <div className={`${styles.column} ${styles.right1}`}>
           
           <h1>Recent Transactions</h1>
-          <ul className="text-white">
+          <ul className={`${styles.ul} ${styles["text-white"]}`}>
             {recentTransactions.length > 0 ? (
               recentTransactions.map((txn, index) => (
-                <li key={index}>
+                <li className={styles.li} key={index}>
                   {txn.name} (${txn.price.toFixed(2)}) on {new Date(txn.date).toLocaleDateString('en-US', {timeZone: 'UTC'})}.
                 </li>
               ))
             ) : (
-              <li>No recent transactions.</li>
+              <li className={styles.li}>No recent transactions.</li>
             )}
           </ul>
 
           <Link href="/allExpenses">
-          <p className="view-all-expenses">
+          <p className={`${styles.p} ${styles["view-all-expenses"]}`}>
           View all expenses
           </p>
           </Link>
@@ -428,10 +428,10 @@ export default function Dashboard() {
 
       </div>
       <br></br>
-      <div className="row2" >
-        <div className="column left2">
+      <div className={styles.row2}>
+        <div className={`${styles.column} ${styles.left2}`}>
           {/* line chart for goals */}
-          <div className="line-chart-container">
+          <div className={styles["line-chart-container"]}>
             <Line
               data={{
                 labels: monthlyLabels,
@@ -502,12 +502,12 @@ export default function Dashboard() {
 
           </div>
         </div>
-        <div className="column right2">
+        <div className={`${styles.column} ${styles.right2}`}>
 
         {doughnutData ? (
           <Doughnut data={doughnutData} options={options} />
         ) : (
-          <p></p>
+          <p className={styles.p}></p>
         )}
 
         </div>

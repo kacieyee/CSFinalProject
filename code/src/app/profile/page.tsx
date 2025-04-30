@@ -1,5 +1,5 @@
 'use client'
-import "./profile.css";
+import styles from "./profile.module.css";
 import { useEffect, useState } from "react";
 import { DeleteRounded, VisibilityRounded, VisibilityOffRounded } from '@mui/icons-material';
 
@@ -191,10 +191,10 @@ export default function Profile() {
   };
 
   return (
-    <div className="row">
-      <div className="column-left">
+    <div className={styles.row}>
+      <div className={styles["column-left"]}>
         <h1>Profile</h1>
-        <div className="profileSection">
+        <div className={styles.profileSection}>
         <p><strong>Name:</strong> {userData.username}</p>
         <div style={{ display: "flex", alignSelf: "right" }}>
           <p style={{ marginRight: "15rem" }}>
@@ -213,21 +213,21 @@ export default function Profile() {
 
         <button
           onClick={() => setIsEditingProfile(!isEditingProfile)}
-          className="button"
+          className={styles.button}
           style={{ marginTop: "1rem", marginBottom: "1rem" }}
         >
           {isEditingProfile ? "Finish Editing" : "Edit Goals"}
         </button>
       </div>
 
-      <div className="column-right">
+      <div className={styles["column-right"]}>
         <h1>Budgeting Goals</h1>
-        <div className="profileSection">
+        <div className={styles.profileSection}>
         {userData.budgets.filter(b => !["temp total"].includes(b.category.toLowerCase())).length > 0 ? (
           userData.budgets
             .filter(b => !["temp total"].includes(b.category.toLowerCase()))
             .map((budget, index) => (
-              <div key={index} className={!isEditingProfile ? "goals" : ""}>
+              <div key={index} className={!isEditingProfile ? styles.goals : ""}>
                 <div>
                   {isEditingProfile ? (
                     <>
@@ -248,25 +248,25 @@ export default function Profile() {
                         value={tempGoals[budget.category] || budget.goal}
                         onChange={(e) => handleGoalChange(budget.category, e.target.value)} 
                         onKeyDown={(e) => handleGoalSubmit(e, budget)}
-                        className="goal-input"
+                        className={styles.goalInput}
                       />
                       <label> for {budget.category}.</label>
                         {budget.category.toLowerCase() !== "total expenses" && (
                           <button 
                             onClick={() => deleteBudget(budget.category)} 
-                            className="delete-button"
+                            className={styles["delete-button"]}
                           ><DeleteRounded sx={{ color: '#FF9BD1' }}/>
                           </button>
                         )}
                     </>
                   ) : (
                     <p>
-                      <span className="budget-label">You have a </span>
-                      <span className="budget-variable">{budget.interval}</span>
-                      <span className="budget-label"> budget of $</span>
-                      <span className="budget-variable">{budget.goal}</span>
-                      <span className="budget-label"> for </span>
-                      <span className="budget-variable">{budget.category}</span>.
+                      <span className={styles["budget-label"]}>You have a </span>
+                      <span className={styles["budget-variable"]}>{budget.interval}</span>
+                      <span className={styles["budget-label"]}> budget of $</span>
+                      <span className={styles["budget-variable"]}>{budget.goal}</span>
+                      <span className={styles["budget-label"]}> for </span>
+                      <span className={styles["budget-variable"]}>{budget.category}</span>.
                     </p>
                   )}
                 </div>
@@ -278,12 +278,13 @@ export default function Profile() {
           
           <h1>Add a new goal!</h1>
           <form onSubmit={submitBudget} className="new-goal-form">
-            <div className="budgetGoal">
+            <div className={styles.budgetGoal}>
               For what category?
               <input
                 list="categories"
                 value={category}
                 onChange={(e) => setCategory(e.target.value.toLowerCase())}
+                className={styles.goalInput}
               />
               <datalist id="categories">
                 {budget.length > 0 ? (
@@ -296,7 +297,7 @@ export default function Profile() {
               </datalist>
             </div>
             <br />
-            <button type="submit" className="button">Submit</button>
+            <button type="submit" className={styles.button}>Submit</button>
           </form>
         </div>
       </div>

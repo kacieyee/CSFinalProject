@@ -2,7 +2,7 @@
 import Link from "next/link";
 import pinkLogo from "../../assets/pink logo.png";
 import Image from "next/image";
-import "./home.css";
+import styles from "./home.module.css"
 import * as turf from "@turf/turf";
 import { useEffect, useState } from "react";
 
@@ -31,7 +31,7 @@ export default function Home() {
       <Image 
         src={pinkLogo}
         alt="Pink Logo"
-        className="logo" 
+        className={styles.logo} 
       />
       <h1 className="heading">
         Reaching our budgeting goals together.<br />
@@ -40,12 +40,12 @@ export default function Home() {
 
       <div className="buttonContainer">
         <Link href="/login">
-          <button className="pink-button">
+          <button className={styles["pink-button"]}>
             Login
             </button>
         </Link>
         <Link href="/signup">
-          <button className="pink-button">
+          <button className={styles["pink-button"]}>
             Sign Up
             </button>
         </Link>

@@ -1,5 +1,5 @@
 'use client'
-import './signup.css';
+import styles from './signup.module.css';
 import { useState } from "react";
 import { useRouter } from 'next/navigation';
 import { VisibilityRounded, VisibilityOffRounded } from '@mui/icons-material';
@@ -39,26 +39,26 @@ export default function SignUp() {
     };    
 
     return (
-      <div className="loginContainer">
+      <div className={styles.loginContainer}>
         <h1>Sign Up</h1>
         
         <form onSubmit={submitUser}>
-        <div className="loginBox">
-            <label className="label">Username</label>
+        <div className={styles.loginBox}>
+            <label className={styles.label}>Username</label>
             <input
               type="text"
               onChange={(e) => setUsername(e.target.value)}
               placeholder="Enter your username"
-              className="inputField"
+              className={styles.inputField}
             />
   
-            <label className="label">Password</label>
+            <label className={styles.label}>Password</label>
           <div style={{ position: 'relative' }}>
             <input
               type={showPassword ? "text" : "password"}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Enter your password"
-              className="inputField"
+              className={styles.inputField}
               style={{ paddingRight: '2.5rem' }}
             />
             <div
@@ -81,13 +81,13 @@ export default function SignUp() {
           </div>
 
           <div className="mb-6">
-            <label className="label">Confirm Password</label>
+            <label className={styles.label}>Confirm Password</label>
           <div style={{ position: 'relative' }}>
             <input
               type={showPassword ? "text" : "password"}
               onChange={(e) => setConfirm(e.target.value)}
               placeholder="Re-enter your password"
-              className="inputField"
+              className={styles.inputField}
               style={{ paddingRight: '2.5rem' }}
             />
             <div
@@ -109,8 +109,8 @@ export default function SignUp() {
             </div>
           </div>
           </div>
-          <div className="flex justify-center items-center">
-          <button type="submit" className="loginButton">
+          <div className={`${styles.flex} ${styles["justify-center"]} ${styles["items-center"]}`}>
+          <button type="submit" className={styles.loginButton}>
             Sign Up
           </button>
           </div>

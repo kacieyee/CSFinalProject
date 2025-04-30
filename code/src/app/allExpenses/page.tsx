@@ -1,5 +1,5 @@
 'use client'
-import './allExpenses.css';
+import styles from './allExpenses.module.css';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 import { BarLoader } from 'react-spinners';
@@ -107,20 +107,22 @@ export default function Expenses() {
   };
 
   return (
-    <div className="row">
-      <div className="column left">
-        <h2>All Expenses</h2>
-        <label>
+    <div className={`${styles.body} ${styles.row}`}>
+      <div className={`${styles.column} ${styles.left}`}>
+        <h2 className={styles.allExpH2}>All Expenses</h2>
+        <label className={styles.dashboardLabel}>
           Start Date:
           <input
+            className={styles.input}
             type="date"
             value={startDate}
             onChange={(e) => setStartDate(e.target.value)}
           />
         </label>
-        <label>
+        <label className={styles.dashboardLabel}>
           End Date:
           <input
+            className={styles.input}
             type="date"
             value={endDate}
             min={startDate ? new Date(new Date(startDate).getTime() + 86400000).toISOString().split('T')[0] : ''}
@@ -128,26 +130,26 @@ export default function Expenses() {
           />
         </label>
       </div>
-      <div className="column right">
-        <ul>
+      <div className={`${styles.column} ${styles.right}`}>
+        <ul className={styles.ul}>
           {filterExpensesByDate(expenses).length === 0 ? (
-            <li>No expenses in this date range.</li>
+            <li className={styles.li}>No expenses in this date range.</li>
             ) : (
               [...filterExpensesByDate(expenses)]
               .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
               .map((expense) => (
-              <li key={expense._id} className="expense-item">
-                <div className="expense-info">
-                  <div className="date"><strong></strong> {new Date(expense.date).toLocaleDateString('en-US', {weekday: "long", day: "numeric", month: "long", year: "numeric"})}</div>
-                  <div className="expenseprice">${expense.price.toFixed(2)} at {expense.vendor}.</div>
+              <li key={expense._id} className={`${styles["expense-item"]} ${styles.li}`}>
+                <div className={`${styles["expense-info"]} ${styles.nestedDiv}`}>
+                  <div className={`${styles.date} ${styles.nestedDiv}`}><strong className={styles.strong}></strong> {new Date(expense.date).toLocaleDateString('en-US', {weekday: "long", day: "numeric", month: "long", year: "numeric"})}</div>
+                  <div className={`${styles.expenseprice} ${styles.nestedDiv}`}>${expense.price.toFixed(2)} at {expense.vendor}.</div>
                 </div>
-                  <button className="editButton" onClick={() => editTransaction(expense)}>
+                  <button className={styles.editButton} onClick={() => editTransaction(expense)}>
                     [Edit]
                   </button>
                   
-                  <div className="expense-right">
-                    <div className="expense-category">{expense.category}</div>
-                    <button className="deleteButton" onClick={() => deleteTransaction(expense._id)}>x
+                  <div className={`${styles["expense-right"]} ${styles.nestedDiv}`}>
+                    <div className={`${styles["expense-category"]} ${styles.nestedDiv}`}>{expense.category}</div>
+                    <button className={styles.deleteButton} onClick={() => deleteTransaction(expense._id)}>x
                     </button>
                   </div>
               </li>

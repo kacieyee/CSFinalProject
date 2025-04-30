@@ -449,8 +449,7 @@ export default function Expenses() {
   };
   
   return (
-    
-    <div className={styles.row}>
+    <div className={`${styles.body} ${styles.row}`}>
       <div className={`${styles.column} ${styles.left}`}>
         <h2 className={styles.h2}>Add New Expense</h2>
         <div className={styles["upload-section"]}>
