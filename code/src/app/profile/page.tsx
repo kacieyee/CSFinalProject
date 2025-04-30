@@ -213,7 +213,7 @@ export default function Profile() {
 
         <button
           onClick={() => setIsEditingProfile(!isEditingProfile)}
-          className={styles.button}
+          className="button"
           style={{ marginTop: "1rem", marginBottom: "1rem" }}
         >
           {isEditingProfile ? "Finish Editing" : "Edit Goals"}
@@ -297,7 +297,7 @@ export default function Profile() {
               </datalist>
             </div>
             <br />
-            <button type="submit" className={styles.button}>Submit</button>
+            <button type="submit" className="button">Submit</button>
           </form>
         </div>
       </div>

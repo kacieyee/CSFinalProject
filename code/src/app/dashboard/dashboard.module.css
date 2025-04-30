@@ -103,6 +103,10 @@
   color: white;
 }
 
+.text-white {
+  color: white;
+}
+
 .subtext{
     display: flex;
     align-items: center;
