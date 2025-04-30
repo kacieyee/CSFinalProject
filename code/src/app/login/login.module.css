@@ -54,22 +54,22 @@
     border-radius: 20px;
   }
 
-  .input-field:focus {
+  .inputField:focus {
     border-color: #ec4899; /* focus:ring-pink-400 */
     box-shadow: 0 0 0 2px rgba(248, 113, 207, 0.5); /* focus:ring-pink-400 */
   }
 
-  input::placeholder {
+  .inputField::placeholder {
     opacity: 0.8;
     color: rgb(255, 255, 255);
   }
 
-  input[type=text] {
+  .inputField[type=text] {
     opacity: 1;
     color: rgb(255, 255, 255);
 
   }
-  input[type=password] {
+  .inputField[type=password] {
     opacity: 1;
     color: rgb(255, 255, 255);
 

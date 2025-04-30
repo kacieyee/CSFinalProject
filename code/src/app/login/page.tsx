@@ -1,5 +1,5 @@
 'use client'
-import './login.css';
+import styles from './login.module.css';
 import { useState } from "react";
 import { useRouter } from 'next/navigation';
 import { VisibilityRounded, VisibilityOffRounded } from '@mui/icons-material';
@@ -38,26 +38,26 @@ export default function Login() {
   };
 
   return (
-    <div className="loginContainer">
-      <div className="heading">Login</div>
+    <div className={styles.loginContainer}>
+      <div className={styles.heading}>Login</div>
 
       <form onSubmit={checkUser}>
-        <div className="loginBox">
-          <label className="label">Username</label>
+        <div className={styles.loginBox}>
+          <label className={styles.label}>Username</label>
           <input
             type="text"
             onChange={(e) => setUsername(e.target.value)}
             placeholder="Enter your username"
-            className="inputField"
+            className={styles.inputField}
           />
 
-          <label className="label">Password</label>
+          <label className={styles.label}>Password</label>
           <div style={{ position: 'relative' }}>
             <input
               type={showPassword ? "text" : "password"}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Enter your password"
-              className="inputField"
+              className={styles.inputField}
               style={{ paddingRight: '2.5rem' }}
             />
             <div
@@ -79,13 +79,13 @@ export default function Login() {
             </div>
           </div>
 
-          <div className="flex justify-center items-center">
-            <button type="submit" className="loginButton">
+          <div className={`${styles.flex} ${styles["justify-center"]} ${styles["items-center"]}`}>
+            <button type="submit" className={styles.loginButton}>
               Login
             </button>
           </div>
 
-          <div className="subtext">
+          <div className={styles.subtext}>
             Don't have an account?&nbsp;
             <a href="/signup" style={{ color: '#ff3388' }}>&nbsp;Sign up&nbsp;</a> here.
           </div>
