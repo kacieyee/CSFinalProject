@@ -1,9 +1,3 @@
-body {
-    margin: 0;
-    padding: 0;
-    background-color: #f4f4f9;
-  }
-
   .row {
     
     /* border: red 2px solid; */
@@ -47,12 +41,12 @@ body {
     font-weight: bold;
   }
 
-  label {
+  .formLabel {
     color: #db2a8e;
     font-weight: bold;
   }
 
-  input {
+  .expensesInput {
     width: 100%;
     padding: 8px;
     margin-bottom: 10px;
@@ -70,12 +64,12 @@ body {
     clear: both;
   }
   
-  ul {
+  .expensesUl {
     list-style-type: none;
     padding: 0;
   }
   
-  ul li {
+  .ul-li {
     margin-bottom: 20px;
     padding: 10px;
     background-color: #000000;
@@ -85,17 +79,17 @@ body {
     border-width: 1px; 
   }
   
-  ul li div {
+  .ul-li-div {
     margin-bottom: 8px;
     font-size: 16px;
     color: #ffffff;
   }
   
-  ul li div strong {
+  .strongColor {
     color: #db2a8e;
   }
 
-  h2 {
+  .h2 {
     color: #FF9BD1;
     padding-bottom: 0px;
     padding-left: 15px;
@@ -231,7 +225,7 @@ body {
     gap: 10px;
   }
 
-  select {
+  /* select {
     padding: 8px;
     border-radius: 10px;
     background-color: rgba(255, 110, 173, 0.5);
@@ -239,7 +233,7 @@ body {
     border-color: #FF9BD1;
     border-width: 1px;
     width: auto; 
-  }
+  } */
 
   .expense-item {
     display: flex;
@@ -298,13 +292,13 @@ body {
   }
 
 
-  img {
+  .img {
     width: 40px;
     height: 40px;
     padding: 5px;
   }
 
-  h3 {
+  .h3 {
     font-size: 25px;
     color: #FF9BD1;
     padding-bottom: 15px;
@@ -313,7 +307,7 @@ body {
     text-align: left;
   }
 
-  h4 {
+  .h4 {
     font-size: 25px;
     color: white;
     padding-bottom: 15px;

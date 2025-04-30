@@ -18,6 +18,10 @@ body {
   color: var(--foreground);
   background: var(--background); 
   font-family: Arial, Helvetica, sans-serif;
+  /*Harper moved from expenses.module.css*/
+  margin: 0;
+  padding: 0;
+  background-color: #f4f4f9;
 }
 
 h1 {

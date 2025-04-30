@@ -1,5 +1,5 @@
 'use client'
-import './expenses.css';
+import styles from './expenses.module.css';
 import Link from 'next/link';
 import React, { useEffect, useRef, useState } from 'react';
 import AddExpensePopup from './addExpensePopup'; 
@@ -450,36 +450,36 @@ export default function Expenses() {
   
   return (
     
-    <div className="row">
-      <div className="column left">
-        <h2>Add New Expense</h2>
-        <div className="upload-section">
-          <div className="row">
-          <div className="upload-left">
-            <h3>Add with Receipt</h3>
+    <div className={styles.row}>
+      <div className={`${styles.column} ${styles.left}`}>
+        <h2 className={styles.h2}>Add New Expense</h2>
+        <div className={styles["upload-section"]}>
+          <div className={styles.row}>
+          <div className={styles["upload-left"]}>
+            <h3 className={styles.h3}>Add with Receipt</h3>
             <form onSubmit={handleFileUpload}>
-              <label className="label">Select a file:</label>
-              <input type="file" id="input" onChange={handleFileChange}></input>
+              <label className={styles.label}>Select a file:</label>
+              <input className={styles.expensesInput} type="file" id="input" onChange={handleFileChange}></input>
               <br></br>
-              <input className="submitReceipt button" type="submit"></input>
+              <input className={`${styles.submitReceipt} ${styles.button} ${styles.expensesInput}`} type="submit"></input>
             </form>
           </div>
 
-          <div className="upload-middle">
-              <h4>or</h4>
+          <div className={styles["upload-middle"]}>
+              <h4 className={styles.h4}>or</h4>
           </div>
 
-          <div className="upload-right">
+          <div className={styles["upload-right"]}>
 
-            <h3>Add with Voice</h3>
-            <label className="label">Record a voice memo:</label>
-            <button className="recordButton" onClick={toggleRecording}>
-            <img src={isRecording ? "https://i.ibb.co/5XggJSKx/pause.png": "https://i.ibb.co/KjMwJ7mD/micIcon.png"}></img></button>
+            <h3 className={styles.h3}>Add with Voice</h3>
+            <label className={styles.label}>Record a voice memo:</label>
+            <button className={styles.recordButton} onClick={toggleRecording}>
+            <img className={styles.img} src={isRecording ? "https://i.ibb.co/5XggJSKx/pause.png": "https://i.ibb.co/KjMwJ7mD/micIcon.png"}></img></button>
             {/* <button className="button" onClick={stopRecording}>Stop</button> */}
             
             
             {isLoading && (
-              <div className="loading-overlay">
+              <div className={styles["loading-overlay"]}>
                 <BarLoader color="#FF9BD1" width={300} />
               </div>
             )}
@@ -489,24 +489,25 @@ export default function Expenses() {
 
           
             {/* <div id ="expensePopup" className="popup"> */}
-            <div className="popupContent">
+            <div className={styles.popupContent}>
             {/* <span className="closeButton" id="closePopup">&times;</span> */}
             <form id="expenseForm" onSubmit={submitTransaction}>
-            <label>Expense Name:</label>
-                <input type="text" value={name} onChange={(e) => setName(e.target.value)} id="name" name="name" required></input><br></br>
+            <label className={styles.formLabel}>Expense Name:</label>
+                <input className={styles.expensesInput} type="text" value={name} onChange={(e) => setName(e.target.value)} id="name" name="name" required></input><br></br>
 
-                <label>Price:</label>
-                <input type="number" value={price} onChange={(e) => setPrice(e.target.value)} id="price" name="price" required></input><br></br>
+                <label className={styles.formLabel}>Price:</label>
+                <input className={styles.expensesInput} type="number" value={price} onChange={(e) => setPrice(e.target.value)} id="price" name="price" required></input><br></br>
 
-                <label>Date:</label>
-                <input type="date" value={date} onChange={(e) => setDate(e.target.value)} id="date" name="date" required></input><br></br>
+                <label className={styles.formLabel}>Date:</label>
+                <input className={styles.expensesInput} type="date" value={date} onChange={(e) => setDate(e.target.value)} id="date" name="date" required></input><br></br>
 
-                <label>Vendor:</label>
-                <input type="text" value={vendor} onChange={(e) => setVendor(e.target.value)} id="vendor" name="vendor" required></input><br></br>
+                <label className={styles.formLabel}>Vendor:</label>
+                <input className={styles.expensesInput} type="text" value={vendor} onChange={(e) => setVendor(e.target.value)} id="vendor" name="vendor" required></input><br></br>
 
-              <div className="button-row">
-              <label>Category:</label>
+              <div className={styles["button-row"]}>
+              <label className={styles.formLabel}>Category:</label>
               <input 
+                className={styles.expensesInput}
                 list="categories" 
                 value={category} 
                 onChange={(e) => setCategory(e.target.value.toLowerCase())} 
@@ -524,7 +525,7 @@ export default function Expenses() {
               </datalist>
               <br></br>
 
-              <button className="button" type="submit">Add new expense!</button>
+              <button className={styles.button} type="submit">Add new expense!</button>
             </div>
             </form>
           </div>
@@ -536,21 +537,21 @@ export default function Expenses() {
       
       </div>
 
-      <div className="column right"><h2>Recent Expenses</h2>
-      <ul>
+      <div className={`${styles.column} ${styles.right}`}><h2 className={styles.h2}>Recent Expenses</h2>
+      <ul className={styles.expensesUl}>
         {expenses.length === 0 ? (
-          <li>No recent expenses</li>
+          <li className={styles["ul-li"]}>No recent expenses</li>
         ) : (
         expenses.map((expense) => (
-        <li key={expense._id} className="expense-item">
-          <div className="expense-info">
-            <div className="date"><strong></strong> {new Date(expense.date).toLocaleDateString('en-US', {weekday: "long", day: "numeric", month: "long", year: "numeric"})}</div>
-            <div className="expenseprice">${expense.price.toFixed(2)} at {expense.vendor}.</div>
+        <li key={expense._id} className={`${styles["expense-item"]} ${styles["ul-li"]}`}>
+          <div className={`${styles["expense-info"]} ${styles["ul-li-div"]}`}>
+            <div className={`${styles["date"]} ${styles["ul-li-div"]}`}><strong className={styles.strongColor}></strong> {new Date(expense.date).toLocaleDateString('en-US', {weekday: "long", day: "numeric", month: "long", year: "numeric"})}</div>
+            <div className={`${styles["expenseprice"]} ${styles["ul-li-div"]}`}>${expense.price.toFixed(2)} at {expense.vendor}.</div>
           </div>
             {/* <button className="editButton" onClick={() => editTransaction(expense)}>
               [Edit]
             </button> */}
-            <div className="expense-category">{expense.category}</div>
+            <div className={`${styles["expense-category"]} ${styles["ul-li-div"]}`}>{expense.category}</div>
             {/* <button className="deleteButton" onClick={() => deleteTransaction(expense._id)}>x
               <DeleteRounded sx={{ color: '#FF9BD1' }}/>
             </button> */}
@@ -561,7 +562,7 @@ export default function Expenses() {
       </ul>
 
         <Link href="/allExpenses">
-          <p className="view-all-expenses">
+          <p className={styles["view-all-expenses"]}>
           View all expenses
           </p>
         </Link>
