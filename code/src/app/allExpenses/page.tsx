@@ -173,75 +173,11 @@ export default function Expenses() {
   const editTransaction = (expense: Expense) => {
 
     setEditingExpense(expense);  
-    setName(expense.name);       
-    // setPrice(expense.price);
-    setDate(expense.date);
+    setName(expense.name);
+    setPrice(expense.price.toString());
+    setDate(expense.date.slice(0, 10));
     setVendor(expense.vendor);
-    setCategory(expense.category);
-    setShowForm(true);
-
-    // const submitTransaction = async(e: any) => {
-    //   try {
-    //     e.preventDefault();
-  
-    //     const disallowedCategories = ["total expenses", "temp total"];
-  
-    //     if (disallowedCategories.includes(category.trim().toLowerCase())) {
-    //         alert(`"${category}" is a reserved category and cannot be added.`);
-    //         return;
-    //     }
-  
-    //     const categoryExists = budget.some(budgetItem => budgetItem.category.toLowerCase() === category.toLowerCase());
-  
-    //     if (!categoryExists) {
-    //       const newBudget = {
-    //         category: category.toLowerCase(),
-    //         goal: 0,
-    //         interval: "monthly"
-    //       };
-    
-    //       try {
-    //         const response = await fetch("/api/budget", {
-    //           method: "POST",
-    //           headers: {
-    //             "Content-Type": "application/json",
-    //           },
-    //           body: JSON.stringify(newBudget),
-    //         });
-    
-    //         if (!response.ok) {
-    //           throw new Error("Failed to create new budget category.");
-    //         }
-    //       } catch (error) {
-    //         console.error("Error creating new budget category:", error);
-    //         alert("Failed to create new budget category.");
-    //         return;
-    //       }
-    //     }
-      
-    //     try {
-    //         const response = await fetch("/api/transactions", { 
-    //           method: "POST",
-    //           headers: {"Content-Type": "application/json"},
-    //           body: JSON.stringify({name, price, date, vendor, category: category.toLowerCase()}),
-    //         });
-            
-    //         if (response.ok) {
-    //           setTransactionAdded(true);
-    //           setShowForm(false);  // Hide the form after submitting
-    //           setEditingExpense(null);
-    //         }
-    //     } catch (error) {
-    //         console.error("Error submitting transaction:", error);
-    //     }      
-    //   } catch (error) {
-    //     alert("Fields cannot be blank!");
-    //   }
-
-      
-    //   setShowForm(false); 
-    //   setEditingExpense(null); 
-    // }
+    setCategory(expense.category.toLowerCase());
 
     
     const query = new URLSearchParams({
