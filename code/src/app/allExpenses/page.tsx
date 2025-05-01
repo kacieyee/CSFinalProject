@@ -30,6 +30,9 @@ export default function Expenses() {
   const [startDate, setStartDate] = useState<string>('');
   const [endDate, setEndDate] = useState<string>('');
 
+  const [showForm, setShowForm] = useState(false);
+  // const [editingExpense, setEditingExpense] = useState(null);
+
   const fetchExpenses = async () => {
     try {
       const res = await fetch("/api/transactions", {
@@ -62,10 +65,10 @@ export default function Expenses() {
   }, []);
 
   const filterExpensesByDate = (expenses: Expense[]) => {
-    const filtered = expenses.filter((expense) => {
-      const expenseDate = new Date(expense.date);
-      const start = startDate ? new Date(startDate) : new Date(0);
-      const end = endDate ? new Date(endDate) : new Date();
+  const filtered = expenses.filter((expense) => {
+  const expenseDate = new Date(expense.date);
+  const start = startDate ? new Date(startDate) : new Date(0);
+  const end = endDate ? new Date(endDate) : new Date();
 
       return expenseDate >= start && expenseDate <= end;
     });
@@ -148,78 +151,97 @@ export default function Expenses() {
     } catch (error) {
       alert("Fields cannot be blank!");
     }
+
+    
+    setShowForm(false);  
+    setEditingExpense(null);
   }
 
   const router = useRouter();
   const [isVisible, setVisible] = useState(false);
-        const [name, setName] = useState('');
-        const [price, setPrice] = useState('');
-        const [date, setDate] = useState('');
-        const [vendor, setVendor] = useState('');
+  const [name, setName] = useState('');
+  const [price, setPrice] = useState('');
+  const [date, setDate] = useState('');
+  const [vendor, setVendor] = useState('');
   
-      const openPopup = () => setVisible(true);
-      const closePopup = () => setVisible(false);
-      const [category, setCategory] = useState('');
-      const [budget, setBudget] = useState<Budget[]>([]);
-      const [transactionAdded, setTransactionAdded] = useState(false);
+  const openPopup = () => setVisible(true);
+  const closePopup = () => setVisible(false);
+  const [category, setCategory] = useState('');
+  const [budget, setBudget] = useState<Budget[]>([]);
+  const [transactionAdded, setTransactionAdded] = useState(false);
+  const [editingExpense, setEditingExpense] = useState<Expense | null>(null);
   const editTransaction = (expense: Expense) => {
 
-    const submitTransaction = async(e: any) => {
-      try {
-        e.preventDefault();
+    setEditingExpense(expense);  
+    setName(expense.name);       
+    // setPrice(expense.price);
+    setDate(expense.date);
+    setVendor(expense.vendor);
+    setCategory(expense.category);
+    setShowForm(true);
+
+    // const submitTransaction = async(e: any) => {
+    //   try {
+    //     e.preventDefault();
   
-        const disallowedCategories = ["total expenses", "temp total"];
+    //     const disallowedCategories = ["total expenses", "temp total"];
   
-        if (disallowedCategories.includes(category.trim().toLowerCase())) {
-            alert(`"${category}" is a reserved category and cannot be added.`);
-            return;
-        }
+    //     if (disallowedCategories.includes(category.trim().toLowerCase())) {
+    //         alert(`"${category}" is a reserved category and cannot be added.`);
+    //         return;
+    //     }
   
-        const categoryExists = budget.some(budgetItem => budgetItem.category.toLowerCase() === category.toLowerCase());
+    //     const categoryExists = budget.some(budgetItem => budgetItem.category.toLowerCase() === category.toLowerCase());
   
-        if (!categoryExists) {
-          const newBudget = {
-            category: category.toLowerCase(),
-            goal: 0,
-            interval: "monthly"
-          };
+    //     if (!categoryExists) {
+    //       const newBudget = {
+    //         category: category.toLowerCase(),
+    //         goal: 0,
+    //         interval: "monthly"
+    //       };
     
-          try {
-            const response = await fetch("/api/budget", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify(newBudget),
-            });
+    //       try {
+    //         const response = await fetch("/api/budget", {
+    //           method: "POST",
+    //           headers: {
+    //             "Content-Type": "application/json",
+    //           },
+    //           body: JSON.stringify(newBudget),
+    //         });
     
-            if (!response.ok) {
-              throw new Error("Failed to create new budget category.");
-            }
-          } catch (error) {
-            console.error("Error creating new budget category:", error);
-            alert("Failed to create new budget category.");
-            return;
-          }
-        }
+    //         if (!response.ok) {
+    //           throw new Error("Failed to create new budget category.");
+    //         }
+    //       } catch (error) {
+    //         console.error("Error creating new budget category:", error);
+    //         alert("Failed to create new budget category.");
+    //         return;
+    //       }
+    //     }
       
-        try {
-            const response = await fetch("/api/transactions", { 
-              method: "POST",
-              headers: {"Content-Type": "application/json"},
-              body: JSON.stringify({name, price, date, vendor, category: category.toLowerCase()}),
-            });
+    //     try {
+    //         const response = await fetch("/api/transactions", { 
+    //           method: "POST",
+    //           headers: {"Content-Type": "application/json"},
+    //           body: JSON.stringify({name, price, date, vendor, category: category.toLowerCase()}),
+    //         });
             
-            if (response.ok) {
-              setTransactionAdded(true);
-            }
-        } catch (error) {
-            console.error("Error submitting transaction:", error);
-        }      
-      } catch (error) {
-        alert("Fields cannot be blank!");
-      }
-    }
+    //         if (response.ok) {
+    //           setTransactionAdded(true);
+    //           setShowForm(false);  // Hide the form after submitting
+    //           setEditingExpense(null);
+    //         }
+    //     } catch (error) {
+    //         console.error("Error submitting transaction:", error);
+    //     }      
+    //   } catch (error) {
+    //     alert("Fields cannot be blank!");
+    //   }
+
+      
+    //   setShowForm(false); 
+    //   setEditingExpense(null); 
+    // }
 
     
     const query = new URLSearchParams({
@@ -231,7 +253,8 @@ export default function Expenses() {
     }).toString();
   
     deleteTransaction(expense._id);
-    router.push(`/expenses?${query}`);
+    setShowForm(true);     
+    // router.push(`/expenses?${query}`);
   };
 
   return (
@@ -257,48 +280,47 @@ export default function Expenses() {
             onChange={(e) => setEndDate(e.target.value)}
           />
         </label>
+        {showForm && (
         <div className={styles.popupContent}>
-                        {/* <span className="closeButton" id="closePopup">&times;</span> */}
-                        <form id="expenseForm" onSubmit={submitTransaction}>
-                        <label className={styles.formLabel}>Expense Name:</label>
-                            <input className={styles.expensesInput} type="text" value={name} onChange={(e) => setName(e.target.value)} id="name" name="name" required></input><br></br>
+            <form id="expenseForm" onSubmit={submitTransaction}>
+              <label className={styles.formLabel}>Expense Name:</label>
+                <input className={styles.expensesInput} type="text" value={name} onChange={(e) => setName(e.target.value)} id="name" name="name" required></input><br></br>
 
-                            <label className={styles.formLabel}>Price:</label>
-                            <input className={styles.expensesInput} type="number" value={price} onChange={(e) => setPrice(e.target.value)} id="price" name="price" required></input><br></br>
+                <label className={styles.formLabel}>Price:</label>
+                <input className={styles.expensesInput} type="number" value={price} onChange={(e) => setPrice(e.target.value)} id="price" name="price" required></input><br></br>
 
-                            <label className={styles.formLabel}>Date:</label>
-                            <input className={styles.expensesInput} type="date" value={date} onChange={(e) => setDate(e.target.value)} id="date" name="date" required></input><br></br>
+                <label className={styles.formLabel}>Date:</label>
+                <input className={styles.expensesInput} type="date" value={date} onChange={(e) => setDate(e.target.value)} id="date" name="date" required></input><br></br>
 
-                            <label className={styles.formLabel}>Vendor:</label>
-                            <input className={styles.expensesInput} type="text" value={vendor} onChange={(e) => setVendor(e.target.value)} id="vendor" name="vendor" required></input><br></br>
+                <label className={styles.formLabel}>Vendor:</label>
+                <input className={styles.expensesInput} type="text" value={vendor} onChange={(e) => setVendor(e.target.value)} id="vendor" name="vendor" required></input><br></br>
 
-                        <div className={styles["button-row"]}>
-                        <label className={styles.formLabel}>Category:</label> 
-                        <input 
-                            className={styles.expensesInput}
-                            list="categories" 
-                            value={category} 
-                            onChange={(e) => setCategory(e.target.value.toLowerCase())} 
-                        />
-                        <datalist id="categories">
-                            {budget.length > 0 ? (
-                            budget.filter((categoryOption) => 
-                                !["total expenses", "temp total"].includes(categoryOption.category.toLowerCase())
-                            ).map((categoryOption) => (
-                                <option key={categoryOption._id} value={categoryOption.category} />
-                            ))
-                            ) : (
-                            <option>No categories available</option>
-                            )}
-                        </datalist>
-                        <button className={styles.button} type="submit">Add new expense!</button>
-
-                        </div>
-                    </form>
-                    </div>
-        
-        {/* <EditExpensePopup /> */}
+                <div className={styles["button-row"]}>
+                  <label className={styles.formLabel}>Category:</label> 
+                    <input 
+                      className={styles.expensesInput}
+                      list="categories" 
+                      value={category} 
+                      onChange={(e) => setCategory(e.target.value.toLowerCase())} 
+                    />
+                  <datalist id="categories">
+                    {budget.length > 0 ? (
+                    budget.filter((categoryOption) => 
+                        !["total expenses", "temp total"].includes(categoryOption.category.toLowerCase())
+                    ).map((categoryOption) => (
+                        <option key={categoryOption._id} value={categoryOption.category} />
+                    ))
+                    ) : (
+                    <option>No categories available</option>
+                    )}
+                  </datalist>
+                  <button className={styles.button} type="submit">Add new expense!</button>
+                </div>
+              </form>
+          </div>
+        )}
       </div>
+
       <div className={`${styles.column} ${styles.right}`}>
         <ul className={styles.ul}>
           {filterExpensesByDate(expenses).length === 0 ? (
