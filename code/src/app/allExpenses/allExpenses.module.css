@@ -81,6 +81,7 @@
     border-color: #FF9BD1;
     border-width: 1px; 
     border-radius: 20px;
+    z-index: -1;
   }
   
   .nestedDiv {
@@ -104,14 +105,18 @@
 
   .deleteButton {
     color: #ac477d; 
+    /* color: aqua; */
     display: inline-block;
     padding-top: 0px;
     margin-right: 1rem;
     margin-bottom: .5rem;
     /* padding-right: 0.4rem; */
-
-
   }
+
+  .deleteButton:hover {
+    cursor: pointer;
+  }
+
   .expenseprice {
     margin-bottom: 0px;
   }
