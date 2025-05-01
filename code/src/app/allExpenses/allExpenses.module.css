@@ -81,7 +81,7 @@
     border-color: #FF9BD1;
     border-width: 1px; 
     border-radius: 20px;
-    z-index: -1;
+    /* z-index: -2; */
   }
   
   .nestedDiv {
