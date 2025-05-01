@@ -272,10 +272,9 @@ export default function Profile() {
             <p>No budgeting goals set.</p>
           )}
           
-          <h1>Add a new goal!</h1>
+          <h1>Add a new category!</h1>
           <form onSubmit={submitBudget} className="new-goal-form">
             <div className={styles.budgetGoal}>
-              For what category?
               <input
                 list="categories"
                 value={category}
