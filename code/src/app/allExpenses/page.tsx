@@ -6,6 +6,7 @@ import { BarLoader } from 'react-spinners';
 import { getCookie } from 'cookies-next';
 import { DeleteRounded } from '@mui/icons-material';
 import { useRouter } from 'next/navigation';
+import EditExpensePopup from './EditExpensePopup'; 
 
 interface Expense {
   _id: string;
@@ -25,9 +26,12 @@ interface Budget {
 
 export default function Expenses() {
   const [expenses, setExpenses] = useState<Expense[]>([]);
-  const [budget, setBudget] = useState<Budget[]>([]);
+  // const [budget, setBudget] = useState<Budget[]>([]);
   const [startDate, setStartDate] = useState<string>('');
   const [endDate, setEndDate] = useState<string>('');
+
+  const [showForm, setShowForm] = useState(false);
+  // const [editingExpense, setEditingExpense] = useState(null);
 
   const fetchExpenses = async () => {
     try {
@@ -61,10 +65,10 @@ export default function Expenses() {
   }, []);
 
   const filterExpensesByDate = (expenses: Expense[]) => {
-    const filtered = expenses.filter((expense) => {
-      const expenseDate = new Date(expense.date);
-      const start = startDate ? new Date(startDate) : new Date(0);
-      const end = endDate ? new Date(endDate) : new Date();
+  const filtered = expenses.filter((expense) => {
+  const expenseDate = new Date(expense.date);
+  const start = startDate ? new Date(startDate) : new Date(0);
+  const end = endDate ? new Date(endDate) : new Date();
 
       return expenseDate >= start && expenseDate <= end;
     });
@@ -92,8 +96,90 @@ export default function Expenses() {
     }
   };
 
+  const submitTransaction = async(e: any) => {
+    try {
+      e.preventDefault();
+
+      const disallowedCategories = ["total expenses", "temp total"];
+
+      if (disallowedCategories.includes(category.trim().toLowerCase())) {
+          alert(`"${category}" is a reserved category and cannot be added.`);
+          return;
+      }
+
+      const categoryExists = budget.some(budgetItem => budgetItem.category.toLowerCase() === category.toLowerCase());
+
+      if (!categoryExists) {
+        const newBudget = {
+          category: category.toLowerCase(),
+          goal: 0,
+          interval: "monthly"
+        };
+  
+        try {
+          const response = await fetch("/api/budget", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(newBudget),
+          });
+  
+          if (!response.ok) {
+            throw new Error("Failed to create new budget category.");
+          }
+        } catch (error) {
+          console.error("Error creating new budget category:", error);
+          alert("Failed to create new budget category.");
+          return;
+        }
+      }
+    
+      try {
+          const response = await fetch("/api/transactions", { 
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({name, price, date, vendor, category: category.toLowerCase()}),
+          });
+          
+          if (response.ok) {
+            setTransactionAdded(true);
+          }
+      } catch (error) {
+          console.error("Error submitting transaction:", error);
+      }      
+    } catch (error) {
+      alert("Fields cannot be blank!");
+    }
+
+    
+    setShowForm(false);  
+    setEditingExpense(null);
+  }
+
   const router = useRouter();
+  const [isVisible, setVisible] = useState(false);
+  const [name, setName] = useState('');
+  const [price, setPrice] = useState('');
+  const [date, setDate] = useState('');
+  const [vendor, setVendor] = useState('');
+  
+  const openPopup = () => setVisible(true);
+  const closePopup = () => setVisible(false);
+  const [category, setCategory] = useState('');
+  const [budget, setBudget] = useState<Budget[]>([]);
+  const [transactionAdded, setTransactionAdded] = useState(false);
+  const [editingExpense, setEditingExpense] = useState<Expense | null>(null);
   const editTransaction = (expense: Expense) => {
+
+    setEditingExpense(expense);  
+    setName(expense.name);
+    setPrice(expense.price.toString());
+    setDate(expense.date.slice(0, 10));
+    setVendor(expense.vendor);
+    setCategory(expense.category.toLowerCase());
+
+    
     const query = new URLSearchParams({
       name: expense.name,
       price: expense.price.toString(),
@@ -103,7 +189,8 @@ export default function Expenses() {
     }).toString();
   
     deleteTransaction(expense._id);
-    router.push(`/expenses?${query}`);
+    setShowForm(true);     
+    // router.push(`/expenses?${query}`);
   };
 
   return (
@@ -129,7 +216,47 @@ export default function Expenses() {
             onChange={(e) => setEndDate(e.target.value)}
           />
         </label>
+        {showForm && (
+        <div className={styles.popupContent}>
+            <form id="expenseForm" onSubmit={submitTransaction}>
+              <label className={styles.formLabel}>Expense Name:</label>
+                <input className={styles.expensesInput} type="text" value={name} onChange={(e) => setName(e.target.value)} id="name" name="name" required></input><br></br>
+
+                <label className={styles.formLabel}>Price:</label>
+                <input className={styles.expensesInput} type="number" value={price} onChange={(e) => setPrice(e.target.value)} id="price" name="price" required></input><br></br>
+
+                <label className={styles.formLabel}>Date:</label>
+                <input className={styles.expensesInput} type="date" value={date} onChange={(e) => setDate(e.target.value)} id="date" name="date" required></input><br></br>
+
+                <label className={styles.formLabel}>Vendor:</label>
+                <input className={styles.expensesInput} type="text" value={vendor} onChange={(e) => setVendor(e.target.value)} id="vendor" name="vendor" required></input><br></br>
+
+                <div className={styles["button-row"]}>
+                  <label className={styles.formLabel}>Category:</label> 
+                    <input 
+                      className={styles.expensesInput}
+                      list="categories" 
+                      value={category} 
+                      onChange={(e) => setCategory(e.target.value.toLowerCase())} 
+                    />
+                  <datalist id="categories">
+                    {budget.length > 0 ? (
+                    budget.filter((categoryOption) => 
+                        !["total expenses", "temp total"].includes(categoryOption.category.toLowerCase())
+                    ).map((categoryOption) => (
+                        <option key={categoryOption._id} value={categoryOption.category} />
+                    ))
+                    ) : (
+                    <option>No categories available</option>
+                    )}
+                  </datalist>
+                  <button className={styles.button} type="submit">Add new expense!</button>
+                </div>
+              </form>
+          </div>
+        )}
       </div>
+
       <div className={`${styles.column} ${styles.right}`}>
         <ul className={styles.ul}>
           {filterExpensesByDate(expenses).length === 0 ? (
@@ -141,7 +268,7 @@ export default function Expenses() {
               <li key={expense._id} className={`${styles["expense-item"]} ${styles.li}`}>
                 <div className={`${styles["expense-info"]} ${styles.nestedDiv}`}>
                   <div className={`${styles.date} ${styles.nestedDiv}`}><strong className={styles.strong}></strong> {new Date(expense.date).toLocaleDateString('en-US', {timeZone: 'UTC'})}</div>
-                  <div className={`${styles.expenseprice} ${styles.nestedDiv}`}>${expense.price.toFixed(2)} at {expense.vendor}.</div>
+                  <div className={`${styles.expenseprice} ${styles.nestedDiv}`}>${expense.price.toFixed(2)} on {expense.name} at {expense.vendor}.</div>
                 </div>
                   <button className={styles.editButton} onClick={() => editTransaction(expense)}>
                     [Edit]
@@ -151,6 +278,9 @@ export default function Expenses() {
                     <div className={`${styles["expense-category"]} ${styles.nestedDiv}`}>{expense.category}</div>
                     <button className={styles.deleteButton} onClick={() => deleteTransaction(expense._id)}>x
                     </button>
+                    {/* <button className="deleteButton" onClick={() => deleteTransaction(expense._id)}>x
+              <DeleteRounded sx={{ color: '#FF9BD1' }}/>
+            </button> */}
                   </div>
               </li>
             ))

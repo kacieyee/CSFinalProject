@@ -2,11 +2,12 @@
 import styles from './expenses.module.css';
 import Link from 'next/link';
 import React, { useEffect, useRef, useState } from 'react';
-import AddExpensePopup from './addExpensePopup'; 
 import { BarLoader } from 'react-spinners';
 import { DeleteRounded} from '@mui/icons-material';
 import { jsPDF } from "jspdf";
 import { useSearchParams } from 'next/navigation';
+
+// import AddExpensePopup from './addExpensePopup'; 
 
 interface Expense {
   _id: string,
@@ -545,7 +546,7 @@ export default function Expenses() {
         <li key={expense._id} className={`${styles["expense-item"]} ${styles["ul-li"]}`}>
           <div className={`${styles["expense-info"]} ${styles["ul-li-div"]}`}>
             <div className={`${styles["date"]} ${styles["ul-li-div"]}`}><strong className={styles.strongColor}></strong> {new Date(expense.date).toLocaleDateString('en-US', {timeZone: 'UTC'})}</div>
-            <div className={`${styles["expenseprice"]} ${styles["ul-li-div"]}`}>${expense.price.toFixed(2)} at {expense.vendor}.</div>
+            <div className={`${styles["expenseprice"]} ${styles["ul-li-div"]}`}>${expense.price.toFixed(2)} on {expense.name} at {expense.vendor}.</div>
           </div>
             {/* <button className="editButton" onClick={() => editTransaction(expense)}>
               [Edit]
