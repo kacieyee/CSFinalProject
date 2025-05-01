@@ -55,6 +55,7 @@ p {
 .navbar {
   position: sticky;
   top: 0;
+  z-index: 3;
   background-color: #000000;
   color:#E0E0E0;
   padding: 1rem;
