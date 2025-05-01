@@ -6,6 +6,7 @@ import { BarLoader } from 'react-spinners';
 import { getCookie } from 'cookies-next';
 import { DeleteRounded } from '@mui/icons-material';
 import { useRouter } from 'next/navigation';
+import EditExpensePopup from './EditExpensePopup'; 
 
 interface Expense {
   _id: string;
@@ -129,6 +130,9 @@ export default function Expenses() {
             onChange={(e) => setEndDate(e.target.value)}
           />
         </label>
+
+        
+        <EditExpensePopup />
       </div>
       <div className={`${styles.column} ${styles.right}`}>
         <ul className={styles.ul}>
@@ -151,6 +155,9 @@ export default function Expenses() {
                     <div className={`${styles["expense-category"]} ${styles.nestedDiv}`}>{expense.category}</div>
                     <button className={styles.deleteButton} onClick={() => deleteTransaction(expense._id)}>x
                     </button>
+                    {/* <button className="deleteButton" onClick={() => deleteTransaction(expense._id)}>x
+              <DeleteRounded sx={{ color: '#FF9BD1' }}/>
+            </button> */}
                   </div>
               </li>
             ))

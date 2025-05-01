@@ -192,6 +192,39 @@
     margin-left: 0.5rem;
   }
 
+
+  .formLabel {
+    color: #db2a8e;
+    font-weight: bold;
+  }
+
+  .popupContent {
+    margin-bottom: 20px;
+    margin-top: 30px;
+    padding: 20px;
+    background-color: #000000;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    text-align: left;
+
+    
+    border-color: #FF9BD1;
+    border-width: 1px; 
+    border-radius: 20px;
+  }
+
+  .expensesInput {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+    border-radius: 10px;
+    background-color: rgba(255, 110, 173, 0.5);
+    color: white;
+    border-color: #FF9BD1;
+    border-width: 1px; 
+    }
+
   @media screen and (max-width: 600px) {
     .column {
       width: 100%;

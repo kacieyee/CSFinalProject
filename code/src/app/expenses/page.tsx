@@ -2,11 +2,12 @@
 import styles from './expenses.module.css';
 import Link from 'next/link';
 import React, { useEffect, useRef, useState } from 'react';
-import AddExpensePopup from './addExpensePopup'; 
 import { BarLoader } from 'react-spinners';
 import { DeleteRounded} from '@mui/icons-material';
 import { jsPDF } from "jspdf";
 import { useSearchParams } from 'next/navigation';
+
+// import AddExpensePopup from './addExpensePopup'; 
 
 interface Expense {
   _id: string,
