@@ -125,7 +125,7 @@ export default function Expenses() {
             className={styles.input}
             type="date"
             value={endDate}
-            min={startDate ? new Date(new Date(startDate).getTime() + 86400000).toISOString().split('T')[0] : ''}
+            min={startDate ? new Date(startDate).toLocaleDateString('en-US', {timeZone: 'UTC'}) : ''}
             onChange={(e) => setEndDate(e.target.value)}
           />
         </label>
@@ -140,7 +140,7 @@ export default function Expenses() {
               .map((expense) => (
               <li key={expense._id} className={`${styles["expense-item"]} ${styles.li}`}>
                 <div className={`${styles["expense-info"]} ${styles.nestedDiv}`}>
-                  <div className={`${styles.date} ${styles.nestedDiv}`}><strong className={styles.strong}></strong> {new Date(expense.date).toLocaleDateString('en-US', {weekday: "long", day: "numeric", month: "long", year: "numeric"})}</div>
+                  <div className={`${styles.date} ${styles.nestedDiv}`}><strong className={styles.strong}></strong> {new Date(expense.date).toLocaleDateString('en-US', {timeZone: 'UTC'})}</div>
                   <div className={`${styles.expenseprice} ${styles.nestedDiv}`}>${expense.price.toFixed(2)} at {expense.vendor}.</div>
                 </div>
                   <button className={styles.editButton} onClick={() => editTransaction(expense)}>

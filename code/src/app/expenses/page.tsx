@@ -544,7 +544,7 @@ export default function Expenses() {
         expenses.map((expense) => (
         <li key={expense._id} className={`${styles["expense-item"]} ${styles["ul-li"]}`}>
           <div className={`${styles["expense-info"]} ${styles["ul-li-div"]}`}>
-            <div className={`${styles["date"]} ${styles["ul-li-div"]}`}><strong className={styles.strongColor}></strong> {new Date(expense.date).toLocaleDateString('en-US', {weekday: "long", day: "numeric", month: "long", year: "numeric"})}</div>
+            <div className={`${styles["date"]} ${styles["ul-li-div"]}`}><strong className={styles.strongColor}></strong> {new Date(expense.date).toLocaleDateString('en-US', {timeZone: 'UTC'})}</div>
             <div className={`${styles["expenseprice"]} ${styles["ul-li-div"]}`}>${expense.price.toFixed(2)} at {expense.vendor}.</div>
           </div>
             {/* <button className="editButton" onClick={() => editTransaction(expense)}>

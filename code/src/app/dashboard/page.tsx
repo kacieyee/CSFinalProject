@@ -83,6 +83,7 @@ export default function Dashboard() {
     const [groupedCategories, setGroupedCategories] = useState<string[][]>([]);
     const [motivationMessage, setMotivationMessage] = useState("");
     const [percentage, setPercentage] = useState(Number);
+    const [overBudgetCategories, setOverBudgetCategories] = useState<string[]>([]);
 
     const groupCategories = (categories: string[]) => {
       return categories.reduce((acc: string[][], category, index) => {
@@ -214,7 +215,7 @@ export default function Dashboard() {
         const sortedLabels = categoryPairs.map(pair => pair.category);
         const sortedData = categoryPairs.map(pair => pair.value);
         const hasNonZeroData = sortedData.some(val => val > 0);
-        const gradientColors = generateGradientColors(sortedLabels.length);
+        const gradientColors = generateGradientColors(sortedData.length);
     
         if (hasNonZeroData) {
           setDoughnutData({
@@ -342,29 +343,46 @@ export default function Dashboard() {
     useEffect(() => {
       if (!totalExpenseLimit || transactions.length === 0) return;
     
-      const latestTxn = [...transactions].sort(
-        (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-      )[0];
+      const now = new Date();
+      const latestMonth = now.getUTCMonth();
+      const latestYear = now.getUTCFullYear();
     
-      const latestMonth = new Date(latestTxn.date).getMonth();
-      const latestYear = new Date(latestTxn.date).getFullYear();
+      let monthlyTotal = 0;
+      const overages: string[] = [];
     
-      const monthlyTotal = transactions.reduce((sum, txn) => {
-        const txnDate = new Date(txn.date);
-        if (
-          txnDate.getMonth() === latestMonth &&
-          txnDate.getFullYear() === latestYear &&
-          visibleCategories.includes(txn.category)
-        ) {
-          return sum + txn.price;
+      visibleCategories.forEach(category => {
+        const budget = allBudgetItems.find(
+          b => b.category.trim().toLowerCase() === category.trim().toLowerCase()
+        );
+        if (!budget) return;
+    
+        const monthlyGoal = budget.goal * getIntervalCoefficient(budget.interval);
+    
+        const categoryTransactions = transactions.filter(txn => {
+          const txnDate = new Date(txn.date);
+          const txnMonth = txnDate.getUTCMonth();
+          const txnYear = txnDate.getUTCFullYear();
+          return (
+            txn.category.trim().toLowerCase() === category.trim().toLowerCase() &&
+            txnMonth === latestMonth &&
+            txnYear === latestYear
+          );
+        });
+    
+        const categorySum = categoryTransactions.reduce((sum, txn) => sum + txn.price, 0);
+    
+        if (categorySum > monthlyGoal) {
+          const percent = categorySum / monthlyGoal * 100;
+          overages.push(`${category} by ${percent.toFixed(2)}%`);
         }
-        return sum;
-      }, 0);
+    
+        monthlyTotal += categorySum;
+      });
     
       setPercentage((monthlyTotal / totalExpenseLimit) * 100);
+      setOverBudgetCategories(overages);
     
       let message = "";
-    
       if (percentage < 50) {
         message = "You’re spending way under budget! Treat yourself a little!";
       } else if (percentage < 90) {
@@ -376,8 +394,8 @@ export default function Dashboard() {
       }
     
       setMotivationMessage(message);
-    }, [transactions, totalExpenseLimit, visibleCategories]);
-
+    }, [transactions, totalExpenseLimit, visibleCategories, allBudgetItems]);
+      
     return (
       
       <div className={styles.main}>
@@ -401,6 +419,17 @@ export default function Dashboard() {
           </div>
 
           <div className={styles.subtext}>{motivationMessage}</div>
+
+          {overBudgetCategories.length > 0 && (
+            <div className={styles["over-budget-list"]}>
+              <p className={styles.p}><strong>You've gone over budget!</strong></p>
+              <ul>
+                {overBudgetCategories.map((cat, i) => (
+                  <li key={i} className={styles.p}>{cat}</li>
+                ))}
+              </ul>
+            </div>
+          )}
 
         </div>
 
@@ -464,7 +493,7 @@ export default function Dashboard() {
                         borderColor: 'rgb(206, 28, 120)',
                         borderWidth: 4,
                         label: {
-                          content: `Goal: $${totalExpenseLimit.toFixed(2)}\n(${percentage.toFixed(1)}% there!)`,
+                          content: `Total budget: $${totalExpenseLimit.toFixed(2)}\n(${percentage.toFixed(1)}% left!)`,
                           display: true,
                           backgroundColor: 'rgba(0,0,0,0.7)',
                           color: '#fff',

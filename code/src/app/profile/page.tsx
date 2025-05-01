@@ -262,12 +262,7 @@ export default function Profile() {
                     </>
                   ) : (
                     <p>
-                      <span className={styles["budget-label"]}>You have a </span>
-                      <span className={styles["budget-variable"]}>{budget.interval}</span>
-                      <span className={styles["budget-label"]}> budget of $</span>
-                      <span className={styles["budget-variable"]}>{budget.goal}</span>
-                      <span className={styles["budget-label"]}> for </span>
-                      <span className={styles["budget-variable"]}>{budget.category}</span>.
+                      <span className={styles["budget-label"]}>You have a {budget.interval} budget of ${budget.goal} for {budget.category}.</span>
                     </p>
                   )}
                 </div>
@@ -287,15 +282,6 @@ export default function Profile() {
                 onChange={(e) => setCategory(e.target.value.toLowerCase())}
                 className={styles.goalInput}
               />
-              <datalist id="categories">
-                {budget.length > 0 ? (
-                  budget.map((categoryOption) => (
-                    <option key={categoryOption._id} value={categoryOption.category} />
-                  ))
-                ) : (
-                  <option>No categories available</option>
-                )}
-              </datalist>
             </div>
             <br />
             <button type="submit" className="button">Submit</button>

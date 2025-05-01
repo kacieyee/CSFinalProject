@@ -134,6 +134,10 @@
   border-radius: 20px;
 }
 
+.over-budget-list {
+  margin-top: 1.5rem;
+}
+
 .line-chart-container {
   color: white;
 }
