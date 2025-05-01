@@ -89,7 +89,7 @@ const EditExpensePopup: React.FC = () => {
 
     return (
         <div>
-            <button className="button" onClick={openPopup}>Add new expense</button>
+            <button className="button" onClick={openPopup}>Edit expense</button>
             {isVisible && (
                 // Close on background click
                 <div onClick={closePopup}>
@@ -130,6 +130,8 @@ const EditExpensePopup: React.FC = () => {
                             <option>No categories available</option>
                             )}
                         </datalist>
+                        <button className={styles.button} type="submit">Add new expense!</button>
+
                         </div>
                     </form>
                     </div>
