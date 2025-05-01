@@ -277,25 +277,15 @@ export default function Profile() {
             <p>No budgeting goals set.</p>
           )}
           
-          <h1>Add a new goal!</h1>
+          <h1>Add a new category!</h1>
           <form onSubmit={submitBudget} className="new-goal-form">
             <div className={styles.budgetGoal}>
-              For what category?
               <input
                 list="categories"
                 value={category}
                 onChange={(e) => setCategory(e.target.value.toLowerCase())}
                 className={styles.goalInput}
               />
-              <datalist id="categories">
-                {budget.length > 0 ? (
-                  budget.map((categoryOption) => (
-                    <option key={categoryOption._id} value={categoryOption.category} />
-                  ))
-                ) : (
-                  <option>No categories available</option>
-                )}
-              </datalist>
             </div>
             <br />
             <button type="submit" className="button">Submit</button>
