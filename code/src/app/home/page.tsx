@@ -50,9 +50,8 @@ export default function Home() {
             </button>
         </Link>
       </div>
-
       <svg
-        viewBox="0 0 1000 100"
+        viewBox="0 0 1440 200"
         preserveAspectRatio="none"
         style={{
           position: "absolute",
@@ -63,13 +62,24 @@ export default function Home() {
           zIndex: -1,
         }}
       >
-        <polyline
-          points={linePoints}
-          fill="none"
-          stroke="#FF9BD1"
-          strokeWidth="8"
+        <defs>
+          <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#FF9BD1" />
+            <stop offset="100%" stopColor="#FF4C8A" />
+          </linearGradient>
+        </defs>
+        <path
+          d="M0,40 C300,-30 600,130 900,40 C1200,20 1440,90 1440,90"
+          stroke="url(#gradient1)"
+          strokeWidth="15"
+        />
+        <path
+          d="M0,160 C280,100 700,200 1100,150 C1300,130 1440,170 1440,170"
+          stroke="url(#gradient1)"
+          strokeWidth="15"
         />
       </svg>
+
     </div>
   );
 }
