@@ -344,38 +344,40 @@ export default function Dashboard() {
       if (!totalExpenseLimit || transactions.length === 0) return;
     
       const now = new Date();
-      const latestMonth = now.getUTCMonth();
-      const latestYear = now.getUTCFullYear();
     
       let monthlyTotal = 0;
       const overages: string[] = [];
     
+      const normalize = (str: string) =>
+        str.trim().toLowerCase().replace(/\s+/g, '');
+      
       visibleCategories.forEach(category => {
+        const normalizedCategory = normalize(category);
+      
         const budget = allBudgetItems.find(
-          b => b.category.trim().toLowerCase() === category.trim().toLowerCase()
+          b => normalize(b.category) === normalizedCategory
         );
         if (!budget) return;
-    
+      
         const monthlyGoal = budget.goal * getIntervalCoefficient(budget.interval);
-    
+      
         const categoryTransactions = transactions.filter(txn => {
           const txnDate = new Date(txn.date);
-          const txnMonth = txnDate.getUTCMonth();
-          const txnYear = txnDate.getUTCFullYear();
-          return (
-            txn.category.trim().toLowerCase() === category.trim().toLowerCase() &&
-            txnMonth === latestMonth &&
-            txnYear === latestYear
-          );
+          const isMatch =
+            normalize(txn.category) === normalizedCategory &&
+            txnDate.getUTCMonth() === now.getUTCMonth() &&
+            txnDate.getUTCFullYear() === now.getUTCFullYear();
+      
+          return isMatch;
         });
-    
+      
         const categorySum = categoryTransactions.reduce((sum, txn) => sum + txn.price, 0);
-    
+      
         if (categorySum > monthlyGoal) {
-          const percent = categorySum / monthlyGoal * 100;
+          const percent = (categorySum / monthlyGoal) * 100;
           overages.push(`${category} by ${percent.toFixed(2)}%`);
         }
-    
+      
         monthlyTotal += categorySum;
       });
     
@@ -394,7 +396,7 @@ export default function Dashboard() {
       }
     
       setMotivationMessage(message);
-    }, [transactions, totalExpenseLimit, visibleCategories, allBudgetItems]);
+    }, [transactions, totalExpenseLimit, visibleCategories, allBudgetItems]);    
       
     return (
       
