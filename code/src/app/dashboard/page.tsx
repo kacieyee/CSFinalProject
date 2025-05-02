@@ -384,7 +384,7 @@ export default function Dashboard() {
     
       let message = "";
       if (percentage < 50) {
-        message = "You’re spending way under budget! Treat yourself a little!";
+        message = "You’re spending way under your overall budget! Treat yourself a little!";
       } else if (percentage < 90) {
         message = "Keep it up girlie! You’re on track!";
       } else if (percentage < 100) {
