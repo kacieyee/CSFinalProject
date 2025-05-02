@@ -24,13 +24,15 @@ interface Budget {
   interval: string;
 }
 
-export default function Expenses() {
+export default function AllExpenses() {
   const [expenses, setExpenses] = useState<Expense[]>([]);
   // const [budget, setBudget] = useState<Budget[]>([]);
   const [startDate, setStartDate] = useState<string>('');
   const [endDate, setEndDate] = useState<string>('');
-
   const [showForm, setShowForm] = useState(false);
+  const [transactionAdded, setTransactionAdded] = useState(false);
+
+
   // const [editingExpense, setEditingExpense] = useState(null);
 
   const fetchExpenses = async () => {
@@ -62,7 +64,15 @@ export default function Expenses() {
   useEffect(() => {
     fetchExpenses();
     fetchBudget();
-  }, []);
+    if (transactionAdded) {
+      setTransactionAdded(false);
+      setName('');
+      setPrice('');
+      setDate('');
+      setVendor('');
+      setCategory('');
+    }
+  }, [transactionAdded]);
 
   const filterExpensesByDate = (expenses: Expense[]) => {
   const filtered = expenses.filter((expense) => {
@@ -168,7 +178,6 @@ export default function Expenses() {
   const closePopup = () => setVisible(false);
   const [category, setCategory] = useState('');
   const [budget, setBudget] = useState<Budget[]>([]);
-  const [transactionAdded, setTransactionAdded] = useState(false);
   const [editingExpense, setEditingExpense] = useState<Expense | null>(null);
   const editTransaction = (expense: Expense) => {
 

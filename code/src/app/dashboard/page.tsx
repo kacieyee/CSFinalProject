@@ -386,7 +386,7 @@ export default function Dashboard() {
     
       let message = "";
       if (percentage < 50) {
-        message = "You’re spending way under budget! Treat yourself a little!";
+        message = "You’re spending way under your overall budget! Treat yourself a little!";
       } else if (percentage < 90) {
         message = "Keep it up girlie! You’re on track!";
       } else if (percentage < 100) {
@@ -495,7 +495,7 @@ export default function Dashboard() {
                         borderColor: 'rgb(206, 28, 120)',
                         borderWidth: 4,
                         label: {
-                          content: `Total budget: $${totalExpenseLimit.toFixed(2)}\n(${percentage.toFixed(1)}% left!)`,
+                          content: `Total budget: $${totalExpenseLimit.toFixed(2)}\n(${percentage.toFixed(1)}% spent!)`,
                           display: true,
                           backgroundColor: 'rgba(0,0,0,0.7)',
                           color: '#fff',
